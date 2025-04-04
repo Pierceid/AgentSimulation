@@ -1,0 +1,246 @@
+﻿<Window x:Class="AgentSimulation.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AgentSimulation.Windows"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Title="Discrete Simulation" Height="720" Width="1040" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="14*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Left Column: Controls -->
+        <StackPanel>
+            <GroupBox Header="Simulation Controls" Margin="2" BorderBrush="DarkRed" Foreground="DarkRed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Button x:Name="btnStart" Grid.Row="0" Content="Start" Height="24" Click="ButtonClick" Margin="2"/>
+                    <Button x:Name="btnPause" Grid.Row="1" Content="Pause" Height="24" Click="ButtonClick" Margin="2"/>
+                    <Button x:Name="btnStop" Grid.Row="2" Content="Stop" Height="24" Click="ButtonClick" Margin="2"/>
+                    <Button x:Name="btnAnalyze" Grid.Row="3" Content="Analyze" Height="24" Click="ButtonClick" Margin="2"/>
+
+                    <Grid Grid.Row="4" Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Replications:" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                        <TextBox x:Name="txtReplications" Grid.Column="1" Height="20"/>
+                    </Grid>
+
+                    <Grid Grid.Row="5" Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Name="lblSpeed" Content="Speed:" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                        <Slider x:Name="sldSpeed" Grid.Column="1" Minimum="1" Maximum="7" IsSnapToTickEnabled="True" Margin="2" ValueChanged="SliderValueChanged"/>
+                    </Grid>
+
+                    <StackPanel Margin="2" Grid.Row="6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Workers A:" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <TextBox x:Name="txtWorkersA" Grid.Column="1" Height="20"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Workers B:" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <TextBox x:Name="txtWorkersB" Grid.Column="1" Height="20"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Workers C:" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <TextBox x:Name="txtWorkersC" Grid.Column="1" Height="20"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <GroupBox Header="Simulation Statistics" Margin="2" BorderBrush="DarkGreen" Foreground="DarkGreen">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Time:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtTime" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Queue A:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtQueueA" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Queue B:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtQueueB" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Queue C:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtQueueC" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Queue D:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtQueueD" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+                    
+                    <Grid Grid.Row="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Utility A:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtUtilityA" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Utility B:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtUtilityB" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="7">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Utility C:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtUtilityC" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Finished Orders:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtFinishedOrders" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="9">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Pending Orders:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtPendingOrders" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+
+                    <Grid Grid.Row="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Confidence Interval:" Margin="0,0,2,0"/>
+                        <TextBlock x:Name="txtConfidenceInterval" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+
+        <oxy:PlotView x:Name="plotView" Grid.Column="1" Margin="2"/>
+
+        <GroupBox Header="Simulation Status" Grid.Row="1" Grid.Column="1" Margin="2" BorderBrush="DarkBlue" Foreground="DarkBlue">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Order States:"/>
+                <DataGrid x:Name="dgOrders" Grid.Row="1" Margin="2" AutoGenerateColumns="False" MinColumnWidth="50" HeadersVisibility="Column" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding State}" Width="*"/>
+                        <DataGridTextColumn Header="Arrival Time" Binding="{Binding FormattedTime}" Width="1.5*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Label Content="Worker States:" Grid.Column="1"/>
+                <DataGrid x:Name="dgWorkers" Grid.Row="1" Grid.Column="1" Margin="2" AutoGenerateColumns="False" MinColumnWidth="50" HeadersVisibility="Column" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                        <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="*"/>
+                        <DataGridCheckBoxColumn Header="Is Busy" Binding="{Binding IsBusy}" Width="*"/>
+                        <DataGridTextColumn Header="Order" Binding="{Binding Order.Id}" Width="*"/>
+                        <DataGridTextColumn Header="Workplace" Binding="{Binding Workplace.Id}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
