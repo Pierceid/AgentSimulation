@@ -1,11 +1,12 @@
 using OSPABA;
 using Simulation;
-namespace Agents.ModelAgent
+
+namespace Agents.AgentWorkersC
 {
-	//meta! id="2"
-	public class ModelAgent : OSPABA.Agent
+	//meta! id="150"
+	public class AgentWorkersC : OSPABA.Agent
 	{
-		public ModelAgent(int id, OSPABA.Simulation mySim, Agent parent) :
+		public AgentWorkersC(int id, OSPABA.Simulation mySim, Agent parent) :
 			base(id, mySim, parent)
 		{
 			Init();
@@ -20,8 +21,8 @@ namespace Agents.ModelAgent
 		//meta! userInfo="Generated code: do not modify", tag="begin"
 		private void Init()
 		{
-			new ModelManager(SimId.ModelManager, MySim, this);
-			AddOwnMessage(Mc.ProcessOrder);
+			new ManagerWorkersC(SimId.ManagerWorkersC, MySim, this);
+			AddOwnMessage(Mc.GetWorkerC);
 		}
 		//meta! tag="end"
 	}

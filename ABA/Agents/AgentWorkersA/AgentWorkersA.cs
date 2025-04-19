@@ -1,11 +1,12 @@
 using OSPABA;
 using Simulation;
-namespace Agents.ScopeAgent
+
+namespace Agents.AgentWorkersA
 {
-	//meta! id="3"
-	public class ScopeAgent : OSPABA.Agent
+	//meta! id="149"
+	public class AgentWorkersA : OSPABA.Agent
 	{
-		public ScopeAgent(int id, OSPABA.Simulation mySim, Agent parent) :
+		public AgentWorkersA(int id, OSPABA.Simulation mySim, Agent parent) :
 			base(id, mySim, parent)
 		{
 			Init();
@@ -20,8 +21,8 @@ namespace Agents.ScopeAgent
 		//meta! userInfo="Generated code: do not modify", tag="begin"
 		private void Init()
 		{
-			new ScopeManager(SimId.ScopeManager, MySim, this);
-			AddOwnMessage(Mc.EnterAndExit);
+			new ManagerWorkersA(SimId.ManagerWorkersA, MySim, this);
+			AddOwnMessage(Mc.GetWorkerA);
 		}
 		//meta! tag="end"
 	}

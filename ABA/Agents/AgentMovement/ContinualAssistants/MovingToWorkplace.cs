@@ -1,29 +1,24 @@
 using OSPABA;
 using Simulation;
-namespace Agents.ModelAgent
+using Agents.AgentMovement;
+namespace Agents.AgentMovement.ContinualAssistants
 {
-	//meta! id="2"
-	public class ModelManager : OSPABA.Manager
+	//meta! id="101"
+	public class MovingToWorkplace : OSPABA.Process
 	{
-		public ModelManager(int id, OSPABA.Simulation mySim, Agent myAgent) :
+		public MovingToWorkplace(int id, OSPABA.Simulation mySim, CommonAgent myAgent) :
 			base(id, mySim, myAgent)
 		{
-			Init();
 		}
 
 		override public void PrepareReplication()
 		{
 			base.PrepareReplication();
 			// Setup component for the next replication
-
-			if (PetriNet != null)
-			{
-				PetriNet.Clear();
-			}
 		}
 
-		//meta! sender="CarpentryAgent", id="12", type="Response"
-		public void ProcessProcessOrder(MessageForm message)
+		//meta! sender="AgentMovement", id="102", type="Start"
+		public void ProcessStart(MessageForm message)
 		{
 		}
 
@@ -36,16 +31,12 @@ namespace Agents.ModelAgent
 		}
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
-		public void Init()
-		{
-		}
-
 		override public void ProcessMessage(MessageForm message)
 		{
 			switch (message.Code)
 			{
-			case Mc.ProcessOrder:
-				ProcessProcessOrder(message);
+			case Mc.Start:
+				ProcessStart(message);
 			break;
 
 			default:
@@ -54,11 +45,11 @@ namespace Agents.ModelAgent
 			}
 		}
 		//meta! tag="end"
-		public new ModelAgent MyAgent
+		public new AgentMovement MyAgent
 		{
 			get
 			{
-				return (ModelAgent)base.MyAgent;
+				return (AgentMovement)base.MyAgent;
 			}
 		}
 	}

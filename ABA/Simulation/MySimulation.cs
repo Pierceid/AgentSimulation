@@ -1,7 +1,14 @@
+using Agents.AgentWorkersC;
 using OSPABA;
-using Agents.ScopeAgent;
-using Agents.ModelAgent;
-using Agents.CarpentryAgent;
+using Agents.AgentWorkersB;
+using Agents.AgentWorkersA;
+using Agents.AgentCarpentry;
+using Agents.AgentScope;
+using Agents.AgentWorkers;
+using Agents.AgentWorkplaces;
+using Agents.AgentModel;
+using Agents.AgentMovement;
+using Agents.AgentWarehouse;
 
 namespace Simulation
 {
@@ -39,15 +46,36 @@ namespace Simulation
 		//meta! userInfo="Generated code: do not modify", tag="begin"
 		private void Init()
 		{
-			ModelAgent = new ModelAgent(SimId.ModelAgent, this, null);
-			ScopeAgent = new ScopeAgent(SimId.ScopeAgent, this, ModelAgent);
-			CarpentryAgent = new CarpentryAgent(SimId.CarpentryAgent, this, ModelAgent);
+			AgentModel = new AgentModel(SimId.AgentModel, this, null);
+			AgentScope = new AgentScope(SimId.AgentScope, this, AgentModel);
+			AgentCarpentry = new AgentCarpentry(SimId.AgentCarpentry, this, AgentModel);
+			AgentWorkplaces = new AgentWorkplaces(SimId.AgentWorkplaces, this, AgentCarpentry);
+			AgentMovement = new AgentMovement(SimId.AgentMovement, this, AgentCarpentry);
+			AgentWarehouse = new AgentWarehouse(SimId.AgentWarehouse, this, AgentCarpentry);
+			AgentWorkers = new AgentWorkers(SimId.AgentWorkers, this, AgentCarpentry);
+			AgentWorkersA = new AgentWorkersA(SimId.AgentWorkersA, this, AgentWorkers);
+			AgentWorkersC = new AgentWorkersC(SimId.AgentWorkersC, this, AgentWorkers);
+			AgentWorkersB = new AgentWorkersB(SimId.AgentWorkersB, this, AgentWorkers);
 		}
-		public ModelAgent ModelAgent
+		public AgentModel AgentModel
 		{ get; set; }
-		public ScopeAgent ScopeAgent
+		public AgentScope AgentScope
 		{ get; set; }
-		public CarpentryAgent CarpentryAgent
+		public AgentCarpentry AgentCarpentry
+		{ get; set; }
+		public AgentWorkplaces AgentWorkplaces
+		{ get; set; }
+		public AgentMovement AgentMovement
+		{ get; set; }
+		public AgentWarehouse AgentWarehouse
+		{ get; set; }
+		public AgentWorkers AgentWorkers
+		{ get; set; }
+		public AgentWorkersA AgentWorkersA
+		{ get; set; }
+		public AgentWorkersC AgentWorkersC
+		{ get; set; }
+		public AgentWorkersB AgentWorkersB
 		{ get; set; }
 		//meta! tag="end"
 	}

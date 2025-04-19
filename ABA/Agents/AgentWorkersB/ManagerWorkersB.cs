@@ -1,11 +1,11 @@
 using OSPABA;
 using Simulation;
-namespace Agents.CarpentryAgent
+namespace Agents.AgentWorkersB
 {
-	//meta! id="4"
-	public class CarpentryManager : OSPABA.Manager
+	//meta! id="151"
+	public class ManagerWorkersB : OSPABA.Manager
 	{
-		public CarpentryManager(int id, OSPABA.Simulation mySim, Agent myAgent) :
+		public ManagerWorkersB(int id, OSPABA.Simulation mySim, Agent myAgent) :
 			base(id, mySim, myAgent)
 		{
 			Init();
@@ -22,8 +22,8 @@ namespace Agents.CarpentryAgent
 			}
 		}
 
-		//meta! sender="ModelAgent", id="12", type="Request"
-		public void ProcessProcessOrder(MessageForm message)
+		//meta! sender="AgentWorkers", id="157", type="Request"
+		public void ProcessGetWorkerB(MessageForm message)
 		{
 		}
 
@@ -44,8 +44,8 @@ namespace Agents.CarpentryAgent
 		{
 			switch (message.Code)
 			{
-			case Mc.ProcessOrder:
-				ProcessProcessOrder(message);
+			case Mc.GetWorkerB:
+				ProcessGetWorkerB(message);
 			break;
 
 			default:
@@ -54,11 +54,11 @@ namespace Agents.CarpentryAgent
 			}
 		}
 		//meta! tag="end"
-		public new CarpentryAgent MyAgent
+		public new AgentWorkersB MyAgent
 		{
 			get
 			{
-				return (CarpentryAgent)base.MyAgent;
+				return (AgentWorkersB)base.MyAgent;
 			}
 		}
 	}

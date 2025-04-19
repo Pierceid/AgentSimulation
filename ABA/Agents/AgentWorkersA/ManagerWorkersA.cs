@@ -1,11 +1,11 @@
 using OSPABA;
 using Simulation;
-namespace Agents.ScopeAgent
+namespace Agents.AgentWorkersA
 {
-	//meta! id="3"
-	public class ScopeManager : OSPABA.Manager
+	//meta! id="149"
+	public class ManagerWorkersA : OSPABA.Manager
 	{
-		public ScopeManager(int id, OSPABA.Simulation mySim, Agent myAgent) :
+		public ManagerWorkersA(int id, OSPABA.Simulation mySim, Agent myAgent) :
 			base(id, mySim, myAgent)
 		{
 			Init();
@@ -22,8 +22,8 @@ namespace Agents.ScopeAgent
 			}
 		}
 
-		//meta! sender="ModelAgent", id="10", type="Notice"
-		public void ProcessEnterAndExit(MessageForm message)
+		//meta! sender="AgentWorkers", id="159", type="Request"
+		public void ProcessGetWorkerA(MessageForm message)
 		{
 		}
 
@@ -44,8 +44,8 @@ namespace Agents.ScopeAgent
 		{
 			switch (message.Code)
 			{
-			case Mc.EnterAndExit:
-				ProcessEnterAndExit(message);
+			case Mc.GetWorkerA:
+				ProcessGetWorkerA(message);
 			break;
 
 			default:
@@ -54,11 +54,11 @@ namespace Agents.ScopeAgent
 			}
 		}
 		//meta! tag="end"
-		public new ScopeAgent MyAgent
+		public new AgentWorkersA MyAgent
 		{
 			get
 			{
-				return (ScopeAgent)base.MyAgent;
+				return (AgentWorkersA)base.MyAgent;
 			}
 		}
 	}
