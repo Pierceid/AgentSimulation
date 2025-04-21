@@ -1,26 +1,27 @@
 using OSPABA;
 using Simulation;
-using Agents.AgentMovement;
-namespace Agents.AgentMovement.ContinualAssistants
-{
-	//meta! id="110"
-	public class MovingToStorage : OSPABA.Process
-	{
-		public MovingToStorage(int id, OSPABA.Simulation mySim, CommonAgent myAgent) :
-			base(id, mySim, myAgent)
-		{
-		}
 
-		override public void PrepareReplication()
-		{
-			base.PrepareReplication();
-			// Setup component for the next replication
-		}
+namespace Agents.AgentMovement.ContinualAssistants {
+    //meta! id="110"
+    public class MovingToStorage : OSPABA.Process {
+        public MovingToStorage(int id, OSPABA.Simulation mySim, CommonAgent myAgent) : base(id, mySim, myAgent) {
+        }
+
+        override public void PrepareReplication() {
+            base.PrepareReplication();
+        }
 
 		//meta! sender="AgentMovement", id="111", type="Start"
-		public void ProcessStart(MessageForm message)
-		{
-		}
+		public void ProcessStart(MessageForm message) {
+            // Simulated duration for moving to storage
+            double duration = ((MySimulation)MySim).Generators.WorkerMoveToStorageTime.Next();
+
+            Hold(duration, message);
+        }
+
+        public void ProcessDefault(MessageForm message) {
+
+        }
 
 		//meta! userInfo="Process messages defined in code", id="0"
 		public void ProcessDefault(MessageForm message)
@@ -45,12 +46,9 @@ namespace Agents.AgentMovement.ContinualAssistants
 			}
 		}
 		//meta! tag="end"
-		public new AgentMovement MyAgent
-		{
-			get
-			{
-				return (AgentMovement)base.MyAgent;
-			}
-		}
-	}
+
+        public new AgentMovement MyAgent {
+            get { return (AgentMovement)base.MyAgent; }
+        }
+    }
 }

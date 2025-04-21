@@ -1,26 +1,55 @@
 using OSPABA;
 using Simulation;
-namespace Agents.AgentMovement
-{
-	//meta! id="43"
-	public class ManagerMovement : OSPABA.Manager
-	{
-		public ManagerMovement(int id, OSPABA.Simulation mySim, Agent myAgent) :
-			base(id, mySim, myAgent)
-		{
-			Init();
-		}
 
-		override public void PrepareReplication()
-		{
-			base.PrepareReplication();
-			// Setup component for the next replication
+namespace Agents.AgentMovement {
+    //meta! id="43"
+    public class ManagerMovement : OSPABA.Manager {
+        public ManagerMovement(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
+            Init();
+        }
 
-			if (PetriNet != null)
-			{
-				PetriNet.Clear();
-			}
-		}
+        override public void PrepareReplication() {
+            base.PrepareReplication();
+            if (PetriNet != null) {
+                PetriNet.Clear();
+            }
+        }
+
+        // Initialization logic from AgentCarpentry
+        public void ProcessInit(MessageForm message) {
+
+        }
+
+        // Finish moving to workplace
+        public void ProcessFinishMovingToWorkplace(MessageForm message) {
+            // Reply back to AgentCarpentry that movement finished
+            message.Code = Mc.MoveToWorkplace;
+            Response(message);
+        }
+
+        // Finish moving to storage
+        public void ProcessFinishMovingToStorage(MessageForm message) {
+            message.Code = Mc.MoveToStorage;
+            Response(message);
+        }
+
+        // Request from AgentCarpentry to move a worker to workplace
+        public void ProcessMoveToWorkplace(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.MovingToWorkplace);
+            message.Code = Mc.Start;
+            StartContinualAssistant(message);
+        }
+
+        // Request from AgentCarpentry to move a worker to storage
+        public void ProcessMoveToStorage(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.MovingToStorage);
+            message.Code = Mc.Start;
+            StartContinualAssistant(message);
+        }
+
+        public void ProcessDefault(MessageForm message) {
+
+        }
 
 		//meta! sender="AgentCarpentry", id="46", type="Notice"
 		public void ProcessInit(MessageForm message)
@@ -64,6 +93,10 @@ namespace Agents.AgentMovement
 		{
 			switch (message.Code)
 			{
+			case Mc.Init:
+				ProcessInit(message);
+			break;
+
 			case Mc.MoveToWorkplace:
 				ProcessMoveToWorkplace(message);
 			break;
@@ -85,22 +118,15 @@ namespace Agents.AgentMovement
 				ProcessMoveToStorage(message);
 			break;
 
-			case Mc.Init:
-				ProcessInit(message);
-			break;
-
 			default:
 				ProcessDefault(message);
 			break;
 			}
 		}
 		//meta! tag="end"
-		public new AgentMovement MyAgent
-		{
-			get
-			{
-				return (AgentMovement)base.MyAgent;
-			}
-		}
-	}
+
+        public new AgentMovement MyAgent {
+            get { return (AgentMovement)base.MyAgent; }
+        }
+    }
 }

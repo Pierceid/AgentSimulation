@@ -3,6 +3,7 @@
         Raw,
         Cut,
         Painted,
+        Pickled,
         Assembled,
         Mounted,
         Finished

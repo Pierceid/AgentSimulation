@@ -11,17 +11,17 @@ namespace Agents.AgentScope {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Setup component for the next replication
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        private void Init() {
-            new ManagerScope(SimId.ManagerScope, MySim, this);
-            new OrderArrival(SimId.OrderArrival, MySim, this);
-
-            AddOwnMessage(Mc.Init);
-            AddOwnMessage(Mc.OrderEnter);
-        }
-        //meta! tag="end"
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		private void Init()
+		{
+			new ManagerScope(SimId.ManagerScope, MySim, this);
+			new OrderArrival(SimId.OrderArrival, MySim, this);
+			AddOwnMessage(Mc.Init);
+			AddOwnMessage(Mc.PlanOrderArrival);
+			AddOwnMessage(Mc.OrderExit);
+		}
+		//meta! tag="end"
     }
 }

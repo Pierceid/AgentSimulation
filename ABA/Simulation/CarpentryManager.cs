@@ -1,4 +1,5 @@
 ﻿using OSPABA;
+using Simulation;
 
 namespace AgentSimulation.ABA.Simulation {
     public class CarpentryManager : OSPABA.Manager {
@@ -9,7 +10,7 @@ namespace AgentSimulation.ABA.Simulation {
             throw new NotImplementedException();
         }
 
-        public CarpentrySimulation CarpentrySimulation { get { return (CarpentrySimulation)base.MySim; } }
+        public MySimulation MySimulation { get { return (MySimulation)base.MySim; } }
 
         public CarpentryAgent CarpentryAgent { get { return (CarpentryAgent)base.MyAgent; } }
     }

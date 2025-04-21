@@ -1,3 +1,4 @@
+using AgentSimulation.Structures;
 using OSPABA;
 using Simulation;
 namespace Agents.AgentScope {
@@ -16,56 +17,65 @@ namespace Agents.AgentScope {
             }
         }
 
-        //meta! sender="AgentModel", id="25", type="Notice"
-        public void ProcessInit(MessageForm message) {
+		//meta! sender="AgentModel", id="25", type="Notice"
+		public void ProcessInit(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.OrderArrival);
             StartContinualAssistant(message);
         }
 
-        //meta! sender="OrderArrival", id="164", type="Finish"
-        public void ProcessFinish(MessageForm message) {
+		//meta! sender="OrderArrival", id="164", type="Finish"
+		public void ProcessFinish(MessageForm message) {
         }
 
-        //meta! sender="AgentModel", id="10", type="Notice"
-        public void ProcessOrderEnter(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentModel);
-            message.Code = Mc.OrderEnter;
-            Notice(new MyMessage(message));
+		//meta! sender="AgentModel", id="10", type="Notice"
+		public void ProcessOrderExit(MessageForm message) {
+            var myMessage = (MyMessage)message.CreateCopy();
 
-            message.Addressee = MyAgent.FindAssistant(SimId.OrderArrival);
-            StartContinualAssistant(message);
+            if (myMessage.Order == null) return;
+
+            myMessage.Order.EndTime = MySim.CurrentTime;
+
+            ((MySimulation)MySim).FinishedOrdersCount++;
+            ((MySimulation)MySim).AverageOrderTime.AddSample(myMessage.Order.EndTime - myMessage.Order.StartTime);
+
+            if (MySim.CurrentTime >= Constants.END_OF_REPLICATION) {
+                MySim.StopReplication();
+            }
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
             switch (message.Code) {
             }
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.Finish:
-                    ProcessFinish(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.Finish:
+				ProcessFinish(message);
+			break;
 
-                case Mc.Init:
-                    ProcessInit(message);
-                    break;
+			case Mc.OrderExit:
+				ProcessOrderExit(message);
+			break;
 
-                case Mc.OrderEnter:
-                    ProcessOrderEnter(message);
-                    break;
+			case Mc.Init:
+				ProcessInit(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentScope MyAgent {
             get {
                 return (AgentScope)base.MyAgent;

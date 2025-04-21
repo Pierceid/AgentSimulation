@@ -9,47 +9,56 @@ namespace Agents.AgentModel {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Setup component for the next replication
 
             if (PetriNet != null) {
                 PetriNet.Clear();
             }
         }
 
-        //meta! sender="AgentCarpentry", id="12", type="Response"
-        public void ProcessProcessOrder(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="12", type="Response"
+		public void ProcessProcessOrder(MessageForm message) {
+            var myMessage = (MyMessage)message.CreateCopy();
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            myMessage.Code = Mc.ProcessOrder;
+
+            Request(myMessage);
         }
 
-        //meta! sender="AgentScope", id="23", type="Notice"
-        public void ProcessOrderExit(MessageForm message) {
+		//meta! sender="AgentScope", id="23", type="Notice"
+		public void ProcessOrderEnter(MessageForm message) {
+            var myMessage = (MyMessage)message.CreateCopy();
+            ((MySimulation)MySim).OrdersCount++;
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
             switch (message.Code) {
             }
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.OrderExit:
-                    ProcessOrderExit(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.ProcessOrder:
+				ProcessProcessOrder(message);
+			break;
 
-                case Mc.ProcessOrder:
-                    ProcessProcessOrder(message);
-                    break;
+			case Mc.OrderEnter:
+				ProcessOrderEnter(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentModel MyAgent {
             get {
                 return (AgentModel)base.MyAgent;

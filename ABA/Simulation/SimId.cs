@@ -30,7 +30,6 @@ namespace Simulation
 		public const int Mounting = 1004;
 		public const int MovingToWorkplace = 1011;
 		public const int AssignWorkplace = 1005;
-		public const int ChangeWorkerState = 1012;
 		public const int MovingToStorage = 1013;
 		public const int Preparing = 1006;
 		public const int Pickling = 1014;
