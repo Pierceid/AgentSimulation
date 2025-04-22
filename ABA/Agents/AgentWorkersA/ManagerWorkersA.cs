@@ -5,7 +5,7 @@ using Simulation;
 namespace Agents.AgentWorkersA {
     //meta! id="149"
     public class ManagerWorkersA : OSPABA.Manager {
-        private List<Worker> workers = new();
+        public List<Worker> Workers { get; set; } = new();
 
         public ManagerWorkersA(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
             Init();
@@ -18,13 +18,13 @@ namespace Agents.AgentWorkersA {
                 PetriNet.Clear();
             }
 
-            workers = ((MySimulation)MySim).WorkersA;
+            Workers = ((MySimulation)MySim).WorkersA;
         }
 
         //meta! sender="AgentWorkers", id="159", type="Request"
         public void ProcessGetWorkerA(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
-            Worker? availableWorker = workers.FirstOrDefault(w => !w.IsBusy);
+            Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
 
             if (availableWorker != null) {
                 availableWorker.SetState(true);
@@ -46,7 +46,7 @@ namespace Agents.AgentWorkersA {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Worker != null) {
-                var match = workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
+                var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
                 match?.SetState(false);
                 myMessage.Worker = null;
             }
@@ -56,7 +56,7 @@ namespace Agents.AgentWorkersA {
 
         //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
-            workers = ((MySimulation)MySim).WorkersA;
+            Workers = ((MySimulation)MySim).WorkersA;
         }
 
         override public void ProcessMessage(MessageForm message) {

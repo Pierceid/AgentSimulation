@@ -1,9 +1,9 @@
-﻿using AgentSimulation.Simulations;
-using OxyPlot;
+﻿using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
+using Simulation;
 
 namespace AgentSimulation.Presentation {
     public class LineGraph {
@@ -50,17 +50,17 @@ namespace AgentSimulation.Presentation {
             this.plotView.Model = model;
         }
 
-        public void UpdatePlot(SimulationCore simulationCore) {
-            if (simulationCore is Carpentry c) {
-                double rep = c.CurrentReplication;
-                double mean = c.AverageOrderTime.GetMean();
-                (double bottom, double top) = c.AverageOrderTime.GetConfidenceInterval();
+        public void UpdatePlot(OSPABA.Simulation simulation) {
+            if (simulation is MySimulation ms) {
+                double rep = ms.CurrentReplication;
+                double mean = ms.AverageOrderTime.Mean();
+                double[] interval = ms.AverageOrderTime.ConfidenceInterval95;
 
                 mainSeries.Points.Add(new DataPoint(rep, mean));
 
-                if (c.CurrentReplication % 2 == 0 && !double.IsNaN(bottom) && !double.IsNaN(top)) {
-                    upperSeries.Points.Add(new DataPoint(rep, top));
-                    lowerSeries.Points.Add(new DataPoint(rep, bottom));
+                if (ms.CurrentReplication % 2 == 0 && !double.IsNaN(interval[0]) && !double.IsNaN(interval[1])) {
+                    upperSeries.Points.Add(new DataPoint(rep, interval[1]));
+                    lowerSeries.Points.Add(new DataPoint(rep, interval[0]));
                 }
 
                 xAxis.Maximum = rep;

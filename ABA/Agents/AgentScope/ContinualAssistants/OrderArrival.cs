@@ -19,7 +19,7 @@ namespace Agents.AgentScope.ContinualAssistants {
             myMessage.Code = Mc.PlanOrderArrival;
             double time = mySimulation.Generators.OrderArrivalTime.Next();
 
-            if (MySim.CurrentTime + time < Constants.END_OF_REPLICATION) {
+            if (MySim.CurrentTime + time < Constants.SIMULATION_TIME) {
                 Hold(time, myMessage);
             }
         }

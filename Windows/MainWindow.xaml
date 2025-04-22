@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:AgentSimulation.Windows"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="Discrete Simulation" Height="720" Width="1040" WindowStartupLocation="CenterScreen">
+        Title="Discrete Simulation" Height="800" Width="1280" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="14*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -23,6 +23,7 @@
             <GroupBox Header="Simulation Controls" Margin="2" BorderBrush="DarkRed" Foreground="DarkRed">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -81,6 +82,15 @@
                             </Grid.ColumnDefinitions>
                             <Label Content="Workers C:" VerticalAlignment="Center" Margin="0,0,2,0"/>
                             <TextBox x:Name="txtWorkersC" Grid.Column="1" Height="20"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Workerplaces:" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <TextBox x:Name="txtWorkplaces" Grid.Column="1" Height="20"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
@@ -216,27 +226,36 @@
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="4*"/>
                 </Grid.ColumnDefinitions>
 
                 <Label Content="Order States:"/>
                 <DataGrid x:Name="dgOrders" Grid.Row="1" Margin="2" AutoGenerateColumns="False" MinColumnWidth="50" HeadersVisibility="Column" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
                         <DataGridTextColumn Header="State" Binding="{Binding State}" Width="*"/>
                         <DataGridTextColumn Header="Arrival Time" Binding="{Binding FormattedTime}" Width="1.5*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <Label Content="Worker States:" Grid.Column="1"/>
-                <DataGrid x:Name="dgWorkers" Grid.Row="1" Grid.Column="1" Margin="2" AutoGenerateColumns="False" MinColumnWidth="50" HeadersVisibility="Column" IsReadOnly="True">
+                <Label Content="Product States:" Grid.Column="1"/>
+                <DataGrid x:Name="dgProducts" Grid.Row="1" Grid.Column="1" Margin="2" AutoGenerateColumns="False" MinColumnWidth="50" HeadersVisibility="Column" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                        <DataGridTextColumn Header="Order" Binding="{Binding Order.Id}" Width="*"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding State}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Label Content="Worker States:" Grid.Column="2"/>
+                <DataGrid x:Name="dgWorkers" Grid.Row="1" Grid.Column="2" Margin="2" AutoGenerateColumns="False" MinColumnWidth="50" HeadersVisibility="Column" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
                         <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="*"/>
                         <DataGridCheckBoxColumn Header="Is Busy" Binding="{Binding IsBusy}" Width="*"/>
-                        <DataGridTextColumn Header="Order" Binding="{Binding Order.Id}" Width="*"/>
+                        <DataGridTextColumn Header="Order" Binding="{Binding Product.Id}" Width="*"/>
                         <DataGridTextColumn Header="Workplace" Binding="{Binding Workplace.Id}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>

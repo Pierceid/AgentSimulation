@@ -1,5 +1,6 @@
 ﻿namespace AgentSimulation.Structures {
-    public static class Constants {
-        public static int END_OF_REPLICATION = 86400;
+    public class Constants {
+        public const int REPLICATION_COUNT = 100;
+        public const int SIMULATION_TIME = 249 * 8 * 60 * 60;
     }
 }

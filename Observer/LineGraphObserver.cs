@@ -1,5 +1,4 @@
 ﻿using AgentSimulation.Presentation;
-using AgentSimulation.Simulations;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -13,9 +12,9 @@ namespace AgentSimulation.Observer {
             this.lineGraph = lineGraph;
         }
 
-        public void Refresh(SimulationCore simulationCore) {
+        public void Refresh(OSPABA.Simulation simulation) {
             window.Dispatcher.Invoke(() => {
-                lineGraph.UpdatePlot(simulationCore);
+                lineGraph.UpdatePlot(simulation);
             }, DispatcherPriority.Input);
         }
     }

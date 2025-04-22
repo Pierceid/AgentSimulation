@@ -42,7 +42,7 @@ namespace Agents.AgentScope {
 
             ((MySimulation)MySim).AverageOrderTime.AddSample(myMessage.Product.EndTime - myMessage.Product.StartTime);
 
-            if (MySim.CurrentTime >= Constants.END_OF_REPLICATION) {
+            if (MySim.CurrentTime >= Constants.SIMULATION_TIME) {
                 MySim.StopReplication();
             }
         }

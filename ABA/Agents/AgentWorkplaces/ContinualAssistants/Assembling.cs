@@ -1,14 +1,10 @@
-using AgentSimulation.Generators;
 using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
 namespace Agents.AgentWorkplaces.ContinualAssistants {
     //meta! id="66"
     public class Assembling : OSPABA.Process {
-        private RandomGenerators generators;
-
         public Assembling(int id, OSPABA.Simulation mySim, CommonAgent myAgent) : base(id, mySim, myAgent) {
-            generators = new();
         }
 
         override public void PrepareReplication() {
@@ -20,13 +16,14 @@ namespace Agents.AgentWorkplaces.ContinualAssistants {
             message.Code = SimId.Assembling;
 
             MyMessage myMessage = (MyMessage)message;
+            MySimulation mySimulation = (MySimulation)MySim;
 
             if (myMessage.Product == null) return;
 
             double assemblingTime = myMessage.Product.Type switch {
-                ProductType.Chair => generators.ChairAssemblyTime.Next(),
-                ProductType.Table => generators.TableAssemblyTime.Next(),
-                ProductType.Wardrobe => generators.WardrobeAssemblyTime.Next(),
+                ProductType.Chair => mySimulation.Generators.ChairAssemblyTime.Next(),
+                ProductType.Table => mySimulation.Generators.TableAssemblyTime.Next(),
+                ProductType.Wardrobe => mySimulation.Generators.WardrobeAssemblyTime.Next(),
                 _ => 0
             };
 

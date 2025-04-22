@@ -45,7 +45,7 @@ public partial class MainWindow : Window {
 
     private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e) {
         var result = MessageBox.Show("A simulation is running. Do you really want to exit?", "Confirm Exit", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        
+
         if (result == MessageBoxResult.No) {
             e.Cancel = true;
             return;
@@ -59,11 +59,12 @@ public partial class MainWindow : Window {
         if (!int.TryParse(txtWorkersA.Text, out int workersA)) workersA = 0;
         if (!int.TryParse(txtWorkersB.Text, out int workersB)) workersB = 0;
         if (!int.TryParse(txtWorkersC.Text, out int workersC)) workersC = 0;
+        if (!int.TryParse(txtWorkplaces.Text, out int workplaces)) workplaces = 0;
 
-        facade?.InitCarpentry(replications, sldSpeed.Value, workersA, workersB, workersC);
+        facade?.InitCarpentry(replications, sldSpeed.Value, workersA, workersB, workersC, workplaces);
 
         TextBlock[] textBlocks = [txtTime, txtQueueA, txtQueueB, txtQueueC, txtQueueD, txtUtilityA, txtUtilityB, txtUtilityC, txtFinishedOrders, txtPendingOrders, txtConfidenceInterval];
-        DataGrid[] dataGrids = [dgOrders, dgWorkers];
+        DataGrid[] dataGrids = [dgOrders, dgProducts, dgWorkers];
 
         facade?.InitObservers(textBlocks, dataGrids);
 

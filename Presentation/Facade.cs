@@ -1,60 +1,53 @@
 ﻿using AgentSimulation.Observer;
-using AgentSimulation.Simulations;
+using AgentSimulation.Structures;
 using OxyPlot.Wpf;
+using Simulation;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace AgentSimulation.Presentation {
     public class Facade {
         private Window? mainWindow;
-        private Carpentry? carpentry;
+        private MySimulation? mySimulation;
         private LineGraph? graph;
-        private double replicationTime;
-        private Thread? simulationThread;
         private bool isRunning;
 
         public Facade(Window? window) {
             mainWindow = window;
-            carpentry = null;
+            mySimulation = new();
             graph = null;
-            replicationTime = 249 * 8 * 60 * 60;
-            simulationThread = null;
             isRunning = false;
         }
 
         public void StartSimulation() {
-            if (carpentry == null || graph == null || isRunning) return;
+            if (mySimulation == null || graph == null || isRunning) return;
 
             isRunning = true;
-            carpentry.Resume();
-            carpentry.Data.Clear();
+            mySimulation.Simulate(mySimulation.ReplicationCount, Constants.SIMULATION_TIME);
             graph.RefreshGraph();
-
-            simulationThread = new(carpentry.RunSimulation) { IsBackground = true };
-            simulationThread.Start();
         }
 
         public bool PauseSimulation() {
-            if (carpentry == null) return false;
+            if (mySimulation == null) return false;
 
-            carpentry.IsPaused = !carpentry.IsPaused;
+            if (mySimulation.IsPaused()) {
+                mySimulation.ResumeSimulation();
+            } else {
+                mySimulation.PauseSimulation();
+            }
 
-            return carpentry.IsPaused;
+            return mySimulation.IsPaused();
         }
 
         public void StopSimulation() {
-            if (carpentry == null || graph == null || !isRunning) return;
+            if (mySimulation == null || graph == null || !isRunning) return;
 
             isRunning = false;
-            carpentry.Pause();
-            carpentry.Stop();
-
-            simulationThread?.Join();
-            simulationThread = null;
+            mySimulation.StopSimulation();
         }
 
         public void AnalyzeReplication() {
-            if (carpentry == null) return;
+            if (mySimulation == null) return;
 
 
         }
@@ -73,31 +66,35 @@ namespace AgentSimulation.Presentation {
             );
         }
 
-        public void InitCarpentry(int replications, double speed, int workersA, int workersB, int workersC) {
+        public void InitCarpentry(int replications, double speed, int workersA, int workersB, int workersC, int workplaces) {
+            if (mySimulation == null) return;
+
             if (isRunning) {
                 StopSimulation();
             }
 
-            carpentry = new(replications, replicationTime) { Speed = speed };
-            carpentry.Data.InitComponents(workersA, workersB, workersC);
+            mySimulation.Clear();
+            mySimulation.InitWorkers(workersA, workersB, workersC);
+            mySimulation.InitWorkplaces(workplaces);
+            mySimulation.InitSpeed(speed);
         }
 
         public void UpdateCarpentry(double speed) {
-            if (carpentry == null) return;
+            if (mySimulation == null) return;
 
-            carpentry.Speed = speed;
+            mySimulation.InitSpeed(speed);
         }
 
         public void InitObservers(TextBlock[] textBlocks, DataGrid[] dataGrids) {
-            if (carpentry == null || mainWindow == null || graph == null) return;
+            if (mySimulation == null || mainWindow == null || graph == null) return;
 
             LineGraphObserver lineGraphObserver = new(mainWindow, graph);
             TextBlockObserver textBlockObserver = new(textBlocks);
             DataGridObserver dataGridObserver = new(dataGrids);
 
-            carpentry.Attach(lineGraphObserver);
-            carpentry.Attach(textBlockObserver);
-            carpentry.Attach(dataGridObserver);
+            mySimulation.Attach(lineGraphObserver);
+            mySimulation.Attach(textBlockObserver);
+            mySimulation.Attach(dataGridObserver);
         }
     }
 }

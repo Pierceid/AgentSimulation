@@ -76,10 +76,18 @@ namespace Simulation {
             AgentWorkersB = new AgentWorkersB(SimId.AgentWorkersB, this, AgentWorkers);
         }
 
-        public void InitComponents(int workersA, int workersB, int workersC) {
+        public void InitWorkers(int workersA, int workersB, int workersC) {
             Parallel.For(0, workersA, a => { lock (WorkersA) { WorkersA.Add(new Worker(a, WorkerGroup.A)); } });
             Parallel.For(0, workersB, b => { lock (WorkersB) { WorkersB.Add(new Worker(b + workersA, WorkerGroup.B)); } });
             Parallel.For(0, workersC, c => { lock (WorkersC) { WorkersC.Add(new Worker(c + workersA + workersB, WorkerGroup.C)); } });
+        }
+
+        public void InitWorkplaces(int workplaces) {
+            Parallel.For(0, workplaces, w => { lock (Workplaces) { Workplaces.Add(new Workplace(w)); } });
+        }
+
+        public void InitSpeed(double speed) {
+            Speed = speed;
         }
 
         public void Clear() {
@@ -96,7 +104,7 @@ namespace Simulation {
 
             AverageOrderTime.Clear();
 
-            InitComponents(workersA, workersB, workersC);
+            InitWorkers(workersA, workersB, workersC);
         }
 
         public void Attach(IObserver observer) {

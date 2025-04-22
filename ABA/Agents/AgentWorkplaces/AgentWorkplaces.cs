@@ -1,7 +1,6 @@
-using OSPABA;
 using Agents.AgentWorkplaces.ContinualAssistants;
+using OSPABA;
 using Simulation;
-using Agents.AgentWorkplaces.InstantAssistants;
 
 namespace Agents.AgentWorkplaces {
     //meta! id="39"
@@ -19,7 +18,6 @@ namespace Agents.AgentWorkplaces {
 		{
 			new ManagerWorkplaces(SimId.ManagerWorkplaces, MySim, this);
 			new Mounting(SimId.Mounting, MySim, this);
-			new AssignWorkplace(SimId.AssignWorkplace, MySim, this);
 			new Assembling(SimId.Assembling, MySim, this);
 			new Painting(SimId.Painting, MySim, this);
 			new Cutting(SimId.Cutting, MySim, this);
