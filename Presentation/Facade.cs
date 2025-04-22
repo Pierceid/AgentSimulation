@@ -22,9 +22,14 @@ namespace AgentSimulation.Presentation {
         public void StartSimulation() {
             if (mySimulation == null || graph == null || isRunning) return;
 
-            isRunning = true;
-            mySimulation.Simulate(mySimulation.ReplicationCount, Constants.SIMULATION_TIME);
-            graph.RefreshGraph();
+            try {
+                isRunning = true;
+                mySimulation.Simulate(mySimulation.ReplicationCount, Constants.SIMULATION_TIME);
+                graph.RefreshGraph();
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+                throw;
+            }
         }
 
         public bool PauseSimulation() {

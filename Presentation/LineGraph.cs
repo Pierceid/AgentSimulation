@@ -54,7 +54,7 @@ namespace AgentSimulation.Presentation {
             if (simulation is MySimulation ms) {
                 double rep = ms.CurrentReplication;
                 double mean = ms.AverageOrderTime.Mean();
-                double[] interval = ms.AverageOrderTime.ConfidenceInterval95;
+                double[] interval = (ms.AverageOrderTime.SampleSize < 2) ? [double.NaN, double.NaN] : ms.AverageOrderTime.ConfidenceInterval95;
 
                 mainSeries.Points.Add(new DataPoint(rep, mean));
 

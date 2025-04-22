@@ -30,7 +30,7 @@ namespace AgentSimulation.Observer {
                 this.textBlocks[8].Text = $"{ms.FinishedOrdersCount.Mean():F2}";
                 this.textBlocks[9].Text = $"{ms.PendingOrdersCount.Mean():F2}";
 
-                double[] interval = ms.AverageOrderTime.ConfidenceInterval95;
+                double[] interval = (ms.AverageOrderTime.SampleSize < 2) ? [double.NaN, double.NaN] : ms.AverageOrderTime.ConfidenceInterval95;
 
                 this.textBlocks[10].Text = $"< {interval[0]:F0} , {interval[1]:F0} >";
             }
