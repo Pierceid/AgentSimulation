@@ -13,18 +13,17 @@ namespace Agents.AgentWorkplaces.ContinualAssistants {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Setup component for the next replication
         }
 
 		//meta! sender="AgentWorkplaces", id="63", type="Start"
 		public void ProcessStart(MessageForm message) {
-            message.Code = Mc.DoCutting;
+            message.Code = SimId.Cutting;
 
-            var myMessage = (MyMessage)message;
+            MyMessage myMessage = (MyMessage)message;
 
-            if (myMessage.Order == null) return;
+            if (myMessage.Product == null) return;
 
-            double cuttingTime = myMessage.Order.Type switch {
+            double cuttingTime = myMessage.Product.Type switch {
                 ProductType.Chair => generators.ChairCuttingTime.Next(),
                 ProductType.Table => generators.TableCuttingTime.Next(),
                 ProductType.Wardrobe => generators.WardrobeCuttingTime.Next(),

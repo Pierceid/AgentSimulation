@@ -1,0 +1,66 @@
+﻿using AgentSimulation.Structures.Enums;
+using System.ComponentModel;
+
+namespace AgentSimulation.Structures.Objects {
+    public class Order : INotifyPropertyChanged {
+        public int Id { get; set; }
+        public double StartTime { get; set; }
+        public double EndTime { get; set; }
+        public string FormattedTime { get; set; }
+
+        private List<Product> products;
+        public List<Product> Products {
+            get => products;
+            set {
+                products = value;
+                foreach (var product in products) {
+                    product.PropertyChanged += Product_PropertyChanged;
+                }
+            }
+        }
+
+        private string state;
+        public string State {
+            get => state;
+            set {
+                if (state != value) {
+                    state = value;
+                    OnPropertyChanged(nameof(State));
+                }
+            }
+        }
+
+        public Order(int id, double startTime) {
+            Id = id;
+            StartTime = startTime;
+            Products = new();
+        }
+
+        public Order(int id, double startTime, List<Product> products) {
+            Id = id;
+            StartTime = startTime;
+            Products = products;
+        }
+
+        private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(ProductState.Finished)) {
+                CheckOrderCompletion();
+            }
+        }
+
+        private void CheckOrderCompletion() {
+            var finished = Products.FindAll(p => p.State == ProductState.Finished);
+
+            if (finished.Count == Products.Count) {
+                State = "Completed";
+            } else {
+                State = $"{finished.Count}/{Products.Count}";
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}

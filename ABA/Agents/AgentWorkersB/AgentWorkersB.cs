@@ -12,11 +12,13 @@ namespace Agents.AgentWorkersB {
             base.PrepareReplication();
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        private void Init() {
-            new ManagerWorkersB(SimId.ManagerWorkersB, MySim, this);
-            AddOwnMessage(Mc.GetWorkerB);
-        }
-        //meta! tag="end"
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		private void Init()
+		{
+			new ManagerWorkersB(SimId.ManagerWorkersB, MySim, this);
+			AddOwnMessage(Mc.DeassignWorkerB);
+			AddOwnMessage(Mc.GetWorkerB);
+		}
+		//meta! tag="end"
     }
 }

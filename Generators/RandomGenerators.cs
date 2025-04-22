@@ -1,4 +1,5 @@
 ﻿using AgentSimulation.Randoms.Continuous;
+using AgentSimulation.Randoms.Discrete;
 using AgentSimulation.Randoms.Other;
 using AgentSimulation.Structures;
 
@@ -9,6 +10,7 @@ namespace AgentSimulation.Generators {
         public Triangular WorkerMoveBetweenStationsTime = new(120, 500, 150);
         public Exponential OrderArrivalTime = new(1800);
         public UniformC RNG = new(0, 1);
+        public UniformD ProductCount = new(1, 6);
 
         public UniformC WardrobeCuttingTime = new(900, 4800);
         public UniformC WardrobePaintingTime = new(18000, 36000);

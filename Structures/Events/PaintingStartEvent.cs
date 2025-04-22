@@ -4,10 +4,10 @@ using AgentSimulation.Structures.Objects;
 
 namespace AgentSimulation.Structures.Events {
     public class PaintingStartEvent : Event<ProductionManager> {
-        public Order Order { get; }
+        public Product Order { get; }
         public Worker Worker { get; }
 
-        public PaintingStartEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Order order, Worker worker) : base(simulationCore, time) {
+        public PaintingStartEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Product order, Worker worker) : base(simulationCore, time) {
             Order = order;
             Worker = worker;
         }
@@ -18,7 +18,7 @@ namespace AgentSimulation.Structures.Events {
             if (manager.QueueD.Count > 0) {
                 manager.QueueC.AddFirst(Order);
 
-                Order nextOrder = manager.QueueD.First();
+                Product nextOrder = manager.QueueD.First();
                 manager.QueueD.RemoveFirst();
 
                 SimulationCore.EventCalendar.Enqueue(new MountingStartEvent(SimulationCore, Time, nextOrder, Worker), Time); return;
@@ -33,7 +33,7 @@ namespace AgentSimulation.Structures.Events {
             }
 
             Worker.Workplace = Order.Workplace;
-            Worker.SetOrder(Order);
+            Worker.SetProduct(Order);
             manager.AverageUtilityC.AddSample(Time, true);
 
             double paintingTime = Order.Type switch {

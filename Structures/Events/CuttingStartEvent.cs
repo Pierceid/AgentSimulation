@@ -4,10 +4,10 @@ using AgentSimulation.Structures.Objects;
 
 namespace AgentSimulation.Structures.Events {
     public class CuttingStartEvent : Event<ProductionManager> {
-        public Order Order { get; }
+        public Product Order { get; }
         public Worker Worker { get; }
 
-        public CuttingStartEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Order order, Worker worker) : base(simulationCore, time) {
+        public CuttingStartEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Product order, Worker worker) : base(simulationCore, time) {
             Order = order;
             Worker = worker;
         }
@@ -25,7 +25,7 @@ namespace AgentSimulation.Structures.Events {
             movingTime += SimulationCore.Generators.WorkerMoveToStorageTime.Next();
 
             Worker.Workplace = Order.Workplace;
-            Worker.SetOrder(Order);
+            Worker.SetProduct(Order);
             manager.AverageUtilityA.AddSample(Time, true);
 
             double cuttingTime = Order.Type switch {

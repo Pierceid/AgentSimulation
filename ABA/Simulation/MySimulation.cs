@@ -9,19 +9,27 @@ using Agents.AgentWorkersB;
 using Agents.AgentWorkersC;
 using Agents.AgentWorkplaces;
 using AgentSimulation.Generators;
-using AgentSimulation.Statistics;
+using AgentSimulation.Observer;
+using AgentSimulation.Structures.Enums;
+using AgentSimulation.Structures.Objects;
+using OSPStat;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Simulation {
-    public class MySimulation : OSPABA.Simulation {
-        public int OrdersCount { get; set; }
-        public int FinishedOrdersCount { get; set; }
-        public int PendingOrdersCount { get; set; }
-        public Average AverageOrderTime { get; set; }
-        public RandomGenerators Generators { get; set; }
-        public int WorkersACount { get; set; }
-        public int WorkersBCount { get; set; }
-        public int WorkersCCount { get; set; }
-        public int WorkplacesCount { get; set; }
+    public class MySimulation : OSPABA.Simulation, ISubject {
+        private List<IObserver> observers = [];
+        public Stat FinishedOrdersCount { get; set; } = new();
+        public Stat PendingOrdersCount { get; set; } = new();
+        public Stat AverageOrderTime { get; set; } = new();
+        public RandomGenerators Generators { get; set; } = new();
+        public List<Order> Orders { get; set; } = new();
+        public List<Product> Products { get; set; } = new();
+        public List<Worker> WorkersA { get; set; } = new();
+        public List<Worker> WorkersB { get; set; } = new();
+        public List<Worker> WorkersC { get; set; } = new();
+        public List<Workplace> Workplaces { get; set; } = new();
+        public double Speed { get; set; } = 1.0;
 
         public MySimulation() {
             Init();
@@ -29,37 +37,33 @@ namespace Simulation {
 
         override public void PrepareSimulation() {
             base.PrepareSimulation();
-            // Create global statistcis
+
+            FinishedOrdersCount.Clear();
+            PendingOrdersCount.Clear();
+            AverageOrderTime.Clear();
         }
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Reset entities, queues, local statistics, etc...
+
+            Clear();
+            Notify();
         }
 
         override public void ReplicationFinished() {
-            // Collect local statistics into global, update UI, etc...
             base.ReplicationFinished();
+
+            Notify();
         }
 
         override public void SimulationFinished() {
-            // Display simulation results
+            Notify();
+
             base.SimulationFinished();
         }
 
         //meta! userInfo="Generated code: do not modify", tag="begin"
         private void Init() {
-            OrdersCount = 0;
-            FinishedOrdersCount = 0;
-            PendingOrdersCount = 0;
-            AverageOrderTime = new();
-            Generators = new();
-
-            WorkersACount = 0;
-            WorkersBCount = 0;
-            WorkersCCount = 0;
-            WorkplacesCount = 0;
-
             AgentModel = new AgentModel(SimId.AgentModel, this, null);
             AgentScope = new AgentScope(SimId.AgentScope, this, AgentModel);
             AgentCarpentry = new AgentCarpentry(SimId.AgentCarpentry, this, AgentModel);
@@ -71,6 +75,48 @@ namespace Simulation {
             AgentWorkersC = new AgentWorkersC(SimId.AgentWorkersC, this, AgentWorkers);
             AgentWorkersB = new AgentWorkersB(SimId.AgentWorkersB, this, AgentWorkers);
         }
+
+        public void InitComponents(int workersA, int workersB, int workersC) {
+            Parallel.For(0, workersA, a => { lock (WorkersA) { WorkersA.Add(new Worker(a, WorkerGroup.A)); } });
+            Parallel.For(0, workersB, b => { lock (WorkersB) { WorkersB.Add(new Worker(b + workersA, WorkerGroup.B)); } });
+            Parallel.For(0, workersC, c => { lock (WorkersC) { WorkersC.Add(new Worker(c + workersA + workersB, WorkerGroup.C)); } });
+        }
+
+        public void Clear() {
+            int workersA = WorkersA.Count;
+            int workersB = WorkersB.Count;
+            int workersC = WorkersC.Count;
+
+            Orders.Clear();
+            Products.Clear();
+            WorkersA.Clear();
+            WorkersB.Clear();
+            WorkersC.Clear();
+            Workplaces.Clear();
+
+            AverageOrderTime.Clear();
+
+            InitComponents(workersA, workersB, workersC);
+        }
+
+        public void Attach(IObserver observer) {
+            if (!observers.Contains(observer)) {
+                observers.Add(observer);
+            }
+        }
+
+        public void Detach(IObserver observer) {
+            observers.Remove(observer);
+        }
+
+        public void Notify() {
+            Application.Current.Dispatcher.Invoke(() => {
+                foreach (var observer in observers) {
+                    observer.Refresh(this);
+                }
+            }, DispatcherPriority.Background);
+        }
+
         public AgentModel AgentModel { get; set; }
         public AgentScope AgentScope { get; set; }
         public AgentCarpentry AgentCarpentry { get; set; }

@@ -3,19 +3,19 @@ using AgentSimulation.Utilities;
 using System.ComponentModel;
 
 namespace AgentSimulation.Structures.Objects {
-    public class Order : INotifyPropertyChanged {
+    public class Product : INotifyPropertyChanged {
         public int Id { get; set; }
+        public Order Order { get; set; }
         public ProductType Type { get; set; }
         public double StartTime { get; set; }
         public double EndTime { get; set; }
         public string FormattedTime { get; set; }
         public Workplace? Workplace { get; set; }
 
-        public Order(int id, ProductType type, double time) {
+        public Product(int id, ProductType type, Order order) {
             Id = id;
             Type = type;
-            StartTime = time;
-            EndTime = time;
+            Order = order;
             FormattedTime = Util.FormatTime(StartTime);
             State = ProductState.Raw;
             Workplace = null;

@@ -4,10 +4,10 @@ using AgentSimulation.Structures.Objects;
 
 namespace AgentSimulation.Structures.Events {
     public class MountingEndEvent : Event<ProductionManager> {
-        public Order Order { get; }
+        public Product Order { get; }
         public Worker Worker { get; }
 
-        public MountingEndEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Order order, Worker worker) : base(simulationCore, time) {
+        public MountingEndEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Product order, Worker worker) : base(simulationCore, time) {
             Order = order;
             Worker = worker;
         }
@@ -19,7 +19,7 @@ namespace AgentSimulation.Structures.Events {
 
             manager.Workplaces.FirstOrDefault(wp => wp.Order == Order)?.SetState(false);
 
-            Worker.SetOrder(null);
+            Worker.SetProduct(null);
             manager.AverageUtilityC.AddSample(Time, false);
 
             SimulationCore.EventCalendar.Enqueue(new OrderEndEvent(SimulationCore, Time, Order, Worker), Time);
@@ -28,13 +28,13 @@ namespace AgentSimulation.Structures.Events {
 
             if (manager.QueueD.Count > 0 && availableWorkersC.Count > 0) {
                 Worker nextWorker = availableWorkersC.First();
-                Order nextOrder = manager.QueueD.First();
+                Product nextOrder = manager.QueueD.First();
                 manager.QueueD.RemoveFirst();
 
                 SimulationCore.EventCalendar.Enqueue(new MountingStartEvent(SimulationCore, Time, nextOrder, nextWorker), Time);
             } else if (manager.QueueC.Count > 0 && availableWorkersC.Count > 0) {
                 Worker nextWorker = availableWorkersC.First();
-                Order nextOrder = manager.QueueC.First();
+                Product nextOrder = manager.QueueC.First();
                 manager.QueueC.RemoveFirst();
 
                 SimulationCore.EventCalendar.Enqueue(new PaintingStartEvent(SimulationCore, Time, nextOrder, nextWorker), Time);

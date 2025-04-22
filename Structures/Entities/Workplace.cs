@@ -2,7 +2,7 @@
     public class Workplace {
         public int Id { get; }
         public bool IsOccupied { get; set; }
-        public Order? Order { get; set; }
+        public Product? Order { get; set; }
         public Worker? Worker { get; set; }
 
         public Workplace(int id) {
@@ -12,7 +12,7 @@
             Worker = null;
         }
 
-        public void AssignOrder(Order? order) {
+        public void AssignOrder(Product? order) {
             Order = order;
             IsOccupied = order != null;
         }

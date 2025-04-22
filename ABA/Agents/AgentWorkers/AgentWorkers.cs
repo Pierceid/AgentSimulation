@@ -12,20 +12,23 @@ namespace Agents.AgentWorkers {
             base.PrepareReplication();
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        private void Init() {
-            new ManagerWorkers(SimId.ManagerWorkers, MySim, this);
-            AddOwnMessage(Mc.GetWorkerForCutting);
-            AddOwnMessage(Mc.GetWorkerForPainting);
-            AddOwnMessage(Mc.Init);
-            AddOwnMessage(Mc.GetWorkerForMounting);
-            AddOwnMessage(Mc.GetWorkerC);
-            AddOwnMessage(Mc.GetWorkerB);
-            AddOwnMessage(Mc.GetWorkerA);
-            AddOwnMessage(Mc.DeassignWorker);
-            AddOwnMessage(Mc.GetWorkerForAssembling);
-            AddOwnMessage(Mc.GetWorkerForPickling);
-        }
-        //meta! tag="end"
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		private void Init()
+		{
+			new ManagerWorkers(SimId.ManagerWorkers, MySim, this);
+			AddOwnMessage(Mc.GetWorkerForCutting);
+			AddOwnMessage(Mc.DeassignWorkerA);
+			AddOwnMessage(Mc.Init);
+			AddOwnMessage(Mc.GetWorkerForPainting);
+			AddOwnMessage(Mc.DeassignWorkerC);
+			AddOwnMessage(Mc.DeassignWorkerB);
+			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.GetWorkerC);
+			AddOwnMessage(Mc.GetWorkerB);
+			AddOwnMessage(Mc.GetWorkerA);
+			AddOwnMessage(Mc.GetWorkerForAssembling);
+			AddOwnMessage(Mc.GetWorkerForPickling);
+		}
+		//meta! tag="end"
     }
 }

@@ -1,4 +1,3 @@
-using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -6,7 +5,7 @@ using Simulation;
 namespace Agents.AgentWorkersA {
     //meta! id="149"
     public class ManagerWorkersA : OSPABA.Manager {
-        private Queue<Worker> availableWorkers;
+        private List<Worker> workers = new();
 
         public ManagerWorkersA(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
             Init();
@@ -19,20 +18,17 @@ namespace Agents.AgentWorkersA {
                 PetriNet.Clear();
             }
 
-            // Reinitialize available workers at the beginning of each replication
-            availableWorkers = new Queue<Worker>();
-
-            for (int i = 0; i < ((MySimulation)MySim).WorkersACount; i++) {
-                availableWorkers.Enqueue(new Worker(i, WorkerGroup.A));
-            }
+            workers = ((MySimulation)MySim).WorkersA;
         }
 
         //meta! sender="AgentWorkers", id="159", type="Request"
         public void ProcessGetWorkerA(MessageForm message) {
-            var myMessage = (MyMessage)message;
+            MyMessage myMessage = (MyMessage)message;
+            Worker? availableWorker = workers.FirstOrDefault(w => !w.IsBusy);
 
-            if (availableWorkers.Count > 0) {
-                myMessage.Worker = availableWorkers.Dequeue();
+            if (availableWorker != null) {
+                availableWorker.SetState(true);
+                myMessage.Worker = availableWorker;
             } else {
                 myMessage.Worker = null;
             }
@@ -45,14 +41,32 @@ namespace Agents.AgentWorkersA {
 
         }
 
+        //meta! sender="AgentWorkers", id="205", type="Notice"
+        public void ProcessDeassignWorkerA(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Worker != null) {
+                var match = workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
+                match?.SetState(false);
+                myMessage.Worker = null;
+            }
+
+            Notice(myMessage);
+        }
+
         //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
+            workers = ((MySimulation)MySim).WorkersA;
         }
 
         override public void ProcessMessage(MessageForm message) {
             switch (message.Code) {
                 case Mc.GetWorkerA:
                     ProcessGetWorkerA(message);
+                    break;
+
+                case Mc.DeassignWorkerA:
+                    ProcessDeassignWorkerA(message);
                     break;
 
                 default:

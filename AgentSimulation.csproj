@@ -17,8 +17,4 @@
 			<HintPath>Library\ABACore.dll</HintPath>
 		</Reference>
 	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Entities\" />
-	</ItemGroup>
 </Project>

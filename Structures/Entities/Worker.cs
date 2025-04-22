@@ -19,13 +19,13 @@ namespace AgentSimulation.Structures.Objects {
             }
         }
 
-        private Order? order;
-        public Order? Order {
-            get => order;
+        private Product? product;
+        public Product? Product {
+            get => product;
             set {
-                if (order != value) {
-                    order = value;
-                    OnPropertyChanged(nameof(Order));
+                if (product != value) {
+                    product = value;
+                    OnPropertyChanged(nameof(Product));
                 }
             }
         }
@@ -45,19 +45,19 @@ namespace AgentSimulation.Structures.Objects {
             Id = id;
             Group = group;
             IsBusy = false;
-            Order = null;
+            Product = null;
             Workplace = null;
             Utility = new();
         }
 
         public void SetState(bool isBusy) {
-            if (!isBusy) Order = null;
+            if (!isBusy) Product = null;
 
             IsBusy = isBusy;
         }
 
-        public void SetOrder(Order? order) {
-            Order = order;
+        public void SetProduct(Product? order) {
+            Product = order;
             IsBusy = order != null;
         }
 
@@ -66,7 +66,7 @@ namespace AgentSimulation.Structures.Objects {
         }
 
         public void Clear() {
-            Order = null;
+            Product = null;
             Workplace = null;
             IsBusy = false;
         }

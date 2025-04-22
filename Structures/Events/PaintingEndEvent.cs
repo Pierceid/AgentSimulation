@@ -4,10 +4,10 @@ using AgentSimulation.Structures.Objects;
 
 namespace AgentSimulation.Structures.Events {
     public class PaintingEndEvent : Event<ProductionManager> {
-        public Order Order { get; }
+        public Product Order { get; }
         public Worker Worker { get; }
 
-        public PaintingEndEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Order order, Worker worker) : base(simulationCore, time) {
+        public PaintingEndEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Product order, Worker worker) : base(simulationCore, time) {
             Order = order;
             Worker = worker;
         }
@@ -18,7 +18,7 @@ namespace AgentSimulation.Structures.Events {
             Order.State = ProductState.Painted;
             manager.QueueB.AddLast(Order);
 
-            Worker.SetOrder(null);
+            Worker.SetProduct(null);
             manager.AverageUtilityC.AddSample(Time, false);
 
             List<Worker> availableWorkersB = manager.GetAvailableWorkers(ProductState.Painted);
@@ -26,7 +26,7 @@ namespace AgentSimulation.Structures.Events {
 
             if (availableWorkersB.Count > 0 && manager.QueueB.Count > 0) {
                 Worker nextWorker = availableWorkersB.First();
-                Order nextOrder = manager.QueueB.First();
+                Product nextOrder = manager.QueueB.First();
                 manager.QueueB.RemoveFirst();
 
                 SimulationCore.EventCalendar.Enqueue(new AssemblyStartEvent(SimulationCore, Time, nextOrder, nextWorker), Time);
@@ -34,13 +34,13 @@ namespace AgentSimulation.Structures.Events {
 
             if (manager.QueueD.Count > 0 && availableWorkersC.Count > 0) {
                 Worker nextWorker = availableWorkersC.First();
-                Order nextOrder = manager.QueueD.First();
+                Product nextOrder = manager.QueueD.First();
                 manager.QueueD.RemoveFirst();
 
                 SimulationCore.EventCalendar.Enqueue(new MountingStartEvent(SimulationCore, Time, nextOrder, nextWorker), Time);
             } else if (manager.QueueC.Count > 0 && availableWorkersC.Count > 0) {
                 Worker nextWorker = availableWorkersC.First();
-                Order nextOrder = manager.QueueC.First();
+                Product nextOrder = manager.QueueC.First();
                 manager.QueueC.RemoveFirst();
 
                 SimulationCore.EventCalendar.Enqueue(new PaintingStartEvent(SimulationCore, Time, nextOrder, nextWorker), Time);

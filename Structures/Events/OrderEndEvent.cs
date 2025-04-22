@@ -4,10 +4,10 @@ using AgentSimulation.Structures.Objects;
 
 namespace AgentSimulation.Structures.Events {
     public class OrderEndEvent : Event<ProductionManager> {
-        public Order Order { get; }
+        public Product Order { get; }
         public Worker Worker { get; }
 
-        public OrderEndEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Order order, Worker worker) : base(simulationCore, time) {
+        public OrderEndEvent(EventSimulationCore<ProductionManager> simulationCore, double time, Product order, Worker worker) : base(simulationCore, time) {
             Order = order;
             Worker = worker;
         }

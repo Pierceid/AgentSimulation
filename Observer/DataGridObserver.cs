@@ -8,7 +8,7 @@ namespace AgentSimulation.Observer {
         private DataGrid[] dataGrids;
 
         private ObservableCollection<Worker> Workers { get; }
-        private ObservableCollection<Order> Orders { get; }
+        private ObservableCollection<Product> Orders { get; }
 
         public DataGridObserver(DataGrid[] dataGrids) {
             Workers = new();

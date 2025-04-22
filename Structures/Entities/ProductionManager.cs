@@ -3,11 +3,11 @@ using AgentSimulation.Structures.Enums;
 
 namespace AgentSimulation.Structures.Objects {
     public class ProductionManager {
-        public List<Order> Orders { get; } = new();
-        public LinkedList<Order> QueueA { get; } = new();
-        public LinkedList<Order> QueueB { get; } = new();
-        public LinkedList<Order> QueueC { get; } = new();
-        public LinkedList<Order> QueueD { get; } = new();
+        public List<Product> Orders { get; } = new();
+        public LinkedList<Product> QueueA { get; } = new();
+        public LinkedList<Product> QueueB { get; } = new();
+        public LinkedList<Product> QueueC { get; } = new();
+        public LinkedList<Product> QueueD { get; } = new();
         public List<Worker> WorkersA { get; } = new();
         public List<Worker> WorkersB { get; } = new();
         public List<Worker> WorkersC { get; } = new();

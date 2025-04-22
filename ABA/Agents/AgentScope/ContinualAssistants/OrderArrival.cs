@@ -1,3 +1,4 @@
+using AgentSimulation.Structures;
 using OSPABA;
 using Simulation;
 namespace Agents.AgentScope.ContinualAssistants {
@@ -12,11 +13,15 @@ namespace Agents.AgentScope.ContinualAssistants {
 
 		//meta! sender="AgentScope", id="164", type="Start"
 		public void ProcessStart(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
-            myMessage.Code = Mc.PlanOrderArrival;
-            double time = ((MySimulation)MySim).Generators.OrderArrivalTime.Next();
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            MySimulation mySimulation = (MySimulation)MySim;
 
-            Hold(time, myMessage);
+            myMessage.Code = Mc.PlanOrderArrival;
+            double time = mySimulation.Generators.OrderArrivalTime.Next();
+
+            if (MySim.CurrentTime + time < Constants.END_OF_REPLICATION) {
+                Hold(time, myMessage);
+            }
         }
 
 		//meta! userInfo="Process messages defined in code", id="0"
@@ -27,9 +32,8 @@ namespace Agents.AgentScope.ContinualAssistants {
 
 		//meta! sender="AgentScope", id="186", type="Notice"
 		public void ProcessPlanOrderArrival(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
             myMessage.Addressee = MyAgent;
-
             Notice(myMessage);
         }
 

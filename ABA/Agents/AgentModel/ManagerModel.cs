@@ -17,17 +17,19 @@ namespace Agents.AgentModel {
 
 		//meta! sender="AgentCarpentry", id="12", type="Response"
 		public void ProcessProcessOrder(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            myMessage.Code = Mc.ProcessOrder;
+            //var myMessage = (MyMessage)message.CreateCopy();
+            //myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            //myMessage.Code = Mc.ProcessOrder;
 
-            Request(myMessage);
+            //Request(myMessage);
         }
 
 		//meta! sender="AgentScope", id="23", type="Notice"
 		public void ProcessOrderEnter(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
-            ((MySimulation)MySim).OrdersCount++;
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentModel);
+            myMessage.Code = Mc.ProcessOrder;
+            Notice(myMessage);
         }
 
 		//meta! userInfo="Process messages defined in code", id="0"

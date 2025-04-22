@@ -10,7 +10,6 @@ namespace Agents.AgentCarpentry {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Setup component for the next replication
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -18,18 +17,16 @@ namespace Agents.AgentCarpentry {
 		{
 			new ManagerCarpentry(SimId.ManagerCarpentry, MySim, this);
 			AddOwnMessage(Mc.GetWorkerForCutting);
-			AddOwnMessage(Mc.ProcessOrder);
-			AddOwnMessage(Mc.GetWorkerForMounting);
-			AddOwnMessage(Mc.GetWorkerForAssembling);
-			AddOwnMessage(Mc.MoveToWorkplace);
 			AddOwnMessage(Mc.GetFreeWorkplace);
 			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.GetWorkerForPainting);
-			AddOwnMessage(Mc.AssignWorker);
+			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.ProcessOrder);
 			AddOwnMessage(Mc.DoPreparing);
 			AddOwnMessage(Mc.MoveToStorage);
+			AddOwnMessage(Mc.GetWorkerForAssembling);
 			AddOwnMessage(Mc.GetWorkerForPickling);
-			AddOwnMessage(Mc.DeassignWorkplace);
+			AddOwnMessage(Mc.MoveToWorkplace);
 		}
 		//meta! tag="end"
     }

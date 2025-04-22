@@ -17,7 +17,7 @@ namespace AgentSimulation.Structures.Events {
             var rng = SimulationCore.Generators.RNG.Next();
             ProductType orderType = rng < 0.5 ? ProductType.Table : rng < 0.65 ? ProductType.Chair : ProductType.Wardrobe;
 
-            Order order = orderFlyweight.GetOrder(orderType, Time);
+            Product order = orderFlyweight.GetOrder(orderType, Time);
             manager.Orders.Add(order);
 
             if (manager.Orders.Count > 500) {
@@ -32,7 +32,7 @@ namespace AgentSimulation.Structures.Events {
 
             if (availableWorkersA.Count > 0) {
                 Worker nextWorker = availableWorkersA.First();
-                Order nextOrder;
+                Product nextOrder;
 
                 if (manager.QueueA.Count > 0) {
                     nextOrder = manager.QueueA.First();

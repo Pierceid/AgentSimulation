@@ -1,4 +1,4 @@
-using AgentSimulation.Structures.Enums;
+﻿using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
 
@@ -11,87 +11,83 @@ namespace Agents.AgentCarpentry {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+            PetriNet?.Clear();
         }
 
-        public void ProcessGetWorkerForCuttingAgentWorkplaces(MessageForm message) {
-            // Request: Workplace needs a worker for cutting
+        // Worker request forwarding (like ObsluhaZakaznika)
+        public void ForwardWorkerRequest(MessageForm message, int code) {
             message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            message.Code = Mc.GetWorkerForCutting;
+            message.Code = code;
             Request(message);
         }
 
-        public void ProcessGetWorkerForCuttingAgentWorkers(MessageForm message) {
-            // Response: Got worker for cutting
+        // Worker acquired → forward response (like ObsluhaZakaznikaJedalen)
+        public void ProcessWorkerAcquired(MessageForm message, int code) {
+            message.Code = code;
+            Response(message);
+        }
+
+		//meta! sender="AgentWorkplaces", id="115", type="Response"
+		public void ProcessGetWorkerForCuttingAgentWorkplaces(MessageForm message) {
+            ForwardWorkerRequest(message, Mc.GetWorkerForCutting);
+        }
+
+		//meta! sender="AgentWorkers", id="57", type="Response"
+		public void ProcessGetWorkerForCuttingAgentWorkers(MessageForm message) {
+            ProcessWorkerAcquired(message, Mc.GetWorkerForCutting);
+        }
+
+		//meta! sender="AgentWorkplaces", id="119", type="Response"
+		public void ProcessGetWorkerForMountingAgentWorkplaces(MessageForm message) {
+            ForwardWorkerRequest(message, Mc.GetWorkerForMounting);
+        }
+
+		//meta! sender="AgentWorkers", id="124", type="Response"
+		public void ProcessGetWorkerForMountingAgentWorkers(MessageForm message) {
+            ProcessWorkerAcquired(message, Mc.GetWorkerForMounting);
+        }
+
+		//meta! sender="AgentWorkplaces", id="118", type="Response"
+		public void ProcessGetWorkerForAssemblingAgentWorkplaces(MessageForm message) {
+            ForwardWorkerRequest(message, Mc.GetWorkerForAssembling);
+        }
+
+		//meta! sender="AgentWorkers", id="122", type="Response"
+		public void ProcessGetWorkerForAssemblingAgentWorkers(MessageForm message) {
+            ProcessWorkerAcquired(message, Mc.GetWorkerForAssembling);
+        }
+
+		//meta! sender="AgentWorkplaces", id="117", type="Response"
+		public void ProcessGetWorkerForPaintingAgentWorkplaces(MessageForm message) {
+            ForwardWorkerRequest(message, Mc.GetWorkerForPainting);
+        }
+
+		//meta! sender="AgentWorkers", id="121", type="Response"
+		public void ProcessGetWorkerForPaintingAgentWorkers(MessageForm message) {
+            ProcessWorkerAcquired(message, Mc.GetWorkerForPainting);
+        }
+
+		//meta! sender="AgentWorkplaces", id="120", type="Response"
+		public void ProcessGetWorkerForPicklingAgentWorkplaces(MessageForm message) {
+            ForwardWorkerRequest(message, Mc.GetWorkerForPickling);
+        }
+
+		//meta! sender="AgentWorkers", id="123", type="Response"
+		public void ProcessGetWorkerForPicklingAgentWorkers(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentMovement);
             message.Code = Mc.MoveToWorkplace;
             Request(message);
         }
 
-        public void ProcessGetWorkerForMountingAgentWorkplaces(MessageForm message) {
-            // Request: Got worker for mounting
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            message.Code = Mc.GetWorkerForMounting;
-            Request(message);
-        }
-
-        public void ProcessGetWorkerForMountingAgentWorkers(MessageForm message) {
-            // Response: Got worker for mounting
-            message.Addressee = MySim.FindAgent(SimId.AgentMovement);
-            message.Code = Mc.MoveToWorkplace;
-            Request(message);
-        }
-
-        public void ProcessProcessOrder(MessageForm message) {
-            // Typically the first step in an order would be to request a free workplace
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
-            message.Code = Mc.GetFreeWorkplace;
-            Request(message);
-        }
-
-        public void ProcessGetWorkerForAssemblingAgentWorkplaces(MessageForm message) {
-            // Request: Got worker for assembling
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            message.Code = Mc.GetWorkerForAssembling;
-            Request(message);
-        }
-
-        public void ProcessGetWorkerForAssemblingAgentWorkers(MessageForm message) {
-            // Response: Got worker for assembling
-            message.Addressee = MySim.FindAgent(SimId.AgentMovement);
-            message.Code = Mc.MoveToWorkplace;
-            Request(message);
-        }
-
-        public void ProcessMoveToWorkplace(MessageForm message) {
-            // After reaching the workplace, send message to AgentWorkplaces to start task
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
-            message.Code = Mc.AssignWorkplace;
-            Notice(message);
-        }
-
-        public void ProcessInit(MessageForm message) {
+		//meta! sender="AgentModel", id="12", type="Request"
+		public void ProcessProcessOrder(MessageForm message) {
 
         }
 
-        public void ProcessGetWorkerForPaintingAgentWorkers(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentMovement);
-            message.Code = Mc.MoveToWorkplace;
-            Request(message);
-        }
-
-        public void ProcessGetWorkerForPaintingAgentWorkplaces(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            message.Code = Mc.GetWorkerForPainting;
-            Request(message);
-        }
-
-        public void ProcessGetFreeWorkplace(MessageForm message) {
-            // Got a workplace, request a worker for the order's current task
+		//meta! sender="AgentWorkplaces", id="170", type="Request"
+		public void ProcessGetFreeWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
-            var state = myMessage.Order?.State;
+            var state = myMessage.Product?.State;
             var rng = ((MySimulation)MySim).Generators.RNG.Next();
 
             switch (state) {
@@ -102,11 +98,7 @@ namespace Agents.AgentCarpentry {
                     myMessage.Code = Mc.GetWorkerForPainting;
                     break;
                 case ProductState.Painted:
-                    if (rng < 0.15) {
-                        myMessage.Code = Mc.GetWorkerForPickling;
-                    } else {
-                        myMessage.Code = Mc.GetWorkerForAssembling;
-                    }
+                    myMessage.Code = rng < 0.15 ? Mc.GetWorkerForPickling : Mc.GetWorkerForAssembling;
                     break;
                 case ProductState.Pickled:
                     myMessage.Code = Mc.GetWorkerForAssembling;
@@ -115,162 +107,160 @@ namespace Agents.AgentCarpentry {
                     myMessage.Code = Mc.GetWorkerForMounting;
                     break;
                 default:
-                    break;
+                    return;
             }
 
             myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
             Request(myMessage);
         }
 
+		//meta! sender="AgentModel", id="27", type="Notice"
+		public void ProcessInit(MessageForm message) {
+
+        }
+
+		//meta! userInfo="Removed from model"
         public void ProcessAssignWorker(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
-            message.Code = Mc.AssignWorker;
-            Notice(message);
+
         }
 
-        public void ProcessDoPreparing(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            myMessage.Code = Mc.ProcessOrder;
-            myMessage.Addressee = MyAgent;
-            Notice(myMessage);
+		//meta! sender="AgentWarehouse", id="140", type="Response"
+		public void ProcessDoPreparing(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWarehouse);
+            message.Code = Mc.DoPreparing;
+            Request(message);
         }
 
-        public void ProcessMoveToStorage(MessageForm message) {
+		//meta! sender="AgentMovement", id="112", type="Response"
+		public void ProcessMoveToStorage(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentWarehouse);
             message.Code = Mc.MoveToStorage;
             Request(message);
         }
 
-        public void ProcessGetWorkerForPicklingAgentWorkplaces(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            message.Code = Mc.GetWorkerForPickling;
-            Request(message);
-        }
-
-        public void ProcessGetWorkerForPicklingAgentWorkers(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentMovement);
+		//meta! sender="AgentMovement", id="55", type="Response"
+		public void ProcessMoveToWorkplace(MessageForm message) {
             message.Code = Mc.MoveToWorkplace;
-            Request(message);
+            Response(message);
         }
 
+		//meta! userInfo="Removed from model"
         public void ProcessDeassignWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            myMessage.Code = Mc.ProcessOrder;
-            myMessage.Addressee = MyAgent;
-            Notice(myMessage);
+            message.Code = Mc.DeassignWorkplace;
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
+            Notice(message);
         }
 
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
 
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.GetFreeWorkplace:
-                    ProcessGetFreeWorkplace(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.GetWorkerForPickling:
+				switch (message.Sender.Id)
+				{
+				case SimId.AgentWorkplaces:
+					ProcessGetWorkerForPicklingAgentWorkplaces(message);
+				break;
 
-                case Mc.AssignWorker:
-                    ProcessAssignWorker(message);
-                    break;
+				case SimId.AgentWorkers:
+					ProcessGetWorkerForPicklingAgentWorkers(message);
+				break;
+				}
+			break;
 
-                case Mc.ProcessOrder:
-                    ProcessProcessOrder(message);
-                    break;
+			case Mc.GetFreeWorkplace:
+				ProcessGetFreeWorkplace(message);
+			break;
 
-                case Mc.Init:
-                    ProcessInit(message);
-                    break;
+			case Mc.MoveToStorage:
+				ProcessMoveToStorage(message);
+			break;
 
-                case Mc.GetWorkerForMounting:
-                    switch (message.Sender.Id) {
-                        case SimId.AgentWorkplaces:
-                            ProcessGetWorkerForMountingAgentWorkplaces(message);
-                            break;
+			case Mc.GetWorkerForCutting:
+				switch (message.Sender.Id)
+				{
+				case SimId.AgentWorkplaces:
+					ProcessGetWorkerForCuttingAgentWorkplaces(message);
+				break;
 
-                        case SimId.AgentWorkers:
-                            ProcessGetWorkerForMountingAgentWorkers(message);
-                            break;
-                    }
-                    break;
+				case SimId.AgentWorkers:
+					ProcessGetWorkerForCuttingAgentWorkers(message);
+				break;
+				}
+			break;
 
-                case Mc.GetWorkerForAssembling:
-                    switch (message.Sender.Id) {
-                        case SimId.AgentWorkers:
-                            ProcessGetWorkerForAssemblingAgentWorkers(message);
-                            break;
+			case Mc.MoveToWorkplace:
+				ProcessMoveToWorkplace(message);
+			break;
 
-                        case SimId.AgentWorkplaces:
-                            ProcessGetWorkerForAssemblingAgentWorkplaces(message);
-                            break;
-                    }
-                    break;
+			case Mc.GetWorkerForAssembling:
+				switch (message.Sender.Id)
+				{
+				case SimId.AgentWorkplaces:
+					ProcessGetWorkerForAssemblingAgentWorkplaces(message);
+				break;
 
-                case Mc.GetWorkerForPainting:
-                    switch (message.Sender.Id) {
-                        case SimId.AgentWorkers:
-                            ProcessGetWorkerForPaintingAgentWorkers(message);
-                            break;
+				case SimId.AgentWorkers:
+					ProcessGetWorkerForAssemblingAgentWorkers(message);
+				break;
+				}
+			break;
 
-                        case SimId.AgentWorkplaces:
-                            ProcessGetWorkerForPaintingAgentWorkplaces(message);
-                            break;
-                    }
-                    break;
+			case Mc.DoPreparing:
+				ProcessDoPreparing(message);
+			break;
 
-                case Mc.GetWorkerForPickling:
-                    switch (message.Sender.Id) {
-                        case SimId.AgentWorkplaces:
-                            ProcessGetWorkerForPicklingAgentWorkplaces(message);
-                            break;
+			case Mc.GetWorkerForMounting:
+				switch (message.Sender.Id)
+				{
+				case SimId.AgentWorkers:
+					ProcessGetWorkerForMountingAgentWorkers(message);
+				break;
 
-                        case SimId.AgentWorkers:
-                            ProcessGetWorkerForPicklingAgentWorkers(message);
-                            break;
-                    }
-                    break;
+				case SimId.AgentWorkplaces:
+					ProcessGetWorkerForMountingAgentWorkplaces(message);
+				break;
+				}
+			break;
 
-                case Mc.MoveToWorkplace:
-                    ProcessMoveToWorkplace(message);
-                    break;
+			case Mc.Init:
+				ProcessInit(message);
+			break;
 
-                case Mc.MoveToStorage:
-                    ProcessMoveToStorage(message);
-                    break;
+			case Mc.GetWorkerForPainting:
+				switch (message.Sender.Id)
+				{
+				case SimId.AgentWorkplaces:
+					ProcessGetWorkerForPaintingAgentWorkplaces(message);
+				break;
 
-                case Mc.GetWorkerForCutting:
-                    switch (message.Sender.Id) {
-                        case SimId.AgentWorkplaces:
-                            ProcessGetWorkerForCuttingAgentWorkplaces(message);
-                            break;
+				case SimId.AgentWorkers:
+					ProcessGetWorkerForPaintingAgentWorkers(message);
+				break;
+				}
+			break;
 
-                        case SimId.AgentWorkers:
-                            ProcessGetWorkerForCuttingAgentWorkers(message);
-                            break;
-                    }
-                    break;
+			case Mc.ProcessOrder:
+				ProcessProcessOrder(message);
+			break;
 
-                case Mc.DoPreparing:
-                    ProcessDoPreparing(message);
-                    break;
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
 
-                case Mc.DeassignWorkplace:
-                    ProcessDeassignWorkplace(message);
-                    break;
-
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
-
-        public new AgentCarpentry MyAgent {
-            get { return (AgentCarpentry)base.MyAgent; }
-        }
+        public new AgentCarpentry MyAgent => (AgentCarpentry)base.MyAgent;
     }
 }

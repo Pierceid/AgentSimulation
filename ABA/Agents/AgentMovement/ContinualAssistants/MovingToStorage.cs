@@ -18,18 +18,10 @@ namespace Agents.AgentMovement.ContinualAssistants {
 
             Hold(duration, message);
         }
-
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
 
         }
-
-		//meta! userInfo="Process messages defined in code", id="0"
-		public void ProcessDefault(MessageForm message)
-		{
-			switch (message.Code)
-			{
-			}
-		}
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
 		override public void ProcessMessage(MessageForm message)

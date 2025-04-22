@@ -1,4 +1,3 @@
-using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
 
@@ -30,11 +29,6 @@ namespace Agents.AgentWorkers {
             Request(message);
         }
 
-        //meta! sender="AgentCarpentry", id="37", type="Notice"
-        public void ProcessInit(MessageForm message) {
-
-        }
-
         //meta! sender="AgentCarpentry", id="124", type="Request"
         public void ProcessGetWorkerForMounting(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.AgentWorkersC);
@@ -51,46 +45,16 @@ namespace Agents.AgentWorkers {
 
         //meta! sender="AgentWorkersB", id="157", type="Response"
         public void ProcessGetWorkerB(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            myMessage.Code = Mc.GetWorkerForPainting;
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            Response(myMessage);
-        }
-
-        //meta! sender="AgentCarpentry", id="127", type="Notice"
-        public void ProcessDeassignWorker(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            switch (myMessage.Worker?.Group) {
-                case WorkerGroup.A:
-                    myMessage.Addressee = MyAgent.FindAssistant(SimId.AgentWorkersA);
-                    break;
-                case WorkerGroup.B:
-                    myMessage.Addressee = MyAgent.FindAssistant(SimId.AgentWorkersB);
-                    break;
-                case WorkerGroup.C:
-                    myMessage.Addressee = MyAgent.FindAssistant(SimId.AgentWorkersC);
-                    break;
-                default:
-                    return;
-            }
-            Notice(myMessage);
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            message.Code = Mc.GetWorkerForPainting;
+            Response(message);
         }
 
         //meta! sender="AgentWorkersA", id="159", type="Response"
         public void ProcessGetWorkerA(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            switch (myMessage.Order?.State) {
-                case ProductState.Raw:
-                    myMessage.Code = Mc.GetWorkerForAssembling;
-                    break;
-                case ProductState.Assembled:
-                    if (myMessage.Order.Type == ProductType.Wardrobe) myMessage.Code = Mc.GetWorkerForCutting;
-                    break;
-                default:
-                    return;
-            }
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            Response(myMessage);
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            message.Code = Mc.GetWorkerForCutting;
+            Response(message);
         }
 
         //meta! sender="AgentCarpentry", id="122", type="Request"
@@ -107,8 +71,34 @@ namespace Agents.AgentWorkers {
             Request(message);
         }
 
+        //meta! sender="AgentCarpentry", id="202", type="Notice"
+        public void ProcessDeassignWorkerC(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
+            message.Code = Mc.DeassignWorkerC;
+            Notice(message);
+        }
+
+        //meta! sender="AgentCarpentry", id="201", type="Notice"
+        public void ProcessDeassignWorkerB(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
+            message.Code = Mc.DeassignWorkerB;
+            Notice(message);
+        }
+
+        //meta! sender="AgentCarpentry", id="127", type="Notice"
+        public void ProcessDeassignWorkerA(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
+            message.Code = Mc.DeassignWorkerA;
+            Notice(message);
+        }
+
         //meta! userInfo="Process messages defined in code", id="0"
         public void ProcessDefault(MessageForm message) {
+
+        }
+
+        //meta! sender="AgentCarpentry", id="37", type="Notice"
+        public void ProcessInit(MessageForm message) {
 
         }
 
@@ -122,6 +112,34 @@ namespace Agents.AgentWorkers {
                     ProcessGetWorkerForAssembling(message);
                     break;
 
+                case Mc.DeassignWorkerA:
+                    ProcessDeassignWorkerA(message);
+                    break;
+
+                case Mc.Init:
+                    ProcessInit(message);
+                    break;
+
+                case Mc.DeassignWorkerB:
+                    ProcessDeassignWorkerB(message);
+                    break;
+
+                case Mc.GetWorkerForPainting:
+                    ProcessGetWorkerForPainting(message);
+                    break;
+
+                case Mc.GetWorkerForMounting:
+                    ProcessGetWorkerForMounting(message);
+                    break;
+
+                case Mc.DeassignWorkerC:
+                    ProcessDeassignWorkerC(message);
+                    break;
+
+                case Mc.GetWorkerB:
+                    ProcessGetWorkerB(message);
+                    break;
+
                 case Mc.GetWorkerA:
                     ProcessGetWorkerA(message);
                     break;
@@ -130,32 +148,12 @@ namespace Agents.AgentWorkers {
                     ProcessGetWorkerForPickling(message);
                     break;
 
-                case Mc.GetWorkerForMounting:
-                    ProcessGetWorkerForMounting(message);
-                    break;
-
                 case Mc.GetWorkerC:
                     ProcessGetWorkerC(message);
                     break;
 
-                case Mc.GetWorkerForPainting:
-                    ProcessGetWorkerForPainting(message);
-                    break;
-
-                case Mc.DeassignWorker:
-                    ProcessDeassignWorker(message);
-                    break;
-
-                case Mc.Init:
-                    ProcessInit(message);
-                    break;
-
                 case Mc.GetWorkerForCutting:
                     ProcessGetWorkerForCutting(message);
-                    break;
-
-                case Mc.GetWorkerB:
-                    ProcessGetWorkerB(message);
                     break;
 
                 default:
