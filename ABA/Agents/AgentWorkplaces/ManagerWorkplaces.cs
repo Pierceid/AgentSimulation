@@ -2,8 +2,6 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
-using System.Windows;
-using System.Windows.Interop;
 
 namespace Agents.AgentWorkplaces {
     //meta! id="39"

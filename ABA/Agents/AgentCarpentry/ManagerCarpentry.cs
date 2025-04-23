@@ -1,4 +1,5 @@
-﻿using AgentSimulation.Structures.Enums;
+﻿using Agents.AgentScope;
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPDataStruct;
@@ -32,7 +33,6 @@ namespace Agents.AgentCarpentry {
         //meta! sender="AgentModel", id="12", type="Request"
         public void ProcessProcessOrder(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
-
             if (myMessage.Order == null) return;
 
             foreach (var product in myMessage.Order.Products) {
@@ -49,12 +49,10 @@ namespace Agents.AgentCarpentry {
         // Handles both worker and workplace acquisitions
         public void ProcessResourceAcquired(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
-
             if (myMessage.Order == null || myMessage.Product == null) return;
 
             var queue = GetQueueForProduct(myMessage.Product);
             var queued = queue.FirstOrDefault(q => q.Product?.Id == myMessage.Product.Id);
-
             if (queued == null) return;
 
             if (myMessage.Worker != null) queued.Worker = myMessage.Worker;
@@ -77,7 +75,7 @@ namespace Agents.AgentCarpentry {
         private int GetWorkerRequestCode(Product product) => product.State switch {
             ProductState.Raw => Mc.GetWorkerForCutting,
             ProductState.Cut => Mc.GetWorkerForPainting,
-            ProductState.Painted => ((MySimulation)MySim).Generators.RNG.Next() < 0.15 ? Mc.GetWorkerForPickling : Mc.GetWorkerForAssembling,
+            ProductState.Painted => Mc.GetWorkerForPickling,
             ProductState.Pickled => Mc.GetWorkerForAssembling,
             ProductState.Assembled => Mc.GetWorkerForMounting,
             _ => Mc.GetWorkerForCutting
@@ -86,6 +84,13 @@ namespace Agents.AgentCarpentry {
         // Central logic for checking readiness of worker and workplace for product
         private void CheckQueueAndProcess(MyMessage message) {
             if (message.Product == null) return;
+
+            var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
+            var matchedProduct = managerScope?.Products.FirstOrDefault(p => p.Id == message.Order?.Id);
+
+            if (matchedProduct != null) {
+                matchedProduct.State = message.Product.State;
+            }
 
             var queue = GetQueueForProduct(message.Product);
 
@@ -115,6 +120,27 @@ namespace Agents.AgentCarpentry {
                         Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
                     });
                 }
+            }
+        }
+
+        // Advances product through the process based on current state
+        private void AdvanceProductState(Product product) {
+            switch (product.State) {
+                case ProductState.Raw:
+                    product.State = ProductState.Cut;
+                    break;
+                case ProductState.Cut:
+                    product.State = ProductState.Painted;
+                    break;
+                case ProductState.Painted:
+                    product.State = ProductState.Pickled;
+                    break;
+                case ProductState.Pickled:
+                    product.State = ProductState.Assembled;
+                    break;
+                case ProductState.Assembled:
+                    product.State = product.Type == ProductType.Wardrobe ? ProductState.Mounted : ProductState.Finished;
+                    break;
             }
         }
 
@@ -162,6 +188,22 @@ namespace Agents.AgentCarpentry {
                 msg.Code = code;
                 msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
                 Notice(msg);
+            }
+
+            // Advance product state and reprocess if needed
+            if (msg.Product != null) {
+                AdvanceProductState(msg.Product);
+
+                if (msg.Product.State != ProductState.Finished) {
+                    MyMessage newMsg = new(MySim) {
+                        Order = msg.Order,
+                        Product = msg.Product
+                    };
+
+                    var queue = GetQueueForProduct(msg.Product);
+                    queue.AddLast(newMsg);
+                    CheckQueueAndProcess(newMsg);
+                }
             }
         }
 
