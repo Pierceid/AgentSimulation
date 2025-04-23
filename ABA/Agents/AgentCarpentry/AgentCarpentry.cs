@@ -18,13 +18,13 @@ namespace Agents.AgentCarpentry {
 			new ManagerCarpentry(SimId.ManagerCarpentry, MySim, this);
 			AddOwnMessage(Mc.GetWorkerForCutting);
 			AddOwnMessage(Mc.GetFreeWorkplace);
-			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.GetWorkerForPainting);
-			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.ProcessOrder);
+			AddOwnMessage(Mc.GetWorkerForMounting);
 			AddOwnMessage(Mc.DoPreparing);
-			AddOwnMessage(Mc.MoveToStorage);
 			AddOwnMessage(Mc.GetWorkerForAssembling);
+			AddOwnMessage(Mc.MoveToStorage);
 			AddOwnMessage(Mc.GetWorkerForPickling);
 			AddOwnMessage(Mc.MoveToWorkplace);
 		}

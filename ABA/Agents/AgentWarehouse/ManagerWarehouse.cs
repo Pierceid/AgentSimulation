@@ -46,12 +46,12 @@ namespace Agents.AgentWarehouse {
 				ProcessFinish(message);
 			break;
 
-			case Mc.Init:
-				ProcessInit(message);
-			break;
-
 			case Mc.DoPreparing:
 				ProcessDoPreparing(message);
+			break;
+
+			case Mc.Init:
+				ProcessInit(message);
 			break;
 
 			default:

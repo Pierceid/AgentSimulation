@@ -155,51 +155,55 @@ namespace Agents.AgentWorkplaces {
                         case SimId.Mounting:
                             ProcessFinishMounting(message);
                             break;
-                        case SimId.Painting:
-                            ProcessFinishPainting(message);
+
+                        case SimId.Pickling:
+                            ProcessFinishPickling(message);
                             break;
+
                         case SimId.Assembling:
                             ProcessFinishAssembling(message);
                             break;
+
+                        case SimId.Painting:
+                            ProcessFinishPainting(message);
+                            break;
+
                         case SimId.Cutting:
                             ProcessFinishCutting(message);
-                            break;
-                        case SimId.Pickling:
-                            ProcessFinishPickling(message);
                             break;
                     }
                     break;
 
-                case Mc.Init:
-                    ProcessInit(message);
-                    break;
-
-                case Mc.GetWorkerForPickling:
-                    ProcessGetWorkerForPickling(message);
+                case Mc.GetWorkerForMounting:
+                    ProcessGetWorkerForMounting(message);
                     break;
 
                 case Mc.GetFreeWorkplace:
                     ProcessGetFreeWorkplace(message);
                     break;
 
+                case Mc.GetWorkerForPainting:
+                    ProcessGetWorkerForPainting(message);
+                    break;
+
                 case Mc.GetWorkerForCutting:
                     ProcessGetWorkerForCutting(message);
                     break;
 
-                case Mc.GetWorkerForAssembling:
-                    ProcessGetWorkerForAssembling(message);
-                    break;
-
-                case Mc.GetWorkerForPainting:
-                    ProcessGetWorkerForPainting(message);
+                case Mc.Init:
+                    ProcessInit(message);
                     break;
 
                 case Mc.DeassignWorkplace:
                     ProcessDeassignWorkplace(message);
                     break;
 
-                case Mc.GetWorkerForMounting:
-                    ProcessGetWorkerForMounting(message);
+                case Mc.GetWorkerForAssembling:
+                    ProcessGetWorkerForAssembling(message);
+                    break;
+
+                case Mc.GetWorkerForPickling:
+                    ProcessGetWorkerForPickling(message);
                     break;
 
                 default:
@@ -222,28 +226,15 @@ namespace Agents.AgentWorkplaces {
                 return;
             }
 
-            AssignWorkerToWorkplace(myMessage);
-
             myMessage.Addressee = MyAgent.FindAssistant(assistantId);
             myMessage.Code = commandCode;
 
             StartContinualAssistant(myMessage);
         }
 
-        private void AssignWorkerToWorkplace(MyMessage message) {
-            if (message.Workplace != null && message.Worker != null) {
-                message.Workplace.AssignWorker(message.Worker);
-                message.Worker.SetState(true);
-            }
-        }
-
         private void FreeWorkplaceAndNotify(MyMessage message) {
             if (message.Workplace != null) {
                 message.Workplace.SetState(false);
-            }
-
-            if (message.Worker != null) {
-                message.Worker.SetState(false);
             }
 
             message.Workplace = null;

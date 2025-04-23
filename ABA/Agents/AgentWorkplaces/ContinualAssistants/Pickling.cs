@@ -11,8 +11,8 @@ namespace Agents.AgentWorkplaces.ContinualAssistants {
             base.PrepareReplication();
         }
 
-        //meta! sender="AgentWorkplaces", id="147", type="Start"
-        public void ProcessStart(MessageForm message) {
+		//meta! sender="AgentWorkplaces", id="147", type="Start"
+		public void ProcessStart(MessageForm message) {
             message.Code = SimId.Pickling;
 
             MyMessage myMessage = (MyMessage)message;
@@ -33,25 +33,27 @@ namespace Agents.AgentWorkplaces.ContinualAssistants {
             Hold(picklingTime, message);
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
             switch (message.Code) {
             }
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.Start:
-                    ProcessStart(message);
-                    break;
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.Start:
+				ProcessStart(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentWorkplaces MyAgent {
             get {
                 return (AgentWorkplaces)base.MyAgent;

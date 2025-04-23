@@ -44,14 +44,14 @@ namespace Agents.AgentModel {
 
 		override public void ProcessMessage(MessageForm message)
 		{
-            switch (message.Code)
+			switch (message.Code)
 			{
-			case Mc.ProcessOrder:
-				ProcessProcessOrder(message);
-			break;
-
 			case Mc.OrderEnter:
 				ProcessOrderEnter(message);
+			break;
+
+			case Mc.ProcessOrder:
+				ProcessProcessOrder(message);
 			break;
 
 			default:

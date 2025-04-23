@@ -37,17 +37,17 @@ namespace Agents.AgentScope.ContinualAssistants {
             Notice(myMessage);
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        override public void ProcessMessage(MessageForm message)
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		override public void ProcessMessage(MessageForm message)
 		{
 			switch (message.Code)
 			{
-			case Mc.PlanOrderArrival:
-				ProcessPlanOrderArrival(message);
-			break;
-
 			case Mc.Start:
 				ProcessStart(message);
+			break;
+
+			case Mc.PlanOrderArrival:
+				ProcessPlanOrderArrival(message);
 			break;
 
 			default:

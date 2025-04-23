@@ -27,13 +27,14 @@ namespace Agents.AgentWorkersC {
             InitWorkers(count);
         }
 
-        //meta! sender="AgentWorkers", id="156", type="Request"
-        public void ProcessGetWorkerC(MessageForm message) {
+		//meta! sender="AgentWorkers", id="156", type="Request"
+		public void ProcessGetWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
 
             if (availableWorker != null) {
-                availableWorker.SetState(true);
+                availableWorker.SetProduct(myMessage.Product);
+                availableWorker.SetWorkplace(myMessage.Workplace);
                 myMessage.Worker = availableWorker;
             } else {
                 myMessage.Worker = null;
@@ -42,8 +43,8 @@ namespace Agents.AgentWorkersC {
             Response(myMessage);
         }
 
-        //meta! sender="AgentWorkers", id="203", type="Notice"
-        public void ProcessDeassignWorkerC(MessageForm message) {
+		//meta! sender="AgentWorkers", id="203", type="Notice"
+		public void ProcessDeassignWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Worker != null) {
@@ -55,30 +56,32 @@ namespace Agents.AgentWorkersC {
             Notice(myMessage);
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) { }
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) { }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        }
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.DeassignWorkerC:
+				ProcessDeassignWorkerC(message);
+			break;
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.DeassignWorkerC:
-                    ProcessDeassignWorkerC(message);
-                    break;
+			case Mc.GetWorkerC:
+				ProcessGetWorkerC(message);
+			break;
 
-                case Mc.GetWorkerC:
-                    ProcessGetWorkerC(message);
-                    break;
-
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
 
         public new AgentWorkersC MyAgent => (AgentWorkersC)base.MyAgent;
     }

@@ -23,11 +23,9 @@ namespace Agents.AgentCarpentry {
             QueueD.Clear();
         }
 
-        override public void PrepareReplication() {
+        public override void PrepareReplication() {
             base.PrepareReplication();
-
             PetriNet?.Clear();
-
             Clear();
         }
 
@@ -36,7 +34,6 @@ namespace Agents.AgentCarpentry {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Order == null) return;
-
 
             foreach (var product in myMessage.Order.Products) {
                 MyMessage productMessage = new(MySim) {
@@ -49,34 +46,21 @@ namespace Agents.AgentCarpentry {
             }
         }
 
-        // Handles worker acquisition from AgentWorkers
-        public void ProcessWorkerAcquired(MessageForm message) {
+        // Handles both worker and workplace acquisitions
+        public void ProcessResourceAcquired(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Order == null || myMessage.Product == null) return;
 
             var queue = GetQueueForProduct(myMessage.Product);
-            var queued = queue.FirstOrDefault(q => q.Product?.Id == myMessage.Product.Id && q.Worker == null);
+            var queued = queue.FirstOrDefault(q => q.Product?.Id == myMessage.Product.Id);
 
-            if (queued != null) {
-                queued.Worker = myMessage.Worker;
-                CheckQueueAndProcess(queued);
-            }
-        }
+            if (queued == null) return;
 
-        // Handles workplace acquisition from AgentWorkplaces
-        public void ProcessWorkplaceAcquired(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
+            if (myMessage.Worker != null) queued.Worker = myMessage.Worker;
+            if (myMessage.Workplace != null) queued.Workplace = myMessage.Workplace;
 
-            if (myMessage.Order == null || myMessage.Product == null) return;
-
-            var queue = GetQueueForProduct(myMessage.Product);
-            var queued = queue.FirstOrDefault(q => q.Product?.Id == myMessage.Product.Id && q.Workplace == null);
-
-            if (queued != null) {
-                queued.Workplace = myMessage.Workplace;
-                CheckQueueAndProcess(queued);
-            }
+            CheckQueueAndProcess(queued);
         }
 
         // Determines which queue to use based on product state
@@ -105,7 +89,6 @@ namespace Agents.AgentCarpentry {
 
             var queue = GetQueueForProduct(message.Product);
 
-            // Proceed if both worker and workplace are assigned
             if (message.Worker != null && message.Workplace != null) {
                 queue.Remove(message);
 
@@ -113,35 +96,41 @@ namespace Agents.AgentCarpentry {
                 message.Product.Workplace = message.Workplace;
                 message.Workplace.Product = message.Product;
 
-                // Always move worker to the workplace before doing anything else
                 message.Code = Mc.MoveToWorkplace;
                 message.Addressee = MySim.FindAgent(SimId.AgentMovement);
                 Request(message);
             } else {
-                // Only request once per type to avoid flooding
                 if (message.Worker == null && !message.WorkerRequested) {
                     message.WorkerRequested = true;
-                    var workerReq = new MyMessage(message) {
+                    Request(new MyMessage(message) {
                         Code = GetWorkerRequestCode(message.Product),
                         Addressee = MySim.FindAgent(SimId.AgentWorkers)
-                    };
-                    Request(workerReq);
+                    });
                 }
 
                 if (message.Workplace == null && !message.WorkplaceRequested) {
                     message.WorkplaceRequested = true;
-                    var workplaceReq = new MyMessage(message) {
+                    Request(new MyMessage(message) {
                         Code = Mc.GetFreeWorkplace,
                         Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
-                    };
-                    Request(workplaceReq);
+                    });
                 }
             }
         }
 
-        //meta! sender="AgentModel", id="27", type="Notice"
-        public void ProcessInit(MessageForm message) {
+        //meta! sender="AgentMovement", id="55", type="Response"
+        public void ProcessMoveToWorkplace(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
 
+            if (myMessage.Worker?.Workplace != null) {
+                myMessage.Code = Mc.MoveToStorage;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            } else {
+                myMessage.Code = Mc.DoPreparing;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentWarehouse);
+            }
+
+            Request(myMessage);
         }
 
         //meta! sender="AgentMovement", id="112", type="Response"
@@ -161,6 +150,9 @@ namespace Agents.AgentCarpentry {
             Notice(message);
         }
 
+        //meta! sender="AgentModel", id="27", type="Notice"
+        public void ProcessInit(MessageForm message) { }
+
         //meta! userInfo="Process messages defined in code", id="0"
         public void ProcessDefault(MessageForm message) { }
 
@@ -178,11 +170,12 @@ namespace Agents.AgentCarpentry {
                 case Mc.GetWorkerForPickling:
                 case Mc.GetWorkerForAssembling:
                 case Mc.GetWorkerForMounting:
-                    ProcessWorkerAcquired(message);
+                case Mc.GetFreeWorkplace:
+                    ProcessResourceAcquired(message);
                     break;
 
-                case Mc.GetFreeWorkplace:
-                    ProcessWorkplaceAcquired(message);
+                case Mc.MoveToWorkplace:
+                    ProcessMoveToWorkplace(message);
                     break;
 
                 case Mc.MoveToStorage:
