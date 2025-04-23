@@ -29,37 +29,37 @@ namespace Agents.AgentWorkplaces {
         }
 
         // Cutting
-        //meta! sender="AgentCarpentry", id="115", type="Request"
-        public void ProcessGetWorkerForCutting(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="115", type="Request"
+		public void ProcessGetWorkerForCutting(MessageForm message) {
             StartWorkWithAssistant(message, SimId.Cutting, Mc.Start);
         }
 
         // Mounting
-        //meta! sender="AgentCarpentry", id="119", type="Request"
-        public void ProcessGetWorkerForMounting(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="119", type="Request"
+		public void ProcessGetWorkerForMounting(MessageForm message) {
             StartWorkWithAssistant(message, SimId.Mounting, Mc.Start);
         }
 
         // Assembling
-        //meta! sender="AgentCarpentry", id="118", type="Request"
-        public void ProcessGetWorkerForAssembling(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="118", type="Request"
+		public void ProcessGetWorkerForAssembling(MessageForm message) {
             StartWorkWithAssistant(message, SimId.Assembling, Mc.Start);
         }
 
         // Painting
-        //meta! sender="AgentCarpentry", id="117", type="Request"
-        public void ProcessGetWorkerForPainting(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="117", type="Request"
+		public void ProcessGetWorkerForPainting(MessageForm message) {
             StartWorkWithAssistant(message, SimId.Painting, Mc.Start);
         }
 
         // Pickling
-        //meta! sender="AgentCarpentry", id="120", type="Request"
-        public void ProcessGetWorkerForPickling(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="120", type="Request"
+		public void ProcessGetWorkerForPickling(MessageForm message) {
             StartWorkWithAssistant(message, SimId.Pickling, Mc.Start);
         }
 
-        //meta! sender="AgentCarpentry", id="170", type="Response"
-        public void ProcessGetFreeWorkplace(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="170", type="Response"
+		public void ProcessGetFreeWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
             Workplace? workplace = GetFreeWorkplace();
 
@@ -70,7 +70,7 @@ namespace Agents.AgentWorkplaces {
             myMessage.Workplace = workplace;
         }
 
-        //meta! sender="Cutting", id="63", type="Finish"
+		//meta! userInfo="Removed from model"
         public void ProcessFinishCutting(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
@@ -81,7 +81,7 @@ namespace Agents.AgentWorkplaces {
             FreeWorkplaceAndNotify(myMessage);
         }
 
-        //meta! sender="Painting", id="65", type="Finish"
+		//meta! userInfo="Removed from model"
         public void ProcessFinishPainting(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
@@ -92,7 +92,7 @@ namespace Agents.AgentWorkplaces {
             FreeWorkplaceAndNotify(myMessage);
         }
 
-        //meta! sender="Assembling", id="67", type="Finish"
+		//meta! userInfo="Removed from model"
         public void ProcessFinishAssembling(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
@@ -103,7 +103,7 @@ namespace Agents.AgentWorkplaces {
             FreeWorkplaceAndNotify(myMessage);
         }
 
-        //meta! sender="Mounting", id="69", type="Finish"
+		//meta! userInfo="Removed from model"
         public void ProcessFinishMounting(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
@@ -114,7 +114,7 @@ namespace Agents.AgentWorkplaces {
             FreeWorkplaceAndNotify(myMessage);
         }
 
-        //meta! sender="Pickling", id="147", type="Finish"
+		//meta! userInfo="Removed from model"
         public void ProcessFinishPickling(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
@@ -125,8 +125,8 @@ namespace Agents.AgentWorkplaces {
             FreeWorkplaceAndNotify(myMessage);
         }
 
-        //meta! sender="AgentCarpentry", id="73", type="Notice"
-        public void ProcessDeassignWorkplace(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="73", type="Notice"
+		public void ProcessDeassignWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Workplace != null) {
@@ -136,82 +136,57 @@ namespace Agents.AgentWorkplaces {
             myMessage.Workplace = null;
         }
 
-        //meta! sender="AgentCarpentry", id="40", type="Notice"
+		//meta! userInfo="Removed from model"
         public void ProcessInit(MessageForm message) {
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.Finish:
-                    switch (message.Sender.Id) {
-                        case SimId.Mounting:
-                            ProcessFinishMounting(message);
-                            break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.GetWorkerForCutting:
+				ProcessGetWorkerForCutting(message);
+			break;
 
-                        case SimId.Pickling:
-                            ProcessFinishPickling(message);
-                            break;
+			case Mc.GetWorkerForPainting:
+				ProcessGetWorkerForPainting(message);
+			break;
 
-                        case SimId.Assembling:
-                            ProcessFinishAssembling(message);
-                            break;
+			case Mc.DeassignWorkplace:
+				ProcessDeassignWorkplace(message);
+			break;
 
-                        case SimId.Painting:
-                            ProcessFinishPainting(message);
-                            break;
+			case Mc.GetWorkerForPickling:
+				ProcessGetWorkerForPickling(message);
+			break;
 
-                        case SimId.Cutting:
-                            ProcessFinishCutting(message);
-                            break;
-                    }
-                    break;
+			case Mc.GetFreeWorkplace:
+				ProcessGetFreeWorkplace(message);
+			break;
 
-                case Mc.GetWorkerForMounting:
-                    ProcessGetWorkerForMounting(message);
-                    break;
+			case Mc.GetWorkerForAssembling:
+				ProcessGetWorkerForAssembling(message);
+			break;
 
-                case Mc.GetFreeWorkplace:
-                    ProcessGetFreeWorkplace(message);
-                    break;
+			case Mc.GetWorkerForMounting:
+				ProcessGetWorkerForMounting(message);
+			break;
 
-                case Mc.GetWorkerForPainting:
-                    ProcessGetWorkerForPainting(message);
-                    break;
-
-                case Mc.GetWorkerForCutting:
-                    ProcessGetWorkerForCutting(message);
-                    break;
-
-                case Mc.Init:
-                    ProcessInit(message);
-                    break;
-
-                case Mc.DeassignWorkplace:
-                    ProcessDeassignWorkplace(message);
-                    break;
-
-                case Mc.GetWorkerForAssembling:
-                    ProcessGetWorkerForAssembling(message);
-                    break;
-
-                case Mc.GetWorkerForPickling:
-                    ProcessGetWorkerForPickling(message);
-                    break;
-
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
 
         public new AgentWorkplaces MyAgent => (AgentWorkplaces)base.MyAgent;
 

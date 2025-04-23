@@ -17,16 +17,21 @@ namespace Agents.AgentCarpentry {
 		{
 			new ManagerCarpentry(SimId.ManagerCarpentry, MySim, this);
 			AddOwnMessage(Mc.GetWorkerForCutting);
-			AddOwnMessage(Mc.GetFreeWorkplace);
-			AddOwnMessage(Mc.GetWorkerForPainting);
-			AddOwnMessage(Mc.Init);
-			AddOwnMessage(Mc.ProcessOrder);
+			AddOwnMessage(Mc.DoPickling);
 			AddOwnMessage(Mc.GetWorkerForMounting);
-			AddOwnMessage(Mc.DoPreparing);
+			AddOwnMessage(Mc.ProcessOrder);
+			AddOwnMessage(Mc.DoAssembling);
 			AddOwnMessage(Mc.GetWorkerForAssembling);
+			AddOwnMessage(Mc.MoveToWorkplace);
+			AddOwnMessage(Mc.GetWorkerForPainting);
+			AddOwnMessage(Mc.GetFreeWorkplace);
+			AddOwnMessage(Mc.Init);
+			AddOwnMessage(Mc.DoMounting);
+			AddOwnMessage(Mc.DoCutting);
+			AddOwnMessage(Mc.DoPainting);
+			AddOwnMessage(Mc.DoPreparing);
 			AddOwnMessage(Mc.MoveToStorage);
 			AddOwnMessage(Mc.GetWorkerForPickling);
-			AddOwnMessage(Mc.MoveToWorkplace);
 		}
 		//meta! tag="end"
     }

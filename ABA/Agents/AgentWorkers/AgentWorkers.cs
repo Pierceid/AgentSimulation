@@ -18,7 +18,6 @@ namespace Agents.AgentWorkers {
 			new ManagerWorkers(SimId.ManagerWorkers, MySim, this);
 			AddOwnMessage(Mc.GetWorkerForCutting);
 			AddOwnMessage(Mc.DeassignWorkerA);
-			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.GetWorkerForPainting);
 			AddOwnMessage(Mc.DeassignWorkerC);
 			AddOwnMessage(Mc.DeassignWorkerB);

@@ -15,7 +15,7 @@ namespace Agents.AgentMovement {
             }
         }
 
-		//meta! sender="AgentCarpentry", id="46", type="Notice"
+		//meta! userInfo="Removed from model"
 		public void ProcessInit(MessageForm message) {
 
         }
@@ -60,14 +60,6 @@ namespace Agents.AgentMovement {
 		{
 			switch (message.Code)
 			{
-			case Mc.Init:
-				ProcessInit(message);
-			break;
-
-			case Mc.MoveToWorkplace:
-				ProcessMoveToWorkplace(message);
-			break;
-
 			case Mc.Finish:
 				switch (message.Sender.Id)
 				{
@@ -83,6 +75,10 @@ namespace Agents.AgentMovement {
 
 			case Mc.MoveToStorage:
 				ProcessMoveToStorage(message);
+			break;
+
+			case Mc.MoveToWorkplace:
+				ProcessMoveToWorkplace(message);
 			break;
 
 			default:

@@ -1,5 +1,4 @@
-﻿using Agents.AgentScope;
-using AgentSimulation.Structures.Enums;
+﻿using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPDataStruct;
@@ -85,13 +84,6 @@ namespace Agents.AgentCarpentry {
         private void CheckQueueAndProcess(MyMessage message) {
             if (message.Product == null) return;
 
-            var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
-            var matchedProduct = managerScope?.Products.FirstOrDefault(p => p.Id == message.Order?.Id);
-
-            if (matchedProduct != null) {
-                matchedProduct.State = message.Product.State;
-            }
-
             var queue = GetQueueForProduct(message.Product);
 
             if (message.Worker != null && message.Workplace != null) {
@@ -144,6 +136,12 @@ namespace Agents.AgentCarpentry {
             }
         }
 
+        // Processes working processes
+        private void ProcessDoWork(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            Request(message);
+        }
+
         //meta! sender="AgentMovement", id="55", type="Response"
         public void ProcessMoveToWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
@@ -153,7 +151,7 @@ namespace Agents.AgentCarpentry {
                 myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
             } else {
                 myMessage.Code = Mc.DoPreparing;
-                myMessage.Addressee = MySim.FindAgent(SimId.AgentWarehouse);
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             }
 
             Request(myMessage);
@@ -164,7 +162,7 @@ namespace Agents.AgentCarpentry {
             Request(message);
         }
 
-        //meta! sender="AgentWarehouse", id="140", type="Response"
+        //meta! sender="AgentProcesses", id="140", type="Response"
         public void ProcessDoPreparing(MessageForm message) {
             Request(message);
         }
@@ -207,14 +205,22 @@ namespace Agents.AgentCarpentry {
             }
         }
 
-        //meta! sender="AgentModel", id="27", type="Notice"
-        public void ProcessInit(MessageForm message) { }
 
         //meta! userInfo="Process messages defined in code", id="0"
         public void ProcessDefault(MessageForm message) { }
 
+
+        //meta! sender="AgentModel", id="239", type="Notice"
+        public void ProcessInit(MessageForm message) {
+        }
+
+        //meta! sender="AgentWorkplaces", id="120", type="Response"
+        public void ProcessGetWorkerForPicklingAgentWorkplaces(MessageForm message) {
+        }
+
         //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() { }
+        public void Init() {
+        }
 
         public override void ProcessMessage(MessageForm message) {
             switch (message.Code) {
@@ -240,7 +246,12 @@ namespace Agents.AgentCarpentry {
                     break;
 
                 case Mc.DoPreparing:
-                    ProcessDoPreparing(message);
+                case Mc.DoCutting:
+                case Mc.DoPainting:
+                case Mc.DoPickling:
+                case Mc.DoAssembling:
+                case Mc.DoMounting:
+                    ProcessDoWork(message);
                     break;
 
                 case Mc.Init:

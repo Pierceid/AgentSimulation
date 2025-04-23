@@ -2,29 +2,12 @@
 <ABAsim>
   <Agents>
     <Agent>
-      <SimId>16</SimId>
-      <InternalId>77</InternalId>
-      <Name>AgentWarehouse</Name>
-      <Bounds>1289,244,180,180</Bounds>
-      <Reasoner>ManagerWarehouse</Reasoner>
-      <ReasonerBounds>74,25,32,25</ReasonerBounds>
-      <UsePetriNet>false</UsePetriNet>
-      <Components>
-        <Process>
-          <SimId>1006</SimId>
-          <InternalId>79</InternalId>
-          <Name>Preparing</Name>
-          <Bounds>72,102,35,18</Bounds>
-        </Process>
-      </Components>
-    </Agent>
-    <Agent>
-      <SimId>24</SimId>
-      <InternalId>151</InternalId>
-      <Name>AgentWorkersB</Name>
-      <Bounds>1704,1438,180,180</Bounds>
-      <Reasoner>ManagerWorkersB</Reasoner>
-      <ReasonerBounds>74,25,32,25</ReasonerBounds>
+      <SimId>9</SimId>
+      <InternalId>39</InternalId>
+      <Name>AgentWorkplaces</Name>
+      <Bounds>120,1068,240,240</Bounds>
+      <Reasoner>ManagerWorkplaces</Reasoner>
+      <ReasonerBounds>104,54,32,25</ReasonerBounds>
       <UsePetriNet>false</UsePetriNet>
     </Agent>
     <Agent>
@@ -37,73 +20,6 @@
       <UsePetriNet>false</UsePetriNet>
     </Agent>
     <Agent>
-      <SimId>9</SimId>
-      <InternalId>39</InternalId>
-      <Name>AgentWorkplaces</Name>
-      <Bounds>120,1068,240,240</Bounds>
-      <Reasoner>ManagerWorkplaces</Reasoner>
-      <ReasonerBounds>104,54,32,25</ReasonerBounds>
-      <UsePetriNet>false</UsePetriNet>
-      <Components>
-        <Process>
-          <SimId>1001</SimId>
-          <InternalId>62</InternalId>
-          <Name>Cutting</Name>
-          <Bounds>35,114,35,18</Bounds>
-        </Process>
-        <Process>
-          <SimId>1014</SimId>
-          <InternalId>146</InternalId>
-          <Name>Pickling</Name>
-          <Bounds>103,144,35,18</Bounds>
-        </Process>
-        <Process>
-          <SimId>1004</SimId>
-          <InternalId>68</InternalId>
-          <Name>Mounting</Name>
-          <Bounds>170,113,35,18</Bounds>
-        </Process>
-        <Process>
-          <SimId>1002</SimId>
-          <InternalId>64</InternalId>
-          <Name>Painting</Name>
-          <Bounds>69,129,35,18</Bounds>
-        </Process>
-        <Process>
-          <SimId>1003</SimId>
-          <InternalId>66</InternalId>
-          <Name>Assembling</Name>
-          <Bounds>137,128,35,18</Bounds>
-        </Process>
-      </Components>
-    </Agent>
-    <Agent>
-      <SimId>2</SimId>
-      <InternalId>3</InternalId>
-      <Name>AgentScope</Name>
-      <Bounds>-87,525,180,180</Bounds>
-      <Reasoner>ManagerScope</Reasoner>
-      <ReasonerBounds>74,25,32,25</ReasonerBounds>
-      <UsePetriNet>false</UsePetriNet>
-      <Components>
-        <Scheduler>
-          <SimId>1015</SimId>
-          <InternalId>163</InternalId>
-          <Name>OrderArrival</Name>
-          <Bounds>71,99,35,13</Bounds>
-        </Scheduler>
-      </Components>
-    </Agent>
-    <Agent>
-      <SimId>3</SimId>
-      <InternalId>4</InternalId>
-      <Name>AgentCarpentry</Name>
-      <Bounds>725,615,300,300</Bounds>
-      <Reasoner>ManagerCarpentry</Reasoner>
-      <ReasonerBounds>132,56,32,25</ReasonerBounds>
-      <UsePetriNet>false</UsePetriNet>
-    </Agent>
-    <Agent>
       <SimId>23</SimId>
       <InternalId>150</InternalId>
       <Name>AgentWorkersC</Name>
@@ -113,10 +29,19 @@
       <UsePetriNet>false</UsePetriNet>
     </Agent>
     <Agent>
+      <SimId>1</SimId>
+      <InternalId>2</InternalId>
+      <Name>AgentModel</Name>
+      <Bounds>146,333,180,180</Bounds>
+      <Reasoner>ManagerModel</Reasoner>
+      <ReasonerBounds>74,25,32,25</ReasonerBounds>
+      <UsePetriNet>false</UsePetriNet>
+    </Agent>
+    <Agent>
       <SimId>10</SimId>
       <InternalId>43</InternalId>
       <Name>AgentMovement</Name>
-      <Bounds>787,119,180,180</Bounds>
+      <Bounds>554,121,180,180</Bounds>
       <Reasoner>ManagerMovement</Reasoner>
       <ReasonerBounds>74,25,32,25</ReasonerBounds>
       <UsePetriNet>false</UsePetriNet>
@@ -136,6 +61,79 @@
       </Components>
     </Agent>
     <Agent>
+      <SimId>3</SimId>
+      <InternalId>4</InternalId>
+      <Name>AgentCarpentry</Name>
+      <Bounds>695,585,360,360</Bounds>
+      <Reasoner>ManagerCarpentry</Reasoner>
+      <ReasonerBounds>132,56,32,25</ReasonerBounds>
+      <UsePetriNet>false</UsePetriNet>
+    </Agent>
+    <Agent>
+      <SimId>2</SimId>
+      <InternalId>3</InternalId>
+      <Name>AgentScope</Name>
+      <Bounds>-112,742,180,180</Bounds>
+      <Reasoner>ManagerScope</Reasoner>
+      <ReasonerBounds>74,25,32,25</ReasonerBounds>
+      <UsePetriNet>false</UsePetriNet>
+      <Components>
+        <Scheduler>
+          <SimId>1015</SimId>
+          <InternalId>163</InternalId>
+          <Name>OrderArrival</Name>
+          <Bounds>71,99,35,13</Bounds>
+        </Scheduler>
+      </Components>
+    </Agent>
+    <Agent>
+      <SimId>16</SimId>
+      <InternalId>77</InternalId>
+      <Name>AgentProcesses</Name>
+      <Bounds>1231,134,180,180</Bounds>
+      <Reasoner>ManagerProcesses</Reasoner>
+      <ReasonerBounds>74,25,32,25</ReasonerBounds>
+      <UsePetriNet>false</UsePetriNet>
+      <Components>
+        <Process>
+          <SimId>1018</SimId>
+          <InternalId>226</InternalId>
+          <Name>Mounting</Name>
+          <Bounds>141,78,35,18</Bounds>
+        </Process>
+        <Process>
+          <SimId>1006</SimId>
+          <InternalId>79</InternalId>
+          <Name>Preparing</Name>
+          <Bounds>8,76,35,18</Bounds>
+        </Process>
+        <Process>
+          <SimId>1020</SimId>
+          <InternalId>230</InternalId>
+          <Name>Pickling</Name>
+          <Bounds>92,114,35,18</Bounds>
+        </Process>
+        <Process>
+          <SimId>1017</SimId>
+          <InternalId>224</InternalId>
+          <Name>Painting</Name>
+          <Bounds>54,114,35,18</Bounds>
+        </Process>
+        <Process>
+          <SimId>1019</SimId>
+          <InternalId>228</InternalId>
+          <Name>Assembling</Name>
+          <Bounds>126,100,35,18</Bounds>
+        </Process>
+        <Process>
+          <SimId>1016</SimId>
+          <InternalId>222</InternalId>
+          <Name>Cutting</Name>
+          <Bounds>20,100,35,18</Bounds>
+        </Process>
+      </Components>
+    </Agent>
+    <Agent>
       <SimId>22</SimId>
       <InternalId>149</InternalId>
       <Name>AgentWorkersA</Name>
@@ -145,11 +143,11 @@
       <UsePetriNet>false</UsePetriNet>
     </Agent>
     <Agent>
-      <SimId>1</SimId>
-      <InternalId>2</InternalId>
-      <Name>AgentModel</Name>
-      <Bounds>311,165,180,180</Bounds>
-      <Reasoner>ManagerModel</Reasoner>
+      <SimId>24</SimId>
+      <InternalId>151</InternalId>
+      <Name>AgentWorkersB</Name>
+      <Bounds>1704,1438,180,180</Bounds>
+      <Reasoner>ManagerWorkersB</Reasoner>
       <ReasonerBounds>74,25,32,25</ReasonerBounds>
       <UsePetriNet>false</UsePetriNet>
     </Agent>
@@ -192,12 +190,6 @@
       <Destination>2</Destination>
     </Message>
     <Message>
-      <InternalId>147</InternalId>
-      <Type>StartFinish</Type>
-      <Source>39</Source>
-      <Destination>146</Destination>
-    </Message>
-    <Message>
       <SimId>1004</SimId>
       <InternalId>23</InternalId>
       <Name>OrderEnter</Name>
@@ -212,14 +204,6 @@
       <Destination>28</Destination>
     </Message>
     <Message>
-      <SimId>1006</SimId>
-      <InternalId>25</InternalId>
-      <Name>Init</Name>
-      <Type>Notice</Type>
-      <Source>2</Source>
-      <Destination>3</Destination>
-    </Message>
-    <Message>
       <InternalId>153</InternalId>
       <Type>Parent</Type>
       <Source>151</Source>
@@ -230,14 +214,6 @@
       <Type>Parent</Type>
       <Source>150</Source>
       <Destination>28</Destination>
-    </Message>
-    <Message>
-      <SimId>1007</SimId>
-      <InternalId>27</InternalId>
-      <Name>Init</Name>
-      <Type>Notice</Type>
-      <Source>2</Source>
-      <Destination>4</Destination>
     </Message>
     <Message>
       <SimId>1055</SimId>
@@ -276,22 +252,6 @@
       <Destination>163</Destination>
     </Message>
     <Message>
-      <SimId>1008</SimId>
-      <InternalId>37</InternalId>
-      <Name>Init</Name>
-      <Type>Notice</Type>
-      <Source>4</Source>
-      <Destination>28</Destination>
-    </Message>
-    <Message>
-      <SimId>1009</SimId>
-      <InternalId>40</InternalId>
-      <Name>Init</Name>
-      <Type>Notice</Type>
-      <Source>4</Source>
-      <Destination>39</Destination>
-    </Message>
-    <Message>
       <SimId>1059</SimId>
       <InternalId>170</InternalId>
       <Name>GetFreeWorkplace</Name>
@@ -304,14 +264,6 @@
       <Type>Parent</Type>
       <Source>43</Source>
       <Destination>4</Destination>
-    </Message>
-    <Message>
-      <SimId>1011</SimId>
-      <InternalId>46</InternalId>
-      <Name>Init</Name>
-      <Type>Notice</Type>
-      <Source>4</Source>
-      <Destination>43</Destination>
     </Message>
     <Message>
       <InternalId>181</InternalId>
@@ -348,30 +300,6 @@
       <Type>Parent</Type>
       <Source>39</Source>
       <Destination>4</Destination>
-    </Message>
-    <Message>
-      <InternalId>63</InternalId>
-      <Type>StartFinish</Type>
-      <Source>39</Source>
-      <Destination>62</Destination>
-    </Message>
-    <Message>
-      <InternalId>65</InternalId>
-      <Type>StartFinish</Type>
-      <Source>39</Source>
-      <Destination>64</Destination>
-    </Message>
-    <Message>
-      <InternalId>67</InternalId>
-      <Type>StartFinish</Type>
-      <Source>39</Source>
-      <Destination>66</Destination>
-    </Message>
-    <Message>
-      <InternalId>69</InternalId>
-      <Type>StartFinish</Type>
-      <Source>39</Source>
-      <Destination>68</Destination>
     </Message>
     <Message>
       <SimId>1018</SimId>
@@ -428,12 +356,68 @@
       <Destination>79</Destination>
     </Message>
     <Message>
-      <SimId>1022</SimId>
-      <InternalId>84</InternalId>
-      <Name>Init</Name>
-      <Type>Notice</Type>
+      <SimId>1066</SimId>
+      <InternalId>215</InternalId>
+      <Name>DoCutting</Name>
+      <Type>RequestResponse</Type>
       <Source>4</Source>
       <Destination>77</Destination>
+    </Message>
+    <Message>
+      <SimId>1067</SimId>
+      <InternalId>216</InternalId>
+      <Name>DoPainting</Name>
+      <Type>RequestResponse</Type>
+      <Source>4</Source>
+      <Destination>77</Destination>
+    </Message>
+    <Message>
+      <SimId>1068</SimId>
+      <InternalId>217</InternalId>
+      <Name>DoPickling</Name>
+      <Type>RequestResponse</Type>
+      <Source>4</Source>
+      <Destination>77</Destination>
+    </Message>
+    <Message>
+      <SimId>1069</SimId>
+      <InternalId>218</InternalId>
+      <Name>DoAssembling</Name>
+      <Type>RequestResponse</Type>
+      <Source>4</Source>
+      <Destination>77</Destination>
+    </Message>
+    <Message>
+      <SimId>1070</SimId>
+      <InternalId>219</InternalId>
+      <Name>DoMounting</Name>
+      <Type>RequestResponse</Type>
+      <Source>4</Source>
+      <Destination>77</Destination>
+    </Message>
+    <Message>
+      <InternalId>223</InternalId>
+      <Type>StartFinish</Type>
+      <Source>77</Source>
+      <Destination>222</Destination>
+    </Message>
+    <Message>
+      <InternalId>225</InternalId>
+      <Type>StartFinish</Type>
+      <Source>77</Source>
+      <Destination>224</Destination>
+    </Message>
+    <Message>
+      <InternalId>227</InternalId>
+      <Type>StartFinish</Type>
+      <Source>77</Source>
+      <Destination>226</Destination>
+    </Message>
+    <Message>
+      <InternalId>229</InternalId>
+      <Type>StartFinish</Type>
+      <Source>77</Source>
+      <Destination>228</Destination>
     </Message>
     <Message>
       <InternalId>102</InternalId>
@@ -442,10 +426,24 @@
       <Destination>101</Destination>
     </Message>
     <Message>
+      <InternalId>231</InternalId>
+      <Type>StartFinish</Type>
+      <Source>77</Source>
+      <Destination>230</Destination>
+    </Message>
+    <Message>
       <InternalId>111</InternalId>
       <Type>StartFinish</Type>
       <Source>43</Source>
       <Destination>110</Destination>
+    </Message>
+    <Message>
+      <SimId>1071</SimId>
+      <InternalId>239</InternalId>
+      <Name>Init</Name>
+      <Type>Notice</Type>
+      <Source>2</Source>
+      <Destination>4</Destination>
     </Message>
     <Message>
       <SimId>1030</SimId>
@@ -454,6 +452,14 @@
       <Type>RequestResponse</Type>
       <Source>4</Source>
       <Destination>43</Destination>
+    </Message>
+    <Message>
+      <SimId>1072</SimId>
+      <InternalId>240</InternalId>
+      <Name>Init</Name>
+      <Type>Notice</Type>
+      <Source>2</Source>
+      <Destination>3</Destination>
     </Message>
     <Message>
       <SimId>1031</SimId>
@@ -536,5 +542,5 @@
       <Destination>28</Destination>
     </Message>
   </Messages>
-  <IID>214</IID>
+  <IID>241</IID>
 </ABAsim>

@@ -8,7 +8,6 @@ namespace Simulation
 		public const int ProcessOrder = 1003;
 		public const int DoPreparing = 1054;
 		public const int OrderEnter = 1004;
-		public const int Init = 1006;
 		public const int GetWorkerC = 1055;
 		public const int GetWorkerB = 1056;
 		public const int GetWorkerA = 1058;
@@ -20,6 +19,12 @@ namespace Simulation
 		public const int DeassignWorkerB = 1061;
 		public const int DeassignWorkerC = 1062;
 		public const int DeassignWorkerA = 1065;
+		public const int DoCutting = 1066;
+		public const int DoPainting = 1067;
+		public const int DoPickling = 1068;
+		public const int DoAssembling = 1069;
+		public const int DoMounting = 1070;
+		public const int Init = 1071;
 		public const int MoveToStorage = 1030;
 		public const int GetWorkerForPainting = 1032;
 		public const int GetWorkerForAssembling = 1033;

@@ -91,7 +91,7 @@ namespace Agents.AgentWorkers {
             Notice(message);
         }
 
-		//meta! sender="AgentCarpentry", id="37", type="Notice"
+		//meta! userInfo="Removed from model"
 		public void ProcessInit(MessageForm message) {
             // Initialization logic if needed
         }
@@ -110,40 +110,36 @@ namespace Agents.AgentWorkers {
 		{
 			switch (message.Code)
 			{
-			case Mc.GetWorkerForCutting:
-				ProcessGetWorkerForCutting(message);
+			case Mc.GetWorkerB:
+				ProcessGetWorkerB(message);
 			break;
 
 			case Mc.GetWorkerForPickling:
 				ProcessGetWorkerForPickling(message);
 			break;
 
+			case Mc.GetWorkerC:
+				ProcessGetWorkerC(message);
+			break;
+
 			case Mc.GetWorkerA:
 				ProcessGetWorkerA(message);
 			break;
 
-			case Mc.GetWorkerB:
-				ProcessGetWorkerB(message);
-			break;
-
-			case Mc.GetWorkerForAssembling:
-				ProcessGetWorkerForAssembling(message);
-			break;
-
-			case Mc.DeassignWorkerA:
-				ProcessDeassignWorkerA(message);
+			case Mc.GetWorkerForCutting:
+				ProcessGetWorkerForCutting(message);
 			break;
 
 			case Mc.DeassignWorkerB:
 				ProcessDeassignWorkerB(message);
 			break;
 
-			case Mc.Init:
-				ProcessInit(message);
+			case Mc.DeassignWorkerA:
+				ProcessDeassignWorkerA(message);
 			break;
 
-			case Mc.GetWorkerC:
-				ProcessGetWorkerC(message);
+			case Mc.GetWorkerForAssembling:
+				ProcessGetWorkerForAssembling(message);
 			break;
 
 			case Mc.DeassignWorkerC:

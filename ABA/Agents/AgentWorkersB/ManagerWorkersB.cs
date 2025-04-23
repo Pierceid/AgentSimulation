@@ -66,12 +66,12 @@ namespace Agents.AgentWorkersB {
 		{
 			switch (message.Code)
 			{
-			case Mc.DeassignWorkerB:
-				ProcessDeassignWorkerB(message);
-			break;
-
 			case Mc.GetWorkerB:
 				ProcessGetWorkerB(message);
+			break;
+
+			case Mc.DeassignWorkerB:
+				ProcessDeassignWorkerB(message);
 			break;
 
 			default:

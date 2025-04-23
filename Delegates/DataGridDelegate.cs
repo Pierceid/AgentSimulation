@@ -6,8 +6,6 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace AgentSimulation.Delegates {
