@@ -16,22 +16,33 @@ namespace Agents.AgentCarpentry {
 		private void Init()
 		{
 			new ManagerCarpentry(SimId.ManagerCarpentry, MySim, this);
-			AddOwnMessage(Mc.GetWorkerForCutting);
-			AddOwnMessage(Mc.DoPickling);
-			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.GetWorkerToPaint);
 			AddOwnMessage(Mc.ProcessOrder);
 			AddOwnMessage(Mc.DoAssembling);
 			AddOwnMessage(Mc.GetWorkerForAssembling);
 			AddOwnMessage(Mc.MoveToWorkplace);
-			AddOwnMessage(Mc.GetWorkerForPainting);
-			AddOwnMessage(Mc.GetFreeWorkplace);
+			AddOwnMessage(Mc.DoPrepare);
 			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.DoMounting);
 			AddOwnMessage(Mc.DoCutting);
-			AddOwnMessage(Mc.DoPainting);
+			AddOwnMessage(Mc.DoPaint);
 			AddOwnMessage(Mc.DoPreparing);
+			AddOwnMessage(Mc.DoAssemble);
 			AddOwnMessage(Mc.MoveToStorage);
 			AddOwnMessage(Mc.GetWorkerForPickling);
+			AddOwnMessage(Mc.GetWorkerToCut);
+			AddOwnMessage(Mc.GetWorkerForCutting);
+			AddOwnMessage(Mc.DoPickling);
+			AddOwnMessage(Mc.GetWorkerToMount);
+			AddOwnMessage(Mc.DoCut);
+			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.DoMount);
+			AddOwnMessage(Mc.GetWorkerToAssemble);
+			AddOwnMessage(Mc.GetWorkerForPainting);
+			AddOwnMessage(Mc.GetFreeWorkplace);
+			AddOwnMessage(Mc.GetWorkerToPickle);
+			AddOwnMessage(Mc.DoPainting);
+			AddOwnMessage(Mc.DoPickle);
 		}
 		//meta! tag="end"
     }

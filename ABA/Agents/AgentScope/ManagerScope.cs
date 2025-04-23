@@ -29,18 +29,18 @@ namespace Agents.AgentScope {
             PetriNet?.Clear();
         }
 
-        //meta! sender="AgentModel", id="240", type="Notice"
-        public void ProcessInit(MessageForm message) {
+		//meta! sender="AgentModel", id="240", type="Notice"
+		public void ProcessInit(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.OrderArrival);
             StartContinualAssistant(message);
         }
 
-        //meta! sender="OrderArrival", id="164", type="Finish"
-        public void ProcessFinish(MessageForm message) {
+		//meta! sender="OrderArrival", id="164", type="Finish"
+		public void ProcessFinish(MessageForm message) {
         }
 
-        //meta! sender="AgentModel", id="10", type="Notice"
-        public void ProcessOrderExit(MessageForm message) {
+		//meta! sender="AgentModel", id="10", type="Notice"
+		public void ProcessOrderExit(MessageForm message) {
             var myMessage = (MyMessage)message.CreateCopy();
 
             if (myMessage.Product == null) return;
@@ -54,8 +54,8 @@ namespace Agents.AgentScope {
             }
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             MySimulation mySimulation = (MySimulation)MySim;
 
@@ -85,30 +85,33 @@ namespace Agents.AgentScope {
             StartContinualAssistant(myMessage);
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.OrderExit:
-                    ProcessOrderExit(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.OrderExit:
+				ProcessOrderExit(message);
+			break;
 
-                case Mc.Init:
-                    ProcessInit(message);
-                    break;
+			case Mc.Init:
+				ProcessInit(message);
+			break;
 
-                case Mc.Finish:
-                    ProcessFinish(message);
-                    break;
+			case Mc.Finish:
+				ProcessFinish(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentScope MyAgent {
             get {
                 return (AgentScope)base.MyAgent;
