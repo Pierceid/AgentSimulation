@@ -245,6 +245,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
                         <DataGridTextColumn Header="Order" Binding="{Binding Order.Id}" Width="*"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
                         <DataGridTextColumn Header="State" Binding="{Binding State}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>

@@ -34,12 +34,12 @@ namespace AgentSimulation.Structures.Objects {
             Id = id;
             StartTime = startTime;
             Products = new();
+            State = "0/0";
         }
 
-        public Order(int id, double startTime, List<Product> products) {
-            Id = id;
-            StartTime = startTime;
+        public void AddProducts(List<Product> products) {
             Products = products;
+            State = $"0/{Products.Count}";
         }
 
         private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e) {

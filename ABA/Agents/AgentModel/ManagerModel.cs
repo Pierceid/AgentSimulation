@@ -17,11 +17,10 @@ namespace Agents.AgentModel {
 
 		//meta! sender="AgentCarpentry", id="12", type="Response"
 		public void ProcessProcessOrder(MessageForm message) {
-            //var myMessage = (MyMessage)message.CreateCopy();
-            //myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            //myMessage.Code = Mc.ProcessOrder;
-
-            //Request(myMessage);
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentModel);
+            myMessage.Code = Mc.OrderExit;
+            Notice(myMessage);
         }
 
 		//meta! sender="AgentScope", id="23", type="Notice"
@@ -29,7 +28,7 @@ namespace Agents.AgentModel {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             myMessage.Addressee = MySim.FindAgent(SimId.AgentModel);
             myMessage.Code = Mc.ProcessOrder;
-            Notice(myMessage);
+            Request(myMessage);
         }
 
 		//meta! userInfo="Process messages defined in code", id="0"
@@ -45,7 +44,7 @@ namespace Agents.AgentModel {
 
 		override public void ProcessMessage(MessageForm message)
 		{
-			switch (message.Code)
+            switch (message.Code)
 			{
 			case Mc.ProcessOrder:
 				ProcessProcessOrder(message);

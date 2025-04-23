@@ -37,8 +37,8 @@ namespace Agents.AgentScope.ContinualAssistants {
             Notice(myMessage);
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		override public void ProcessMessage(MessageForm message)
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        override public void ProcessMessage(MessageForm message)
 		{
 			switch (message.Code)
 			{

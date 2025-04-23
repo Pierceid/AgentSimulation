@@ -1,4 +1,5 @@
 ﻿using AgentSimulation.Structures.Enums;
+using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPDataStruct;
 using Simulation;
@@ -6,10 +7,10 @@ using Simulation;
 namespace Agents.AgentCarpentry {
     //meta! id="4"
     public class ManagerCarpentry : OSPABA.Manager {
-        public SimQueue<MyMessage> QueueA { get; set; }
-        public SimQueue<MyMessage> QueueB { get; set; }
-        public SimQueue<MyMessage> QueueC { get; set; }
-        public SimQueue<MyMessage> QueueD { get; set; }
+        public SimQueue<MyMessage> QueueA { get; set; } = new();
+        public SimQueue<MyMessage> QueueB { get; set; } = new();
+        public SimQueue<MyMessage> QueueC { get; set; } = new();
+        public SimQueue<MyMessage> QueueD { get; set; } = new();
 
         public ManagerCarpentry(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
             Init();
@@ -20,15 +21,16 @@ namespace Agents.AgentCarpentry {
             PetriNet?.Clear();
         }
 
-        // Worker request forwarding (like ObsluhaZakaznika)
+        // Worker request forwarding
         public void ForwardWorkerRequest(MessageForm message, int code) {
             message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
             message.Code = code;
             Request(message);
         }
 
-        // Worker acquired → forward response (like ObsluhaZakaznikaJedalen)
+        // Worker acquired → forward response
         public void ProcessWorkerAcquired(MessageForm message, int code) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
             message.Code = code;
             Response(message);
         }
@@ -80,9 +82,7 @@ namespace Agents.AgentCarpentry {
 
         //meta! sender="AgentWorkers", id="123", type="Response"
         public void ProcessGetWorkerForPicklingAgentWorkers(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentMovement);
-            message.Code = Mc.MoveToWorkplace;
-            Request(message);
+            ProcessWorkerAcquired(message, Mc.GetWorkerForPickling);
         }
 
         //meta! sender="AgentModel", id="12", type="Request"
@@ -92,32 +92,13 @@ namespace Agents.AgentCarpentry {
 
         //meta! sender="AgentWorkplaces", id="170", type="Request"
         public void ProcessGetFreeWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            var state = myMessage.Product?.State;
-            var rng = ((MySimulation)MySim).Generators.RNG.Next();
+            MyMessage myMessage = (MyMessage)message;
+            MySimulation mySimulation = (MySimulation)MySim;
 
-            switch (state) {
-                case ProductState.Raw:
-                    myMessage.Code = Mc.GetWorkerForCutting;
-                    break;
-                case ProductState.Cut:
-                    myMessage.Code = Mc.GetWorkerForPainting;
-                    break;
-                case ProductState.Painted:
-                    myMessage.Code = rng < 0.15 ? Mc.GetWorkerForPickling : Mc.GetWorkerForAssembling;
-                    break;
-                case ProductState.Pickled:
-                    myMessage.Code = Mc.GetWorkerForAssembling;
-                    break;
-                case ProductState.Assembled:
-                    myMessage.Code = Mc.GetWorkerForMounting;
-                    break;
-                default:
-                    return;
-            }
-
+            myMessage.Workplace = mySimulation.Workplaces.FirstOrDefault(w => !w.IsOccupied);
             myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
-            Request(myMessage);
+            myMessage.Code = Mc.GetFreeWorkplace;
+            Response(myMessage);
         }
 
         //meta! sender="AgentModel", id="27", type="Notice"
