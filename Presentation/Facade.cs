@@ -69,7 +69,7 @@ namespace AgentSimulation.Presentation {
                 StopSimulation();
             }
 
-            mySimulation.Clear();
+            mySimulation = new();
             mySimulation.InitWorkers(workersA, workersB, workersC);
             mySimulation.InitWorkplaces(workplaces);
             mySimulation.InitSpeed(speed);

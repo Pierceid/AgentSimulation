@@ -6,77 +6,50 @@ using Simulation;
 namespace Agents.AgentWorkplaces {
     //meta! id="39"
     public class ManagerWorkplaces : OSPABA.Manager {
+        public List<Workplace> Workplaces { get; set; } = new();
+
         public ManagerWorkplaces(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
             Init();
         }
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Setup component for the next replication
 
             if (PetriNet != null) {
                 PetriNet.Clear();
             }
+
+            Workplaces = ((MySimulation)MySim).Workplaces;
         }
 
+        // Cutting
         //meta! sender="AgentCarpentry", id="115", type="Request"
         public void ProcessGetWorkerForCutting(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-
-            if (myMessage.Worker == null) return;
-
-            AssignWorkerToWorkplace(myMessage);
-            myMessage.Addressee = MyAgent.FindAssistant(SimId.Cutting);
-            myMessage.Code = Mc.Start;
-            StartContinualAssistant(myMessage);
+            StartWorkWithAssistant(message, SimId.Cutting, Mc.Start);
         }
 
+        // Mounting
         //meta! sender="AgentCarpentry", id="119", type="Request"
         public void ProcessGetWorkerForMounting(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-
-            if (myMessage.Worker == null) return;
-
-            AssignWorkerToWorkplace(myMessage);
-            myMessage.Addressee = MyAgent.FindAssistant(SimId.Mounting);
-            myMessage.Code = Mc.Start;
-            StartContinualAssistant(myMessage);
+            StartWorkWithAssistant(message, SimId.Mounting, Mc.Start);
         }
 
+        // Assembling
         //meta! sender="AgentCarpentry", id="118", type="Request"
         public void ProcessGetWorkerForAssembling(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-
-            if (myMessage.Worker == null) return;
-
-            AssignWorkerToWorkplace(myMessage);
-            myMessage.Addressee = MyAgent.FindAssistant(SimId.Assembling);
-            myMessage.Code = Mc.Start;
-            StartContinualAssistant(myMessage);
+            StartWorkWithAssistant(message, SimId.Assembling, Mc.Start);
         }
 
+        // Painting
         //meta! sender="AgentCarpentry", id="117", type="Request"
         public void ProcessGetWorkerForPainting(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-
-            if (myMessage.Worker == null) return;
-
-            AssignWorkerToWorkplace(myMessage);
-            myMessage.Addressee = MyAgent.FindAssistant(SimId.Painting);
-            myMessage.Code = Mc.Start;
-            StartContinualAssistant(myMessage);
+            StartWorkWithAssistant(message, SimId.Painting, Mc.Start);
         }
 
+        // Pickling
         //meta! sender="AgentCarpentry", id="120", type="Request"
         public void ProcessGetWorkerForPickling(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-
-            if (myMessage.Worker == null) return;
-
-            AssignWorkerToWorkplace(myMessage);
-            myMessage.Addressee = MyAgent.FindAssistant(SimId.Pickling);
-            myMessage.Code = Mc.Start;
-            StartContinualAssistant(myMessage);
+            StartWorkWithAssistant(message, SimId.Pickling, Mc.Start);
         }
 
         //meta! sender="AgentCarpentry", id="170", type="Response"
@@ -84,71 +57,85 @@ namespace Agents.AgentWorkplaces {
             MyMessage myMessage = (MyMessage)message;
             Workplace? workplace = GetFreeWorkplace();
 
-            workplace?.SetState(true);
+            if (workplace != null) {
+                workplace.SetState(true);
+            }
+
             myMessage.Workplace = workplace;
-        }
-
-        //meta! sender="Pickling", id="147", type="Finish"
-        public void ProcessFinishPickling(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
-
-            if (myMessage.Product != null) myMessage.Product.State = ProductState.Pickled;
-
-            FreeWorkplaceAndNotify(message);
-        }
-
-        //meta! sender="Assembling", id="67", type="Finish"
-        public void ProcessFinishAssembling(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
-
-            if (myMessage.Product != null) myMessage.Product.State = ProductState.Assembled;
-
-            FreeWorkplaceAndNotify(message);
-        }
-
-        //meta! sender="Painting", id="65", type="Finish"
-        public void ProcessFinishPainting(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
-
-            if (myMessage.Product != null) myMessage.Product.State = ProductState.Painted;
-
-            FreeWorkplaceAndNotify(message);
         }
 
         //meta! sender="Cutting", id="63", type="Finish"
         public void ProcessFinishCutting(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
-            if (myMessage.Product != null) myMessage.Product.State = ProductState.Cut;
+            if (myMessage.Product != null) {
+                myMessage.Product.State = ProductState.Cut;
+            }
 
-            FreeWorkplaceAndNotify(message);
+            FreeWorkplaceAndNotify(myMessage);
+        }
+
+        //meta! sender="Painting", id="65", type="Finish"
+        public void ProcessFinishPainting(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) {
+                myMessage.Product.State = ProductState.Painted;
+            }
+
+            FreeWorkplaceAndNotify(myMessage);
+        }
+
+        //meta! sender="Assembling", id="67", type="Finish"
+        public void ProcessFinishAssembling(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) {
+                myMessage.Product.State = ProductState.Assembled;
+            }
+
+            FreeWorkplaceAndNotify(myMessage);
         }
 
         //meta! sender="Mounting", id="69", type="Finish"
         public void ProcessFinishMounting(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
-            if (myMessage.Product != null) myMessage.Product.State = ProductState.Mounted;
+            if (myMessage.Product != null) {
+                myMessage.Product.State = ProductState.Mounted;
+            }
 
-            FreeWorkplaceAndNotify(message);
+            FreeWorkplaceAndNotify(myMessage);
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
-            switch (message.Code) {
+        //meta! sender="Pickling", id="147", type="Finish"
+        public void ProcessFinishPickling(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) {
+                myMessage.Product.State = ProductState.Pickled;
             }
+
+            FreeWorkplaceAndNotify(myMessage);
         }
 
         //meta! sender="AgentCarpentry", id="73", type="Notice"
         public void ProcessDeassignWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
-            myMessage.Workplace?.SetState(false);
+
+            if (myMessage.Workplace != null) {
+                myMessage.Workplace.SetState(false);
+            }
+
             myMessage.Workplace = null;
         }
 
         //meta! sender="AgentCarpentry", id="40", type="Notice"
         public void ProcessInit(MessageForm message) {
+        }
 
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) {
         }
 
         //meta! userInfo="Generated code: do not modify", tag="begin"
@@ -216,31 +203,49 @@ namespace Agents.AgentWorkplaces {
         }
         //meta! tag="end"
 
-        public new AgentWorkplaces MyAgent {
-            get {
-                return (AgentWorkplaces)base.MyAgent;
-            }
-        }
+        public new AgentWorkplaces MyAgent => (AgentWorkplaces)base.MyAgent;
 
         private Workplace? GetFreeWorkplace() {
-            return ((MySimulation)MySim).Workplaces.FirstOrDefault(w => !w.IsOccupied);
+            return Workplaces.FirstOrDefault(w => !w.IsOccupied);
+        }
+
+        private void StartWorkWithAssistant(MessageForm message, int assistantId, int commandCode) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+
+            if (myMessage.Worker == null) {
+                return;
+            }
+
+            AssignWorkerToWorkplace(myMessage);
+
+            myMessage.Addressee = MyAgent.FindAssistant(assistantId);
+            myMessage.Code = commandCode;
+
+            StartContinualAssistant(myMessage);
         }
 
         private void AssignWorkerToWorkplace(MyMessage message) {
-            message.Workplace?.AssignWorker(message.Worker);
-            message.Worker?.SetState(true);
+            if (message.Workplace != null && message.Worker != null) {
+                message.Workplace.AssignWorker(message.Worker);
+                message.Worker.SetState(true);
+            }
         }
 
-        private void FreeWorkplaceAndNotify(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
-            myMessage.Workplace?.SetState(false);
-            myMessage.Worker?.SetState(false);
-            myMessage.Workplace = null;
-            myMessage.Worker = null;
+        private void FreeWorkplaceAndNotify(MyMessage message) {
+            if (message.Workplace != null) {
+                message.Workplace.SetState(false);
+            }
 
-            myMessage.Code = Mc.DeassignWorkplace;
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            Notice(myMessage);
+            if (message.Worker != null) {
+                message.Worker.SetState(false);
+            }
+
+            message.Workplace = null;
+            message.Worker = null;
+
+            message.Code = Mc.DeassignWorkplace;
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            Notice(message);
         }
     }
 }

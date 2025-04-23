@@ -34,6 +34,8 @@ namespace Simulation {
         override public void PrepareSimulation() {
             base.PrepareSimulation();
 
+            Clear();
+
             FinishedOrdersCount.Clear();
             PendingOrdersCount.Clear();
             AverageOrderTime.Clear();
@@ -53,6 +55,8 @@ namespace Simulation {
 
         override public void SimulationFinished() {
             base.SimulationFinished();
+
+            Clear();
         }
 
         private void Init() {

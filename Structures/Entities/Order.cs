@@ -15,7 +15,7 @@ namespace AgentSimulation.Structures.Objects {
             set {
                 products = value;
                 foreach (var product in products) {
-                    product.PropertyChanged += Product_PropertyChanged;
+                    product.PropertyChanged += ProductPropertyChanged;
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace AgentSimulation.Structures.Objects {
             State = $"0/{Products.Count}";
         }
 
-        private void Product_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        private void ProductPropertyChanged(object? sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == nameof(ProductState.Finished)) {
                 CheckOrderCompletion();
             }

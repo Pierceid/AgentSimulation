@@ -1,7 +1,12 @@
-﻿using AgentSimulation.Structures.Objects;
+﻿using Agents.AgentWorkersA;
+using Agents.AgentWorkersB;
+using Agents.AgentWorkersC;
+using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace AgentSimulation.Delegates {
@@ -45,7 +50,14 @@ namespace AgentSimulation.Delegates {
                 if (ms.Speed != double.MaxValue) {
                     SyncCollection(Orders, ms.Orders);
                     SyncCollection(Products, ms.Products);
-                    SyncCollection(Workers, ms.WorkersA.Concat(ms.WorkersB).Concat(ms.WorkersC));
+
+                    var managerWorkersA = ms.AgentWorkersA.MyManager as ManagerWorkersA;
+                    var managerWorkersB = ms.AgentWorkersB.MyManager as ManagerWorkersB;
+                    var managerWorkersC = ms.AgentWorkersC.MyManager as ManagerWorkersC;
+
+                    if (managerWorkersA != null && managerWorkersB != null && managerWorkersC != null) {
+                        SyncCollection(Workers, managerWorkersA.Workers.Concat(managerWorkersB.Workers).Concat(managerWorkersC.Workers));
+                    }
                 }
             }
         }

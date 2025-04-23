@@ -26,7 +26,7 @@ namespace Agents.AgentModel {
 		//meta! sender="AgentScope", id="23", type="Notice"
 		public void ProcessOrderEnter(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentModel);
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             myMessage.Code = Mc.ProcessOrder;
             Request(myMessage);
         }
