@@ -82,7 +82,7 @@ public partial class MainWindow : Window {
 
     private void InitUI() {
         txtReplications.Text = "1000";
-        sldSpeed.Value = 4;
+        sldSpeed.Value = 1;
         txtWorkersA.Text = "5";
         txtWorkersB.Text = "5";
         txtWorkersC.Text = "15";

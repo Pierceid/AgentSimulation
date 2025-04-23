@@ -1,4 +1,5 @@
 ﻿using AgentSimulation.Structures.Enums;
+using AgentSimulation.Utilities;
 using System.ComponentModel;
 
 namespace AgentSimulation.Structures.Objects {
@@ -33,6 +34,7 @@ namespace AgentSimulation.Structures.Objects {
         public Order(int id, double startTime) {
             Id = id;
             StartTime = startTime;
+            FormattedTime = Util.FormatTime(startTime);
             Products = new();
             State = "0/0";
         }

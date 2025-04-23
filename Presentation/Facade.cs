@@ -1,5 +1,4 @@
 ﻿using AgentSimulation.Delegates;
-using AgentSimulation.Observer;
 using AgentSimulation.Structures;
 using OxyPlot.Wpf;
 using Simulation;
@@ -11,19 +10,16 @@ namespace AgentSimulation.Presentation {
         private Window? mainWindow;
         private MySimulation? mySimulation;
         private LineGraph? graph;
-        private bool isRunning;
 
         public Facade(Window? window) {
             mainWindow = window;
             mySimulation = new();
             graph = null;
-            isRunning = false;
         }
 
         public void StartSimulation() {
-            if (mySimulation == null || graph == null || isRunning) return;
+            if (mySimulation == null || graph == null || mySimulation.IsRunning()) return;
 
-            isRunning = true;
             mySimulation.Simulate(Constants.REPLICATION_COUNT, Constants.SIMULATION_TIME);
             graph.RefreshGraph();
         }
@@ -31,19 +27,18 @@ namespace AgentSimulation.Presentation {
         public bool PauseSimulation() {
             if (mySimulation == null) return false;
 
-            if (mySimulation.IsPaused()) {
-                mySimulation.ResumeSimulation();
-            } else {
+            if (mySimulation.IsRunning()) {
                 mySimulation.PauseSimulation();
+            } else {
+                mySimulation.ResumeSimulation();
             }
 
             return mySimulation.IsPaused();
         }
 
         public void StopSimulation() {
-            if (mySimulation == null || graph == null || !isRunning) return;
+            if (mySimulation == null || graph == null || !mySimulation.IsRunning()) return;
 
-            isRunning = false;
             mySimulation.StopSimulation();
         }
 
@@ -54,7 +49,7 @@ namespace AgentSimulation.Presentation {
         }
 
         public void InitGraph(PlotView plotView) {
-            if (isRunning) {
+            if (mySimulation != null && mySimulation.IsRunning()) {
                 StopSimulation();
             }
 
@@ -70,7 +65,7 @@ namespace AgentSimulation.Presentation {
         public void InitCarpentry(int replications, double speed, int workersA, int workersB, int workersC, int workplaces) {
             if (mySimulation == null) return;
 
-            if (isRunning) {
+            if (mySimulation.IsRunning()) {
                 StopSimulation();
             }
 
