@@ -256,7 +256,7 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
                         <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="*"/>
                         <DataGridCheckBoxColumn Header="Is Busy" Binding="{Binding IsBusy}" Width="*"/>
-                        <DataGridTextColumn Header="Order" Binding="{Binding Product.Id}" Width="*"/>
+                        <DataGridTextColumn Header="Product" Binding="{Binding Product.Id}" Width="*"/>
                         <DataGridTextColumn Header="Workplace" Binding="{Binding Workplace.Id}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>

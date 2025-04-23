@@ -52,8 +52,6 @@ namespace Agents.AgentWorkersB {
                 match?.SetState(false);
                 myMessage.Worker = null;
             }
-
-            Notice(myMessage);
         }
 
 		//meta! userInfo="Process messages defined in code", id="0"

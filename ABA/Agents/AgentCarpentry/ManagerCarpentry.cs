@@ -148,6 +148,21 @@ namespace Agents.AgentCarpentry {
             message.Code = Mc.DeassignWorkplace;
             message.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
             Notice(message);
+
+            MyMessage msg = (MyMessage)message.CreateCopy();
+
+            int code = msg.Worker?.Group switch {
+                WorkerGroup.A => Mc.DeassignWorkerA,
+                WorkerGroup.B => Mc.DeassignWorkerB,
+                WorkerGroup.C => Mc.DeassignWorkerC,
+                _ => -1
+            };
+
+            if (code != -1) {
+                msg.Code = code;
+                msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+                Notice(msg);
+            }
         }
 
         //meta! sender="AgentModel", id="27", type="Notice"

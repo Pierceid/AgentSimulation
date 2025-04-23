@@ -2,6 +2,8 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace Agents.AgentWorkplaces {
     //meta! id="39"
@@ -233,13 +235,6 @@ namespace Agents.AgentWorkplaces {
         }
 
         private void FreeWorkplaceAndNotify(MyMessage message) {
-            if (message.Workplace != null) {
-                message.Workplace.SetState(false);
-            }
-
-            message.Workplace = null;
-            message.Worker = null;
-
             message.Code = Mc.DeassignWorkplace;
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Notice(message);

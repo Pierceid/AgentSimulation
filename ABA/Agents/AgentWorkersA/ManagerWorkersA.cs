@@ -58,8 +58,6 @@ namespace Agents.AgentWorkersA {
                 match?.SetState(false);
                 myMessage.Worker = null;
             }
-
-            Notice(myMessage);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
