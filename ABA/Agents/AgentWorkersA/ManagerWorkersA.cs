@@ -1,3 +1,4 @@
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -14,11 +15,17 @@ namespace Agents.AgentWorkersA {
         override public void PrepareReplication() {
             base.PrepareReplication();
 
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+            PetriNet?.Clear();
+        }
 
-            Workers = ((MySimulation)MySim).WorkersA;
+        public void InitWorkers(int workersA) {
+            Parallel.For(0, workersA, a => { lock (Workers) { Workers.Add(new Worker(a, WorkerGroup.A)); } });
+        }
+
+        public void Clear() {
+            int workersA = Workers.Count;
+            Workers.Clear();
+            InitWorkers(workersA);
         }
 
         //meta! sender="AgentWorkers", id="159", type="Request"
@@ -56,7 +63,7 @@ namespace Agents.AgentWorkersA {
 
         //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
-            Workers = ((MySimulation)MySim).WorkersA;
+
         }
 
         override public void ProcessMessage(MessageForm message) {

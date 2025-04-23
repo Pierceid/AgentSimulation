@@ -1,3 +1,4 @@
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -13,12 +14,17 @@ namespace Agents.AgentWorkersB {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
+            PetriNet?.Clear();
+        }
 
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+        public void InitWorkers(int workersB) {
+            Parallel.For(0, workersB, b => { lock (Workers) { Workers.Add(new Worker(b, WorkerGroup.B)); } });
+        }
 
-            Workers = ((MySimulation)MySim).WorkersB;
+        public void Clear() {
+            int count = Workers.Count;
+            Workers.Clear();
+            InitWorkers(count);
         }
 
         //meta! sender="AgentWorkers", id="157", type="Request"
@@ -50,13 +56,11 @@ namespace Agents.AgentWorkersB {
         }
 
         //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
-            // Optional: Log unhandled codes
-        }
+        public void ProcessDefault(MessageForm message) { }
 
         //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
-            Workers = ((MySimulation)MySim).WorkersA;
+
         }
 
         override public void ProcessMessage(MessageForm message) {
@@ -64,11 +68,9 @@ namespace Agents.AgentWorkersB {
                 case Mc.DeassignWorkerB:
                     ProcessDeassignWorkerB(message);
                     break;
-
                 case Mc.GetWorkerB:
                     ProcessGetWorkerB(message);
                     break;
-
                 default:
                     ProcessDefault(message);
                     break;
@@ -76,10 +78,6 @@ namespace Agents.AgentWorkersB {
         }
         //meta! tag="end"
 
-        public new AgentWorkersB MyAgent {
-            get {
-                return (AgentWorkersB)base.MyAgent;
-            }
-        }
+        public new AgentWorkersB MyAgent => (AgentWorkersB)base.MyAgent;
     }
 }

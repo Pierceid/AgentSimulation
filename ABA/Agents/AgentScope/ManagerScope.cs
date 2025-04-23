@@ -6,6 +6,9 @@ using Simulation;
 namespace Agents.AgentScope {
     //meta! id="3"
     public class ManagerScope : OSPABA.Manager {
+        public List<Order> Orders { get; set; } = new();
+        public List<Product> Products { get; set; } = new();
+
         private static int orderId = 0;
         private static int productId = 0;
 
@@ -13,13 +16,17 @@ namespace Agents.AgentScope {
             Init();
         }
 
+        public void Clear() {
+            Orders.Clear();
+            Products.Clear();
+            orderId = 0;
+            productId = 0;
+        }
+
         override public void PrepareReplication() {
             base.PrepareReplication();
-            // Setup component for the next replication
 
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+            PetriNet?.Clear();
         }
 
         //meta! sender="AgentModel", id="25", type="Notice"
@@ -65,8 +72,8 @@ namespace Agents.AgentScope {
             }
 
             order.AddProducts(products);
-            mySimulation.Orders.Add(order);
-            mySimulation.Products.AddRange(products);
+            Orders.Add(order);
+            Products.AddRange(products);
             myMessage.Order = order;
             myMessage.Addressee = mySimulation.FindAgent(SimId.AgentModel);
             myMessage.Code = Mc.OrderEnter;

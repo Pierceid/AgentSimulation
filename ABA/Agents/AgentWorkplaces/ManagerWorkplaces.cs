@@ -18,8 +18,16 @@ namespace Agents.AgentWorkplaces {
             if (PetriNet != null) {
                 PetriNet.Clear();
             }
+        }
 
-            Workplaces = ((MySimulation)MySim).Workplaces;
+        public void InitWorkplaces(int workplaces) {
+            Parallel.For(0, workplaces, w => { lock (Workplaces) { Workplaces.Add(new Workplace(w)); } });
+        }
+
+        public void Clear() {
+            int count = Workplaces.Count;
+            Workplaces.Clear();
+            InitWorkplaces(count);
         }
 
         // Cutting

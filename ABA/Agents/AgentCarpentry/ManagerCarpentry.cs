@@ -1,9 +1,8 @@
-﻿using OSPABA;
+﻿using AgentSimulation.Structures.Enums;
+using AgentSimulation.Structures.Objects;
+using OSPABA;
 using OSPDataStruct;
 using Simulation;
-using AgentSimulation.Structures.Objects;
-using AgentSimulation.Structures.Enums;
-using System.Windows;
 
 namespace Agents.AgentCarpentry {
     //meta! id="4"
@@ -17,17 +16,19 @@ namespace Agents.AgentCarpentry {
             Init();
         }
 
-        override public void PrepareReplication() {
-            base.PrepareReplication();
-
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
-
+        public void Clear() {
             QueueA.Clear();
             QueueB.Clear();
             QueueC.Clear();
             QueueD.Clear();
+        }
+
+        override public void PrepareReplication() {
+            base.PrepareReplication();
+
+            PetriNet?.Clear();
+
+            Clear();
         }
 
         //meta! sender="AgentModel", id="12", type="Request"

@@ -1,3 +1,4 @@
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -13,12 +14,17 @@ namespace Agents.AgentWorkersC {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
+            PetriNet?.Clear();
+        }
 
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+        public void InitWorkers(int workersC) {
+            Parallel.For(0, workersC, c => { lock (Workers) { Workers.Add(new Worker(c, WorkerGroup.C)); } });
+        }
 
-            Workers = ((MySimulation)MySim).WorkersC;
+        public void Clear() {
+            int count = Workers.Count;
+            Workers.Clear();
+            InitWorkers(count);
         }
 
         //meta! sender="AgentWorkers", id="156", type="Request"
@@ -36,9 +42,6 @@ namespace Agents.AgentWorkersC {
             Response(myMessage);
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) { }
-
         //meta! sender="AgentWorkers", id="203", type="Notice"
         public void ProcessDeassignWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
@@ -52,9 +55,12 @@ namespace Agents.AgentWorkersC {
             Notice(myMessage);
         }
 
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) { }
+
         //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
-            Workers = ((MySimulation)MySim).WorkersA;
+
         }
 
         override public void ProcessMessage(MessageForm message) {
@@ -74,10 +80,6 @@ namespace Agents.AgentWorkersC {
         }
         //meta! tag="end"
 
-        public new AgentWorkersC MyAgent {
-            get {
-                return (AgentWorkersC)base.MyAgent;
-            }
-        }
+        public new AgentWorkersC MyAgent => (AgentWorkersC)base.MyAgent;
     }
 }

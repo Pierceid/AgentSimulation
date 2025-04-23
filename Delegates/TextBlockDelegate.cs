@@ -1,4 +1,6 @@
-﻿using AgentSimulation.Utilities;
+﻿using Agents.AgentCarpentry;
+using Agents.AgentScope;
+using AgentSimulation.Utilities;
 using OSPABA;
 using Simulation;
 using System.Windows.Controls;
@@ -16,12 +18,16 @@ namespace AgentSimulation.Delegates {
         public void Refresh(OSPABA.Simulation simulation) {
             if (simulation is MySimulation ms) {
                 if (ms.Speed != double.MaxValue) {
+                    var managerCarpentry = ms.AgentCarpentry.MyManager as ManagerCarpentry;
+
                     this.textBlocks[0].Text = Util.FormatTime(ms.CurrentTime);
 
-                    //this.textBlocks[1].Text = $"{ms.AgentCarpentry.MyManager.QueueA.Count:F0}";
-                    //this.textBlocks[2].Text = $"{ms.AgentCarpentry.MyManager.QueueB.Count:F0}";
-                    //this.textBlocks[3].Text = $"{ms.AgentCarpentry.MyManager.QueueC.Count:F0}";
-                    //this.textBlocks[4].Text = $"{ms.AgentCarpentry.MyManager.QueueD.Count:F0}";
+                    if (managerCarpentry != null) {
+                        this.textBlocks[1].Text = $"{managerCarpentry.QueueA.Count:F0}";
+                        this.textBlocks[2].Text = $"{managerCarpentry.QueueB.Count:F0}";
+                        this.textBlocks[3].Text = $"{managerCarpentry.QueueC.Count:F0}";
+                        this.textBlocks[4].Text = $"{managerCarpentry.QueueD.Count:F0}";
+                    }
                 }
 
                 //this.textBlocks[5].Text = $"{(100 * ms.AgentWorkersA.AverageUtilityA.GetAverage()):F2}%";
