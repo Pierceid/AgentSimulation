@@ -1,4 +1,5 @@
-﻿using AgentSimulation.Observer;
+﻿using AgentSimulation.Delegates;
+using AgentSimulation.Observer;
 using AgentSimulation.Structures;
 using OxyPlot.Wpf;
 using Simulation;
@@ -88,13 +89,13 @@ namespace AgentSimulation.Presentation {
         public void InitObservers(TextBlock[] textBlocks, DataGrid[] dataGrids) {
             if (mySimulation == null || mainWindow == null || graph == null) return;
 
-            LineGraphObserver lineGraphObserver = new(mainWindow, graph);
-            TextBlockObserver textBlockObserver = new(textBlocks);
-            DataGridObserver dataGridObserver = new(dataGrids);
+            LineGraphDelegate lineGraphObserver = new(mainWindow, graph);
+            TextBlockDelegate textBlockObserver = new(textBlocks);
+            DataGridDelegate dataGridObserver = new(dataGrids);
 
-            mySimulation.Attach(lineGraphObserver);
-            mySimulation.Attach(textBlockObserver);
-            mySimulation.Attach(dataGridObserver);
+            mySimulation.RegisterDelegate(lineGraphObserver);
+            mySimulation.RegisterDelegate(textBlockObserver);
+            mySimulation.RegisterDelegate(dataGridObserver);
         }
     }
 }

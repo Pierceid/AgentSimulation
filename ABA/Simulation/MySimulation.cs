@@ -9,16 +9,12 @@ using Agents.AgentWorkersB;
 using Agents.AgentWorkersC;
 using Agents.AgentWorkplaces;
 using AgentSimulation.Generators;
-using AgentSimulation.Observer;
 using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPStat;
-using System.Windows;
-using System.Windows.Threading;
 
 namespace Simulation {
-    public class MySimulation : OSPABA.Simulation, ISubject {
-        private List<IObserver> observers = [];
+    public class MySimulation : OSPABA.Simulation {
         public Stat FinishedOrdersCount { get; set; } = new();
         public Stat PendingOrdersCount { get; set; } = new();
         public Stat AverageOrderTime { get; set; } = new();
@@ -47,22 +43,18 @@ namespace Simulation {
             base.PrepareReplication();
 
             Clear();
-            Notify();
         }
 
         override public void ReplicationFinished() {
             base.ReplicationFinished();
 
-            Notify();
+            OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
         }
 
         override public void SimulationFinished() {
-            Notify();
-
             base.SimulationFinished();
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
         private void Init() {
             AgentModel = new AgentModel(SimId.AgentModel, this, null);
             AgentScope = new AgentScope(SimId.AgentScope, this, AgentModel);
@@ -88,6 +80,12 @@ namespace Simulation {
 
         public void InitSpeed(double speed) {
             Speed = speed;
+
+            if (Speed > 0) {
+                SetSimSpeed(Speed, 0.1);
+            } else {
+                SetMaxSimSpeed();
+            }
         }
 
         public void Clear() {
@@ -107,24 +105,6 @@ namespace Simulation {
             InitWorkers(workersA, workersB, workersC);
         }
 
-        public void Attach(IObserver observer) {
-            if (!observers.Contains(observer)) {
-                observers.Add(observer);
-            }
-        }
-
-        public void Detach(IObserver observer) {
-            observers.Remove(observer);
-        }
-
-        public void Notify() {
-            Application.Current.Dispatcher.Invoke(() => {
-                foreach (var observer in observers) {
-                    observer.Refresh(this);
-                }
-            }, DispatcherPriority.Background);
-        }
-
         public AgentModel AgentModel { get; set; }
         public AgentScope AgentScope { get; set; }
         public AgentCarpentry AgentCarpentry { get; set; }
@@ -135,6 +115,5 @@ namespace Simulation {
         public AgentWorkersA AgentWorkersA { get; set; }
         public AgentWorkersC AgentWorkersC { get; set; }
         public AgentWorkersB AgentWorkersB { get; set; }
-        //meta! tag="end"
     }
 }

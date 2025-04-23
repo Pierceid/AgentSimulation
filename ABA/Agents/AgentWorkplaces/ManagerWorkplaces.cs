@@ -1,3 +1,4 @@
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -89,26 +90,46 @@ namespace Agents.AgentWorkplaces {
 
         //meta! sender="Pickling", id="147", type="Finish"
         public void ProcessFinishPickling(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) myMessage.Product.State = ProductState.Pickled;
+
             FreeWorkplaceAndNotify(message);
         }
 
         //meta! sender="Assembling", id="67", type="Finish"
         public void ProcessFinishAssembling(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) myMessage.Product.State = ProductState.Assembled;
+
             FreeWorkplaceAndNotify(message);
         }
 
         //meta! sender="Painting", id="65", type="Finish"
         public void ProcessFinishPainting(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) myMessage.Product.State = ProductState.Painted;
+
             FreeWorkplaceAndNotify(message);
         }
 
         //meta! sender="Cutting", id="63", type="Finish"
         public void ProcessFinishCutting(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) myMessage.Product.State = ProductState.Cut;
+
             FreeWorkplaceAndNotify(message);
         }
 
         //meta! sender="Mounting", id="69", type="Finish"
         public void ProcessFinishMounting(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+
+            if (myMessage.Product != null) myMessage.Product.State = ProductState.Mounted;
+
             FreeWorkplaceAndNotify(message);
         }
 
