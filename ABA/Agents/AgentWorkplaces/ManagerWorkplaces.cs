@@ -15,9 +15,7 @@ namespace Agents.AgentWorkplaces {
         override public void PrepareReplication() {
             base.PrepareReplication();
 
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+            PetriNet?.Clear();
         }
 
         public void InitWorkplaces(int workplaces) {

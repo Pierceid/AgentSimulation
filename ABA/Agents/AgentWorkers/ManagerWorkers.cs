@@ -1,6 +1,5 @@
 using OSPABA;
 using Simulation;
-using System.Windows;
 
 namespace Agents.AgentWorkers {
     //meta! id="28"
@@ -12,9 +11,7 @@ namespace Agents.AgentWorkers {
         override public void PrepareReplication() {
             base.PrepareReplication();
 
-            if (PetriNet != null) {
-                PetriNet.Clear();
-            }
+            PetriNet?.Clear();
         }
 
         //meta! sender="AgentCarpentry", id="57", type="Request"

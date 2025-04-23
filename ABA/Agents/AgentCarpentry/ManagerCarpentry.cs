@@ -105,7 +105,7 @@ namespace Agents.AgentCarpentry {
 
             var queue = GetQueueForProduct(message.Product);
 
-            // Worker and workplace are both available → start process
+            // Proceed if both worker and workplace are assigned
             if (message.Worker != null && message.Workplace != null) {
                 queue.Remove(message);
 
@@ -113,29 +113,29 @@ namespace Agents.AgentCarpentry {
                 message.Product.Workplace = message.Workplace;
                 message.Workplace.Product = message.Product;
 
-                if (message.Worker.Workplace != null) {
-                    message.Code = Mc.MoveToStorage;
-                    message.Addressee = MySim.FindAgent(SimId.AgentMovement);
-                } else {
-                    message.Code = Mc.DoPreparing;
-                    message.Addressee = MySim.FindAgent(SimId.AgentWarehouse);
+                // Always move worker to the workplace before doing anything else
+                message.Code = Mc.MoveToWorkplace;
+                message.Addressee = MySim.FindAgent(SimId.AgentMovement);
+                Request(message);
+            } else {
+                // Only request once per type to avoid flooding
+                if (message.Worker == null && !message.WorkerRequested) {
+                    message.WorkerRequested = true;
+                    var workerReq = new MyMessage(message) {
+                        Code = GetWorkerRequestCode(message.Product),
+                        Addressee = MySim.FindAgent(SimId.AgentWorkers)
+                    };
+                    Request(workerReq);
                 }
 
-                Request(message);
-            } else if (message.Worker == null) {
-                var workerReq = new MyMessage(message) {
-                    Code = GetWorkerRequestCode(message.Product),
-                    Addressee = MySim.FindAgent(SimId.AgentWorkers)
-                };
-
-                Request(workerReq);
-            } else if (message.Workplace == null) {
-                var workplaceReq = new MyMessage(message) {
-                    Code = Mc.GetFreeWorkplace,
-                    Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
-                };
-
-                Request(workplaceReq);
+                if (message.Workplace == null && !message.WorkplaceRequested) {
+                    message.WorkplaceRequested = true;
+                    var workplaceReq = new MyMessage(message) {
+                        Code = Mc.GetFreeWorkplace,
+                        Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
+                    };
+                    Request(workplaceReq);
+                }
             }
         }
 
