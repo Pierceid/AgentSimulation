@@ -1,6 +1,7 @@
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentWorkplaces {
     //meta! id="39"
@@ -25,6 +26,13 @@ namespace Agents.AgentWorkplaces {
             int count = Workplaces.Count;
             Workplaces.Clear();
             InitWorkplaces(count);
+        }
+
+        public void ProcessAssignWorkplace(MessageForm message) {
+            MessageBox.Show("Assign");
+            message.Code = Mc.GetWorkerForCutting;
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            Request(message);
         }
 
         // Cutting
@@ -67,6 +75,9 @@ namespace Agents.AgentWorkplaces {
             }
 
             myMessage.Workplace = workplace;
+            myMessage.Code = Mc.GetFreeWorkplace;
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            Response(myMessage);
         }
 
         //meta! sender="AgentCarpentry", id="73", type="Notice"
@@ -102,6 +113,10 @@ namespace Agents.AgentWorkplaces {
 
         override public void ProcessMessage(MessageForm message) {
             switch (message.Code) {
+                case Mc.AssignWorkplace:
+                    ProcessAssignWorkplace(message);
+                    break;
+
                 case Mc.GetWorkerForCutting:
                     ProcessGetWorkerForCutting(message);
                     break;

@@ -94,12 +94,12 @@ namespace Agents.AgentScope {
 		{
 			switch (message.Code)
 			{
-			case Mc.OrderExit:
-				ProcessOrderExit(message);
-			break;
-
 			case Mc.Init:
 				ProcessInit(message);
+			break;
+
+			case Mc.OrderExit:
+				ProcessOrderExit(message);
 			break;
 
 			case Mc.Finish:

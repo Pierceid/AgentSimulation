@@ -4,6 +4,7 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPDataStruct;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -63,12 +64,11 @@ namespace Agents.AgentCarpentry {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
 
             int code = myMessage.Code switch {
-                Mc.DoPreparing => Mc.DoPrepare,
-                Mc.DoCutting => Mc.DoCut,
-                Mc.DoPainting => Mc.DoPaint,
-                Mc.DoPickling => Mc.DoPickle,
-                Mc.DoAssembling => Mc.DoAssemble,
-                Mc.DoMounting => Mc.DoMount,
+                Mc.GetWorkerForCutting => Mc.GetWorkerToCut,
+                Mc.GetWorkerForPainting => Mc.GetWorkerToPaint,
+                Mc.GetWorkerForPickling => Mc.GetWorkerToPickle,
+                Mc.GetWorkerForAssembling => Mc.GetWorkerToAssemble,
+                Mc.GetWorkerForMounting => Mc.GetWorkerToMount,
                 _ => -1
             };
 
@@ -82,21 +82,26 @@ namespace Agents.AgentCarpentry {
         public void ProcessResponseWorker(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
 
-            int code = myMessage.Code switch {
-                Mc.DoPrepare => Mc.DoPreparing,
-                Mc.DoCut => Mc.DoCutting,
-                Mc.DoPaint => Mc.DoPainting,
-                Mc.DoPickle => Mc.DoPickling,
-                Mc.DoAssemble => Mc.DoAssembling,
-                Mc.DoMount => Mc.DoMounting,
-                _ => -1
-            };
+            //int code = myMessage.Code switch {
+            //    Mc.GetWorkerToCut => Mc.GetWorkerForCutting,
+            //    Mc.GetWorkerToPaint => Mc.GetWorkerForPainting,
+            //    Mc.GetWorkerToPickle => Mc.GetWorkerForPickling,
+            //    Mc.GetWorkerToAssemble => Mc.GetWorkerForAssembling,
+            //    Mc.GetWorkerToMount => Mc.GetWorkerForMounting,
+            //    _ => -1
+            //};
 
-            if (code != -1) {
-                myMessage.Code = code;
-                myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
-                Response(message);
-            }
+            myMessage.Code = Mc.MoveToStorage;
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            MessageBox.Show("MOVE");
+            Request(message);
+        }
+
+        public void ProcessGetWorkplace(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            myMessage.Code = Mc.AssignWorkplace;
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkplaces);
+            Notice(myMessage);
         }
 
         public void ProcessMoveToWorkplace(MessageForm message) {
@@ -190,32 +195,34 @@ namespace Agents.AgentCarpentry {
             _ => Mc.GetWorkerForCutting
         };
 
-        private void CheckQueueAndProcess(MyMessage msg) {
-            if (msg.Product == null) return;
-            var queue = GetQueueForProduct(msg.Product);
+        private void CheckQueueAndProcess(MyMessage message) {
+            if (message.Product == null) return;
+            var queue = GetQueueForProduct(message.Product);
 
-            if (msg.Worker != null && msg.Workplace != null) {
-                queue.Remove(msg);
-                msg.Workplace.SetState(true);
-                msg.Product.Workplace = msg.Workplace;
-                msg.Workplace.Product = msg.Product;
+            if (message.Worker != null && message.Workplace != null) {
+                queue.Remove(message);
+                message.Workplace.SetState(true);
+                message.Product.Workplace = message.Workplace;
+                message.Workplace.Product = message.Product;
 
-                msg.Code = Mc.MoveToWorkplace;
-                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
-                Request(msg);
+                message.Code = Mc.MoveToWorkplace;
+                message.Addressee = MySim.FindAgent(SimId.AgentMovement);
+                Request(message);
             } else {
-                if (msg.Worker == null && !msg.WorkerRequested) {
-                    msg.WorkerRequested = true;
-                    Request(new MyMessage(msg) {
-                        Code = GetWorkerRequestCode(msg.Product),
-                        Addressee = MySim.FindAgent(SimId.AgentWorkers)
-                    });
-                }
-                if (msg.Workplace == null && !msg.WorkplaceRequested) {
-                    msg.WorkplaceRequested = true;
-                    Request(new MyMessage(msg) {
+                if (message.Workplace == null && !message.WorkplaceRequested) {
+                    message.WorkplaceRequested = true;
+
+                    Request(new MyMessage(message) {
                         Code = Mc.GetFreeWorkplace,
                         Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
+                    });
+                }
+                if (message.Worker == null && !message.WorkerRequested) {
+
+                    message.WorkerRequested = true;
+                    Request(new MyMessage(message) {
+                        Code = GetWorkerRequestCode(message.Product),
+                        Addressee = MySim.FindAgent(SimId.AgentWorkers)
                     });
                 }
             }
@@ -246,7 +253,10 @@ namespace Agents.AgentCarpentry {
         }
 
         public override void ProcessMessage(MessageForm message) {
+            MessageBox.Show($"{message.Code}, {message.Addressee}");
+
             switch (message.Code) {
+                case Mc.GetFreeWorkplace: ProcessGetWorkplace(message); break;
                 case Mc.ProcessOrder: ProcessProcessOrder(message); break;
                 case Mc.MoveToWorkplace: ProcessMoveToWorkplace(message); break;
                 case Mc.MoveToStorage: ProcessMoveToStorage(message); break;

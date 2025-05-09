@@ -2,6 +2,7 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentWorkersA {
     //meta! id="149"
