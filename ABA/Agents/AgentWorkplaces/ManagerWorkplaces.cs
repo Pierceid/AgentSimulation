@@ -1,3 +1,4 @@
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -12,14 +13,17 @@ namespace Agents.AgentWorkplaces {
             Init();
         }
 
-        override public void PrepareReplication() {
+        public override void PrepareReplication() {
             base.PrepareReplication();
-
             PetriNet?.Clear();
         }
 
         public void InitWorkplaces(int workplaces) {
-            Parallel.For(0, workplaces, w => { lock (Workplaces) { Workplaces.Add(new Workplace(w)); } });
+            Parallel.For(0, workplaces, w => {
+                lock (Workplaces) {
+                    Workplaces.Add(new Workplace(w));
+                }
+            });
         }
 
         public void Clear() {
@@ -29,53 +33,65 @@ namespace Agents.AgentWorkplaces {
         }
 
         public void ProcessAssignWorkplace(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-            Workplace? workplace = Workplaces.FirstOrDefault(wp => wp.Id == myMessage.Workplace?.Id);
+            MessageBox.Show("ProcessAssignWorkplace()");
 
-            if (workplace != null) {
-                workplace.Product = myMessage.Product;
-                workplace.Worker = myMessage.Worker;
+            // Create a safe copy of the incoming message
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+
+            if (myMessage.Workplace == null) {
+                MessageBox.Show("Error: Workplace is null in AssignWorkplace!");
+                return;
             }
 
-            MessageBox.Show("Assign");
+            // Find the workplace in our local list
+            Workplace? workplace = Workplaces.FirstOrDefault(wp => wp.Id == myMessage.Workplace.Id);
+            if (workplace == null) {
+                MessageBox.Show($"Error: Workplace with ID {myMessage.Workplace.Id} not found!");
+                return;
+            }
 
-            message.Code = Mc.GetWorkerForCutting;
-            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            Request(message);
+            // Assign product and worker
+            workplace.Product = myMessage.Product;
+            workplace.Worker = myMessage.Worker;
+
+            // Continue with next step
+            myMessage.Code = GetNextProcessCode(myMessage.Product);
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            Request(myMessage);
         }
 
         // Cutting
-        //meta! sender="AgentCarpentry", id="115", type="Request"
         public void ProcessGetWorkerForCutting(MessageForm message) {
+            MessageBox.Show("ProcessGetWorkerForCutting()");
             SendWorkerToWork(message, Mc.DoCutting);
         }
 
         // Mounting
-        //meta! sender="AgentCarpentry", id="119", type="Request"
         public void ProcessGetWorkerForMounting(MessageForm message) {
+            MessageBox.Show("ProcessGetWorkerForMounting()");
             SendWorkerToWork(message, Mc.DoMounting);
         }
 
         // Assembling
-        //meta! sender="AgentCarpentry", id="118", type="Request"
         public void ProcessGetWorkerForAssembling(MessageForm message) {
+            MessageBox.Show("ProcessGetWorkerForAssembling()");
             SendWorkerToWork(message, Mc.DoAssembling);
         }
 
         // Painting
-        //meta! sender="AgentCarpentry", id="117", type="Request"
         public void ProcessGetWorkerForPainting(MessageForm message) {
+            MessageBox.Show("ProcessGetWorkerForPainting()");
             SendWorkerToWork(message, Mc.DoPainting);
         }
 
         // Pickling
-        //meta! sender="AgentCarpentry", id="120", type="Request"
         public void ProcessGetWorkerForPickling(MessageForm message) {
+            MessageBox.Show("ProcessGetWorkerForPickling()");
             SendWorkerToWork(message, Mc.DoPickling);
         }
 
-        //meta! sender="AgentCarpentry", id="170", type="Response"
         public void ProcessGetFreeWorkplace(MessageForm message) {
+            MessageBox.Show("ProcessGetFreeWorkplace()");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Workplace? workplace = GetFreeWorkplace();
 
@@ -89,8 +105,8 @@ namespace Agents.AgentWorkplaces {
             Response(myMessage);
         }
 
-        //meta! sender="AgentCarpentry", id="73", type="Notice"
         public void ProcessDeassignWorkplace(MessageForm message) {
+            MessageBox.Show("ProcessDeassignWorkplace()");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
 
             if (myMessage.Workplace != null) {
@@ -101,26 +117,27 @@ namespace Agents.AgentWorkplaces {
         }
 
         private void SendWorkerToWork(MessageForm message, int processCode) {
+            MessageBox.Show($"SendWorkerToWork() - ProcessCode: {processCode}");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             myMessage.Code = processCode;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Notice(myMessage);
         }
 
-
-        //meta! userInfo="Removed from model"
         public void ProcessInit(MessageForm message) {
+
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
         public void ProcessDefault(MessageForm message) {
+
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
+
         }
 
-        override public void ProcessMessage(MessageForm message) {
+        public override void ProcessMessage(MessageForm message) {
+            MessageBox.Show($"ProcessMessage() - Code: {message.Code}");
             switch (message.Code) {
                 case Mc.AssignWorkplace:
                     ProcessAssignWorkplace(message);
@@ -159,12 +176,24 @@ namespace Agents.AgentWorkplaces {
                     break;
             }
         }
-        //meta! tag="end"
 
         public new AgentWorkplaces MyAgent => (AgentWorkplaces)base.MyAgent;
 
         private Workplace? GetFreeWorkplace() {
+            MessageBox.Show("GetFreeWorkplace()");
             return Workplaces.FirstOrDefault(w => !w.IsOccupied);
+        }
+
+        private int GetNextProcessCode(Product? product) {
+            MessageBox.Show($"GetNextProcessCode() - State: {product?.State}");
+            return product?.State switch {
+                ProductState.Raw => Mc.GetWorkerForCutting,
+                ProductState.Cut => Mc.GetWorkerForPainting,
+                ProductState.Painted => Mc.GetWorkerForPickling,
+                ProductState.Pickled => Mc.GetWorkerForAssembling,
+                ProductState.Assembled => Mc.GetWorkerForMounting,
+                _ => Mc.GetWorkerForCutting
+            };
         }
     }
 }
