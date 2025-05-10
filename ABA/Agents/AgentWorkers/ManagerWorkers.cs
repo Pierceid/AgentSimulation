@@ -15,7 +15,6 @@ namespace Agents.AgentWorkers {
 
         public void ProcessGetWorkerForCutting(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
-            MessageBox.Show($"WP: {myMessage.Workplace}");
             MessageBox.Show("ProcessGetWorkerForCutting");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
             message.Code = Mc.GetWorkerA;
