@@ -29,14 +29,15 @@ namespace Agents.AgentWorkersA {
             InitWorkers(workersA);
         }
 
-		//meta! sender="AgentWorkers", id="159", type="Request"
-		public void ProcessGetWorkerA(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
+        //meta! sender="AgentWorkers", id="159", type="Request"
+        public void ProcessGetWorkerA(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
 
             if (availableWorker != null) {
                 availableWorker.SetProduct(myMessage.Product);
                 availableWorker.SetWorkplace(myMessage.Workplace);
+                MessageBox.Show($"Get worker A: {availableWorker.Workplace?.Id}, {availableWorker.Product?.Id}");
                 myMessage.Worker = availableWorker;
             } else {
                 myMessage.Worker = null;
@@ -45,13 +46,11 @@ namespace Agents.AgentWorkersA {
             Response(myMessage);
         }
 
-		//meta! userInfo="Process messages defined in code", id="0"
-		public void ProcessDefault(MessageForm message) {
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) { }
 
-        }
-
-		//meta! sender="AgentWorkers", id="205", type="Notice"
-		public void ProcessDeassignWorkerA(MessageForm message) {
+        //meta! sender="AgentWorkers", id="205", type="Notice"
+        public void ProcessDeassignWorkerA(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Worker != null) {
@@ -61,29 +60,26 @@ namespace Agents.AgentWorkersA {
             }
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		public void Init()
-		{
-		}
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        public void Init() {
+        }
 
-		override public void ProcessMessage(MessageForm message)
-		{
-			switch (message.Code)
-			{
-			case Mc.GetWorkerA:
-				ProcessGetWorkerA(message);
-			break;
+        override public void ProcessMessage(MessageForm message) {
+            switch (message.Code) {
+                case Mc.GetWorkerA:
+                    ProcessGetWorkerA(message);
+                    break;
 
-			case Mc.DeassignWorkerA:
-				ProcessDeassignWorkerA(message);
-			break;
+                case Mc.DeassignWorkerA:
+                    ProcessDeassignWorkerA(message);
+                    break;
 
-			default:
-				ProcessDefault(message);
-			break;
-			}
-		}
-		//meta! tag="end"
+                default:
+                    ProcessDefault(message);
+                    break;
+            }
+        }
+        //meta! tag="end"
 
         public new AgentWorkersA MyAgent {
             get {

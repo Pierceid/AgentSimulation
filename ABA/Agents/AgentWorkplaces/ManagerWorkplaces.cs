@@ -34,27 +34,15 @@ namespace Agents.AgentWorkplaces {
 
         public void ProcessAssignWorkplace(MessageForm message) {
             MessageBox.Show("ProcessAssignWorkplace()");
-
-            // Create a safe copy of the incoming message
             MyMessage myMessage = (MyMessage)message.CreateCopy();
+            Workplace? workplace = GetFreeWorkplace();
 
-            if (myMessage.Workplace == null) {
-                MessageBox.Show("Error: Workplace is null in AssignWorkplace!");
-                return;
+            if (workplace != null) {
+                workplace.Product = myMessage.Product;
+                workplace.Worker = myMessage.Worker;
             }
 
-            // Find the workplace in our local list
-            Workplace? workplace = Workplaces.FirstOrDefault(wp => wp.Id == myMessage.Workplace.Id);
-            if (workplace == null) {
-                MessageBox.Show($"Error: Workplace with ID {myMessage.Workplace.Id} not found!");
-                return;
-            }
-
-            // Assign product and worker
-            workplace.Product = myMessage.Product;
-            workplace.Worker = myMessage.Worker;
-
-            // Continue with next step
+            myMessage.Workplace = workplace;
             myMessage.Code = GetNextProcessCode(myMessage.Product);
             myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Request(myMessage);
@@ -180,7 +168,6 @@ namespace Agents.AgentWorkplaces {
         public new AgentWorkplaces MyAgent => (AgentWorkplaces)base.MyAgent;
 
         private Workplace? GetFreeWorkplace() {
-            MessageBox.Show("GetFreeWorkplace()");
             return Workplaces.FirstOrDefault(w => !w.IsOccupied);
         }
 
