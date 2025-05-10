@@ -29,7 +29,16 @@ namespace Agents.AgentWorkplaces {
         }
 
         public void ProcessAssignWorkplace(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            Workplace? workplace = Workplaces.FirstOrDefault(wp => wp.Id == myMessage.Workplace?.Id);
+
+            if (workplace != null) {
+                workplace.Product = myMessage.Product;
+                workplace.Worker = myMessage.Worker;
+            }
+
             MessageBox.Show("Assign");
+
             message.Code = Mc.GetWorkerForCutting;
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Request(message);
