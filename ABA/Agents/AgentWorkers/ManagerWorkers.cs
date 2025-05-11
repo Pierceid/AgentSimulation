@@ -80,6 +80,7 @@ namespace Agents.AgentWorkers {
         }
 
         public void ProcessAssignWorkerA(MessageForm message) {
+            MessageBox.Show("assing");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
             Notice(message);
         }

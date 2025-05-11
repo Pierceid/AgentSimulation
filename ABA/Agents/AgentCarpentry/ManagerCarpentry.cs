@@ -4,6 +4,7 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPDataStruct;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -28,14 +29,13 @@ namespace Agents.AgentCarpentry {
             QueueB.Clear();
             QueueC.Clear();
             QueueD.Clear();
-            InitWorkplaces();
+            InitWorkplaces(Workplaces.Count);
         }
 
-        public void InitWorkplaces() {
-            int count = Workplaces.Count;
+        public void InitWorkplaces(int workplaces) {
             Workplaces.Clear();
 
-            Parallel.For(0, count, w => {
+            Parallel.For(0, workplaces, w => {
                 lock (Workplaces) {
                     Workplaces.Add(new Workplace(w));
                 }
@@ -77,7 +77,9 @@ namespace Agents.AgentCarpentry {
 
         private Workplace? GetFreeWorkplace() {
             lock (Workplaces) {
-                return Workplaces.FirstOrDefault(w => !w.IsOccupied);
+                Workplace? workplace = Workplaces.FirstOrDefault(w => !w.IsOccupied);
+                workplace?.SetState(true);
+                return workplace;
             }
         }
 
@@ -100,6 +102,7 @@ namespace Agents.AgentCarpentry {
                 var freeWorkplace = GetFreeWorkplace();
                 if (freeWorkplace != null) {
                     message.Workplace = freeWorkplace;
+                    message.Product.Workplace = freeWorkplace;
                 }
             }
 
@@ -191,6 +194,7 @@ namespace Agents.AgentCarpentry {
         }
 
         public void ProcessMoveToStorage(MessageForm message) {
+            ProcessAssignWorkplace(message);
             var myMessage = (MyMessage)message;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             myMessage.Code = Mc.DoCut;
@@ -207,15 +211,14 @@ namespace Agents.AgentCarpentry {
             };
 
             if (code != -1) {
-                myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkers);
                 myMessage.Code = code;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkers);
                 Notice(myMessage);
             }
         }
 
         public void ProcessDeassignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
-
             if (myMessage.Workplace != null) {
                 ReleaseWorkplace(myMessage.Workplace);
             }

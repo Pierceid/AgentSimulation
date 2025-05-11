@@ -51,14 +51,12 @@ namespace Simulation {
 
         public void Clear() {
             var managerScope = AgentScope.MyManager as ManagerScope;
-            var managerWorkplaces = AgentWorkplaces.MyManager as ManagerWorkplaces;
             var managerWorkersA = AgentWorkersA.MyManager as ManagerWorkersA;
             var managerWorkersB = AgentWorkersB.MyManager as ManagerWorkersB;
             var managerWorkersC = AgentWorkersC.MyManager as ManagerWorkersC;
             var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
 
             managerScope?.Clear();
-            managerWorkplaces?.Clear();
             managerWorkersA?.Clear();
             managerWorkersB?.Clear();
             managerWorkersC?.Clear();
@@ -78,9 +76,9 @@ namespace Simulation {
         }
 
         public void InitWorkplaces(int workplaces) {
-            var managerWorkplaces = AgentWorkplaces.MyManager as ManagerWorkplaces;
+            var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
 
-            managerWorkplaces?.InitWorkplaces(workplaces);
+            managerCarpentry?.InitWorkplaces(workplaces);
         }
 
         public void InitSpeed(double speed) {

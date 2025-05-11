@@ -20,7 +20,9 @@ namespace Agents.AgentMovement.ContinualAssistants {
 
 		//meta! userInfo="Process messages defined in code", id="0"
 		public void ProcessDefault(MessageForm message) {
-            AssistantFinished(message);
+            var myMessage = (MyMessage)message;
+            myMessage.Workplace = myMessage.Product?.Workplace;
+            AssistantFinished(myMessage);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
