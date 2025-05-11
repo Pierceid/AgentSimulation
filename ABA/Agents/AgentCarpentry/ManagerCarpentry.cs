@@ -161,7 +161,7 @@ namespace Agents.AgentCarpentry {
 
         public void ProcessRequestWorker(MessageForm message) {
             var myMessage = (MyMessage)message;
-            myMessage.Code = myMessage.Code switch {
+            int code = myMessage.Code switch {
                 Mc.GetWorkerForCutting => Mc.GetWorkerToCut,
                 Mc.GetWorkerForPainting => Mc.GetWorkerToPaint,
                 Mc.GetWorkerForPickling => Mc.GetWorkerToPickle,
@@ -171,6 +171,7 @@ namespace Agents.AgentCarpentry {
             };
 
             if (myMessage.Code != -1) {
+                myMessage.Code = code;
                 myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkers);
                 Request(myMessage);
             }
@@ -187,22 +188,37 @@ namespace Agents.AgentCarpentry {
         }
 
         public void ProcessMoveToWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            myMessage.Code = Mc.DoPrepare;
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-            Request(myMessage);
+            ProcessAssignWorkplace(message);
+            var myMessage = (MyMessage)message.CreateCopy();
+
+            if (myMessage.Product == null) return;
+
+            int code = myMessage.Product.State switch {
+                ProductState.Raw => Mc.DoCut,
+                ProductState.Cut => Mc.DoPaint,
+                ProductState.Painted => Mc.DoPickle,
+                ProductState.Pickled => Mc.DoAssemble,
+                ProductState.Assembled => Mc.DoMount,
+                _ => -1
+            };
+
+            if (code != -1) {
+                myMessage.Code = code;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+                Request(myMessage);
+            }
         }
 
         public void ProcessMoveToStorage(MessageForm message) {
-            ProcessAssignWorkplace(message);
-            var myMessage = (MyMessage)message;
+            var myMessage = (MyMessage)message.CreateCopy();
+            myMessage.Workplace = null;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-            myMessage.Code = Mc.DoCut;
+            myMessage.Code = Mc.DoPrepare;
             Request(myMessage);
         }
 
         public void ProcessAssignWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message;
+            var myMessage = (MyMessage)message.CreateCopy();
             int code = myMessage.Worker?.Group switch {
                 WorkerGroup.A => Mc.AssignWorkerA,
                 WorkerGroup.B => Mc.AssignWorkerB,
@@ -218,7 +234,7 @@ namespace Agents.AgentCarpentry {
         }
 
         public void ProcessDeassignWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message;
+            var myMessage = (MyMessage)message.CreateCopy();
             if (myMessage.Workplace != null) {
                 ReleaseWorkplace(myMessage.Workplace);
             }
@@ -239,14 +255,16 @@ namespace Agents.AgentCarpentry {
 
             if (myMessage.Product == null) return;
 
-            AdvanceProductState(myMessage.Product);
+            var msg = (MyMessage)myMessage.CreateCopy();
 
-            if (myMessage.Product.State != ProductState.Finished) {
+            if (msg.Product == null) return;
+
+            if (msg.Product.State != ProductState.Finished) {
                 var next = new MyMessage(MySim) {
-                    Order = myMessage.Order,
-                    Product = myMessage.Product
+                    Order = msg.Order,
+                    Product = msg.Product
                 };
-                var queue = GetQueueForProduct(myMessage.Product);
+                var queue = GetQueueForProduct(msg.Product);
                 queue.AddLast(next);
                 CheckQueueAndProcess(next);
             }
@@ -254,7 +272,7 @@ namespace Agents.AgentCarpentry {
 
         private void ProcessStartWorking(MessageForm message) {
             var myMessage = (MyMessage)message;
-            myMessage.Code = myMessage.Code switch {
+            int code = myMessage.Code switch {
                 Mc.DoPreparing => Mc.DoPrepare,
                 Mc.DoCutting => Mc.DoCut,
                 Mc.DoPainting => Mc.DoPaint,
@@ -265,6 +283,7 @@ namespace Agents.AgentCarpentry {
             };
 
             if (myMessage.Code != -1) {
+                myMessage.Code = code;
                 myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
                 Request(myMessage);
             }
@@ -274,13 +293,20 @@ namespace Agents.AgentCarpentry {
             var myMessage = (MyMessage)message;
             if (myMessage.Product == null) return;
 
-            if (myMessage.Code != Mc.DoPrepare) {
-                AdvanceProductState(myMessage.Product);
+            if (myMessage.Code == Mc.DoPrepare) {
+                myMessage.Code = Mc.MoveToWorkplace;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
+                Request(myMessage);
+                return;
             }
 
-            myMessage.Code = Mc.DeassignWorkplace;
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            Notice(myMessage);
+            AdvanceProductState(myMessage.Product);
+
+            var deassignMsg = new MyMessage(myMessage) {
+                Code = Mc.DeassignWorkplace,
+                Addressee = MySim.FindAgent(SimId.AgentCarpentry)
+            };
+            Request(deassignMsg);
         }
 
         public void ProcessDefault(MessageForm message) { }
@@ -288,47 +314,52 @@ namespace Agents.AgentCarpentry {
         public void Init() { }
 
         public override void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.ProcessOrder: ProcessProcessOrder(message); break;
-                case Mc.MoveToWorkplace: ProcessMoveToWorkplace(message); break;
-                case Mc.MoveToStorage: ProcessMoveToStorage(message); break;
-                case Mc.Init: ProcessInit(message); break;
+            try {
+                switch (message.Code) {
+                    case Mc.ProcessOrder: ProcessProcessOrder(message); break;
+                    case Mc.MoveToWorkplace: ProcessMoveToWorkplace(message); break;
+                    case Mc.MoveToStorage: ProcessMoveToStorage(message); break;
+                    case Mc.Init: ProcessInit(message); break;
 
-                case Mc.GetWorkerForCutting:
-                case Mc.GetWorkerForPainting:
-                case Mc.GetWorkerForPickling:
-                case Mc.GetWorkerForAssembling:
-                case Mc.GetWorkerForMounting:
-                    ProcessRequestWorker(message); break;
+                    case Mc.GetWorkerForCutting:
+                    case Mc.GetWorkerForPainting:
+                    case Mc.GetWorkerForPickling:
+                    case Mc.GetWorkerForAssembling:
+                    case Mc.GetWorkerForMounting:
+                        ProcessRequestWorker(message); break;
 
-                case Mc.GetWorkerToCut:
-                case Mc.GetWorkerToPaint:
-                case Mc.GetWorkerToPickle:
-                case Mc.GetWorkerToAssemble:
-                case Mc.GetWorkerToMount:
-                    ProcessResponseWorker(message); break;
+                    case Mc.GetWorkerToCut:
+                    case Mc.GetWorkerToPaint:
+                    case Mc.GetWorkerToPickle:
+                    case Mc.GetWorkerToAssemble:
+                    case Mc.GetWorkerToMount:
+                        ProcessResponseWorker(message); break;
 
-                case Mc.DoPreparing:
-                case Mc.DoCutting:
-                case Mc.DoPainting:
-                case Mc.DoPickling:
-                case Mc.DoAssembling:
-                case Mc.DoMounting:
-                    ProcessStartWorking(message); break;
+                    case Mc.DoPreparing:
+                    case Mc.DoCutting:
+                    case Mc.DoPainting:
+                    case Mc.DoPickling:
+                    case Mc.DoAssembling:
+                    case Mc.DoMounting:
+                        ProcessStartWorking(message); break;
 
-                case Mc.DoPrepare:
-                case Mc.DoCut:
-                case Mc.DoPaint:
-                case Mc.DoPickle:
-                case Mc.DoAssemble:
-                case Mc.DoMount:
-                    ProcessFinishWorking(message); break;
+                    case Mc.DoPrepare:
+                    case Mc.DoCut:
+                    case Mc.DoPaint:
+                    case Mc.DoPickle:
+                    case Mc.DoAssemble:
+                    case Mc.DoMount:
+                        ProcessFinishWorking(message); break;
 
-                case Mc.DeassignWorkplace:
-                    ProcessDeassignWorkplace(message); break;
+                    case Mc.DeassignWorkplace:
+                        ProcessDeassignWorkplace(message); break;
 
-                default:
-                    ProcessDefault(message); break;
+                    default:
+                        ProcessDefault(message); break;
+                }
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+                throw;
             }
         }
 
