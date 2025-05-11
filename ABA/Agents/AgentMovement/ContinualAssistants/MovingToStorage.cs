@@ -11,39 +11,37 @@ namespace Agents.AgentMovement.ContinualAssistants {
             base.PrepareReplication();
         }
 
-        //meta! sender="AgentMovement", id="111", type="Start"
-        public void ProcessStart(MessageForm message) {
+		//meta! sender="AgentMovement", id="111", type="Start"
+		public void ProcessStart(MessageForm message) {
             message.Code = Mc.Finish;
             double duration = ((MySimulation)MySim).Generators.WorkerMoveToStorageTime.Next();
             Hold(duration, message);
         }
 
-        //meta! sender="self", id="X", type="Finish"
+		//meta! userInfo="Removed from model"
         public void ProcessFinish(MessageForm message) {
             AssistantFinished(message);
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.Start:
-                    ProcessStart(message);
-                    break;
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.Start:
+				ProcessStart(message);
+			break;
 
-                case Mc.Finish:
-                    ProcessFinish(message);
-                    break;
-
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
 
         public new AgentMovement MyAgent {
             get { return (AgentMovement)base.MyAgent; }

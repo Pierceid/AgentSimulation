@@ -9,8 +9,6 @@ using Agents.AgentWorkplaces;
 using Agents.AgentProcesses;
 using Agents.AgentModel;
 using Agents.AgentMovement;
-using OSPStat;
-using AgentSimulation.Generators;
 
 namespace Simulation {
     public class MySimulation : OSPABA.Simulation {

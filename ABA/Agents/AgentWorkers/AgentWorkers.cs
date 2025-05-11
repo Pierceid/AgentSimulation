@@ -16,17 +16,20 @@ namespace Agents.AgentWorkers {
 		private void Init()
 		{
 			new ManagerWorkers(SimId.ManagerWorkers, MySim, this);
-			AddOwnMessage(Mc.GetWorkerForCutting);
-			AddOwnMessage(Mc.DeassignWorkerA);
-			AddOwnMessage(Mc.GetWorkerForPainting);
-			AddOwnMessage(Mc.DeassignWorkerC);
-			AddOwnMessage(Mc.DeassignWorkerB);
-			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.GetWorkerToPaint);
+			AddOwnMessage(Mc.GetWorkerToMount);
 			AddOwnMessage(Mc.GetWorkerC);
 			AddOwnMessage(Mc.GetWorkerB);
 			AddOwnMessage(Mc.GetWorkerA);
-			AddOwnMessage(Mc.GetWorkerForAssembling);
-			AddOwnMessage(Mc.GetWorkerForPickling);
+			AddOwnMessage(Mc.AssignWorkerA);
+			AddOwnMessage(Mc.AssignWorkerB);
+			AddOwnMessage(Mc.AssignWorkerC);
+			AddOwnMessage(Mc.GetWorkerToAssemble);
+			AddOwnMessage(Mc.DeassignWorkerA);
+			AddOwnMessage(Mc.GetWorkerToPickle);
+			AddOwnMessage(Mc.DeassignWorkerC);
+			AddOwnMessage(Mc.DeassignWorkerB);
+			AddOwnMessage(Mc.GetWorkerToCut);
 		}
 		//meta! tag="end"
     }

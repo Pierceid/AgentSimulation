@@ -78,6 +78,18 @@ namespace Agents.AgentWorkers {
             Notice(message);
         }
 
+        public void ProcessAssignWorkerA(MessageForm message) {
+
+        }
+
+        public void ProcessAssignWorkerB(MessageForm message) {
+
+        }
+
+        public void ProcessAssignWorkerC(MessageForm message) {
+
+        }
+
         public void ProcessInit(MessageForm message) {
 
         }

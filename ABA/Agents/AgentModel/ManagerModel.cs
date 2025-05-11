@@ -1,6 +1,5 @@
 using OSPABA;
 using Simulation;
-using System.Windows;
 namespace Agents.AgentModel {
     //meta! id="2"
     public class ManagerModel : OSPABA.Manager {
@@ -47,12 +46,12 @@ namespace Agents.AgentModel {
 		{
 			switch (message.Code)
 			{
-			case Mc.ProcessOrder:
-				ProcessProcessOrder(message);
-			break;
-
 			case Mc.OrderEnter:
 				ProcessOrderEnter(message);
+			break;
+
+			case Mc.ProcessOrder:
+				ProcessProcessOrder(message);
 			break;
 
 			default:

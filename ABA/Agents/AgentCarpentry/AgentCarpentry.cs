@@ -21,8 +21,8 @@ namespace Agents.AgentCarpentry {
 			AddOwnMessage(Mc.DoAssembling);
 			AddOwnMessage(Mc.GetWorkerForAssembling);
 			AddOwnMessage(Mc.MoveToWorkplace);
-			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.DoPrepare);
+			AddOwnMessage(Mc.Init);
 			AddOwnMessage(Mc.DoMounting);
 			AddOwnMessage(Mc.DoCutting);
 			AddOwnMessage(Mc.DoPaint);
@@ -34,8 +34,8 @@ namespace Agents.AgentCarpentry {
 			AddOwnMessage(Mc.GetWorkerForCutting);
 			AddOwnMessage(Mc.DoPickling);
 			AddOwnMessage(Mc.GetWorkerToMount);
-			AddOwnMessage(Mc.DoCut);
 			AddOwnMessage(Mc.GetWorkerForMounting);
+			AddOwnMessage(Mc.DoCut);
 			AddOwnMessage(Mc.DoMount);
 			AddOwnMessage(Mc.GetWorkerToAssemble);
 			AddOwnMessage(Mc.GetFreeWorkplace);

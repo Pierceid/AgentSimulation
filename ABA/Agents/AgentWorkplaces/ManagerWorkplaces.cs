@@ -171,4 +171,52 @@ namespace Agents.AgentWorkplaces {
             };
         }
     }
+		//meta! sender="AgentCarpentry", id="115", type="Response"
+		public void ProcessGetWorkerForCutting(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="170", type="Request"
+		public void ProcessGetFreeWorkplace(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="117", type="Response"
+		public void ProcessGetWorkerForPainting(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="119", type="Response"
+		public void ProcessGetWorkerForMounting(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="257", type="Notice"
+		public void ProcessAssignWorkplace(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="118", type="Response"
+		public void ProcessGetWorkerForAssembling(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="120", type="Response"
+		public void ProcessGetWorkerForPickling(MessageForm message)
+		{
+		}
+
+		//meta! sender="AgentCarpentry", id="73", type="Notice"
+		public void ProcessDeassignWorkplace(MessageForm message)
+		{
+		}
+
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			}
+		}
+
 }

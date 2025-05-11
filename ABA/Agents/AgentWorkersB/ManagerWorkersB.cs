@@ -27,8 +27,8 @@ namespace Agents.AgentWorkersB {
             InitWorkers(count);
         }
 
-        //meta! sender="AgentWorkers", id="157", type="Request"
-        public void ProcessGetWorkerB(MessageForm message) {
+		//meta! sender="AgentWorkers", id="157", type="Request"
+		public void ProcessGetWorkerB(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
 
@@ -43,8 +43,8 @@ namespace Agents.AgentWorkersB {
             Response(myMessage);
         }
 
-        //meta! sender="AgentWorkers", id="204", type="Notice"
-        public void ProcessDeassignWorkerB(MessageForm message) {
+		//meta! sender="AgentWorkers", id="204", type="Notice"
+		public void ProcessDeassignWorkerB(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Worker != null) {
@@ -54,29 +54,32 @@ namespace Agents.AgentWorkersB {
             }
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) { }
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) { }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.GetWorkerB:
-                    ProcessGetWorkerB(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.DeassignWorkerB:
+				ProcessDeassignWorkerB(message);
+			break;
 
-                case Mc.DeassignWorkerB:
-                    ProcessDeassignWorkerB(message);
-                    break;
+			case Mc.GetWorkerB:
+				ProcessGetWorkerB(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
 
         public new AgentWorkersB MyAgent => (AgentWorkersB)base.MyAgent;
     }

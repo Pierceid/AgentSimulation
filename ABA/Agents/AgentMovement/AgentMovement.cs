@@ -17,8 +17,8 @@ namespace Agents.AgentMovement {
 		private void Init()
 		{
 			new ManagerMovement(SimId.ManagerMovement, MySim, this);
-			new MovingToWorkplace(SimId.MovingToWorkplace, MySim, this);
 			new MovingToStorage(SimId.MovingToStorage, MySim, this);
+			new MovingToWorkplace(SimId.MovingToWorkplace, MySim, this);
 			AddOwnMessage(Mc.MoveToStorage);
 			AddOwnMessage(Mc.MoveToWorkplace);
 		}
