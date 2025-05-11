@@ -52,12 +52,12 @@ namespace Agents.AgentCarpentry {
         };
 
         private int GetWorkerRequestCode(Product product) => product.State switch {
-            ProductState.Raw => Mc.GetWorkerForCutting,
-            ProductState.Cut => Mc.GetWorkerForPainting,
-            ProductState.Painted => Mc.GetWorkerForPickling,
-            ProductState.Pickled => Mc.GetWorkerForAssembling,
-            ProductState.Assembled => Mc.GetWorkerForMounting,
-            _ => Mc.GetWorkerForCutting
+            ProductState.Raw => Mc.GetWorkerToCut,
+            ProductState.Cut => Mc.GetWorkerToPaint,
+            ProductState.Painted => Mc.GetWorkerToPickle,
+            ProductState.Pickled => Mc.GetWorkerToAssemble,
+            ProductState.Assembled => Mc.GetWorkerToMount,
+            _ => Mc.GetWorkerToCut
         };
 
         private void AdvanceProductState(Product product) {
@@ -140,8 +140,12 @@ namespace Agents.AgentCarpentry {
 
         public void ProcessResourceAcquired(MessageForm message) {
             var myMessage = (MyMessage)message;
+
+            if (myMessage.Product == null) return;
+
             var queue = GetQueueForProduct(myMessage.Product);
             var queued = queue.FirstOrDefault(q => q.Product?.Id == myMessage.Product.Id);
+
             if (queued == null) return;
 
             if (myMessage.Worker != null)
@@ -191,6 +195,22 @@ namespace Agents.AgentCarpentry {
             myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             myMessage.Code = Mc.DoCut;
             Request(myMessage);
+        }
+
+        public void ProcessAssignWorkplace(MessageForm message) {
+            var myMessage = (MyMessage)message;
+            int code = myMessage.Worker?.Group switch {
+                WorkerGroup.A => Mc.AssignWorkerA,
+                WorkerGroup.B => Mc.AssignWorkerB,
+                WorkerGroup.C => Mc.AssignWorkerC,
+                _ => -1
+            };
+
+            if (code != -1) {
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+                myMessage.Code = code;
+                Notice(myMessage);
+            }
         }
 
         public void ProcessDeassignWorkplace(MessageForm message) {

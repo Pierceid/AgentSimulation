@@ -18,6 +18,7 @@ namespace Agents.AgentWorkersA {
 			new ManagerWorkersA(SimId.ManagerWorkersA, MySim, this);
 			AddOwnMessage(Mc.DeassignWorkerA);
 			AddOwnMessage(Mc.GetWorkerA);
+			AddOwnMessage(Mc.AssignWorkerA);
 		}
 		//meta! tag="end"
     }

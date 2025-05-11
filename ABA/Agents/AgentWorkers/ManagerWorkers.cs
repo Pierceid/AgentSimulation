@@ -1,5 +1,6 @@
 using OSPABA;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentWorkers {
     public class ManagerWorkers : OSPABA.Manager {
@@ -79,15 +80,18 @@ namespace Agents.AgentWorkers {
         }
 
         public void ProcessAssignWorkerA(MessageForm message) {
-
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
+            Notice(message);
         }
 
         public void ProcessAssignWorkerB(MessageForm message) {
-
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
+            Notice(message);
         }
 
         public void ProcessAssignWorkerC(MessageForm message) {
-
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
+            Notice(message);
         }
 
         public void ProcessInit(MessageForm message) {
@@ -104,17 +108,20 @@ namespace Agents.AgentWorkers {
 
         override public void ProcessMessage(MessageForm message) {
             switch (message.Code) {
-                case Mc.GetWorkerB: ProcessGetWorkerB(message); break;
-                case Mc.GetWorkerForPickling: ProcessGetWorkerForPickling(message); break;
-                case Mc.GetWorkerC: ProcessGetWorkerC(message); break;
                 case Mc.GetWorkerA: ProcessGetWorkerA(message); break;
-                case Mc.GetWorkerForCutting: ProcessGetWorkerForCutting(message); break;
-                case Mc.DeassignWorkerB: ProcessDeassignWorkerB(message); break;
+                case Mc.GetWorkerC: ProcessGetWorkerC(message); break;
+                case Mc.GetWorkerB: ProcessGetWorkerB(message); break;
+                case Mc.AssignWorkerA: ProcessAssignWorkerA(message); break;
+                case Mc.AssignWorkerB: ProcessAssignWorkerB(message); break;
+                case Mc.AssignWorkerC: ProcessAssignWorkerC(message); break;
                 case Mc.DeassignWorkerA: ProcessDeassignWorkerA(message); break;
-                case Mc.GetWorkerForAssembling: ProcessGetWorkerForAssembling(message); break;
+                case Mc.DeassignWorkerB: ProcessDeassignWorkerB(message); break;
                 case Mc.DeassignWorkerC: ProcessDeassignWorkerC(message); break;
-                case Mc.GetWorkerForPainting: ProcessGetWorkerForPainting(message); break;
-                case Mc.GetWorkerForMounting: ProcessGetWorkerForMounting(message); break;
+                case Mc.GetWorkerToCut: ProcessGetWorkerForCutting(message); break;
+                case Mc.GetWorkerToPaint: ProcessGetWorkerForPainting(message); break;
+                case Mc.GetWorkerToPickle: ProcessGetWorkerForPickling(message); break;
+                case Mc.GetWorkerToAssemble: ProcessGetWorkerForAssembling(message); break;
+                case Mc.GetWorkerToMount: ProcessGetWorkerForMounting(message); break;
                 default: ProcessDefault(message); break;
             }
         }
