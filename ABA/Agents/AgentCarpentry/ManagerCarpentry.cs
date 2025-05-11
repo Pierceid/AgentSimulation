@@ -234,7 +234,7 @@ namespace Agents.AgentCarpentry {
         }
 
         public void ProcessDeassignWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
+            var myMessage = (MyMessage)message;
             if (myMessage.Workplace != null) {
                 ReleaseWorkplace(myMessage.Workplace);
             }
@@ -301,6 +301,12 @@ namespace Agents.AgentCarpentry {
             }
 
             AdvanceProductState(myMessage.Product);
+
+            var queue = GetQueueForProduct(myMessage.Product);
+            queue.AddLast(myMessage);
+
+            var next = new MyMessage(myMessage);
+            CheckQueueAndProcess(next);
 
             var deassignMsg = new MyMessage(myMessage) {
                 Code = Mc.DeassignWorkplace,
