@@ -7,16 +7,12 @@ namespace Simulation {
         public Product? Product { get; set; }
         public Worker? Worker { get; set; }
         public Workplace? Workplace { get; set; }
-        public bool WorkerRequested { get; set; }
-        public bool WorkplaceRequested { get; set; }
 
         public MyMessage(OSPABA.Simulation mySim) : base(mySim) {
             Worker = null;
             Order = null;
             Product = null;
             Workplace = null;
-            WorkerRequested = false;
-            WorkplaceRequested = false;
         }
 
         public MyMessage(MyMessage original) : base(original) {
@@ -24,8 +20,6 @@ namespace Simulation {
             Product = original.Product;
             Worker = original.Worker;
             Workplace = original.Workplace;
-            WorkerRequested = original.WorkerRequested;
-            WorkplaceRequested = original.WorkplaceRequested;
         }
 
         public MyMessage(MessageForm original) : base(original) {
@@ -33,8 +27,6 @@ namespace Simulation {
             Order = ((MyMessage)original).Order;
             Product = ((MyMessage)original).Product;
             Workplace = ((MyMessage)original).Workplace;
-            WorkerRequested = ((MyMessage)original).WorkerRequested;
-            WorkplaceRequested = ((MyMessage)original).WorkplaceRequested;
         }
 
         override public MessageForm CreateCopy() {
@@ -49,8 +41,6 @@ namespace Simulation {
             Order = original.Order;
             Product = original.Product;
             Workplace = original.Workplace;
-            WorkerRequested = original.WorkerRequested;
-            WorkplaceRequested = original.WorkplaceRequested;
         }
     }
 }

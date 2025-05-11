@@ -2,7 +2,6 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
-using System.Windows;
 
 namespace Agents.AgentWorkersA {
     //meta! id="149"
@@ -15,7 +14,6 @@ namespace Agents.AgentWorkersA {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-
             PetriNet?.Clear();
         }
 
@@ -37,7 +35,6 @@ namespace Agents.AgentWorkersA {
             if (availableWorker != null) {
                 availableWorker.SetProduct(myMessage.Product);
                 availableWorker.SetWorkplace(myMessage.Workplace);
-                MessageBox.Show($"Get worker A: {availableWorker.Workplace?.Id}, {availableWorker.Product?.Id}");
                 myMessage.Worker = availableWorker;
             } else {
                 myMessage.Worker = null;

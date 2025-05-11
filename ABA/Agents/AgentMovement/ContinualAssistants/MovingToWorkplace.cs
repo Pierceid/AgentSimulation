@@ -1,5 +1,6 @@
 using OSPABA;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentMovement.ContinualAssistants {
     //meta! id="101"
@@ -11,33 +12,39 @@ namespace Agents.AgentMovement.ContinualAssistants {
             base.PrepareReplication();
         }
 
-		//meta! sender="AgentMovement", id="102", type="Start"
-		public void ProcessStart(MessageForm message) {
-            // Simulate movement duration to workplace
+        //meta! sender="AgentMovement", id="102", type="Start"
+        public void ProcessStart(MessageForm message) {
+            message.Code = Mc.Finish;
             double duration = ((MySimulation)MySim).Generators.WorkerMoveBetweenStationsTime.Next();
-
             Hold(duration, message);
         }
-		//meta! userInfo="Process messages defined in code", id="0"
-		public void ProcessDefault(MessageForm message) {
 
+        //meta! sender="self", id="X", type="Finish"
+        public void ProcessFinish(MessageForm message) {
+            AssistantFinished(message);
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		override public void ProcessMessage(MessageForm message)
-		{
-			switch (message.Code)
-			{
-			case Mc.Start:
-				ProcessStart(message);
-			break;
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) {
+        }
 
-			default:
-				ProcessDefault(message);
-			break;
-			}
-		}
-		//meta! tag="end"
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        override public void ProcessMessage(MessageForm message) {
+            switch (message.Code) {
+                case Mc.Start:
+                    ProcessStart(message);
+                    break;
+
+                case Mc.Finish:
+                    ProcessFinish(message);
+                    break;
+
+                default:
+                    ProcessDefault(message);
+                    break;
+            }
+        }
+        //meta! tag="end"
 
         public new AgentMovement MyAgent {
             get { return (AgentMovement)base.MyAgent; }

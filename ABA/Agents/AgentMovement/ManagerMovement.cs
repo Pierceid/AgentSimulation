@@ -1,5 +1,6 @@
 using OSPABA;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentMovement {
     //meta! id="43"
@@ -20,27 +21,28 @@ namespace Agents.AgentMovement {
 
         //meta! sender="MovingToWorkplace", id="102", type="Finish"
         public void ProcessFinishMovingToWorkplace(MessageForm message) {
-            // Reply back to AgentCarpentry that movement finished
             message.Code = Mc.MoveToWorkplace;
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Response(message);
         }
 
         //meta! sender="MovingToStorage", id="111", type="Finish"
         public void ProcessFinishMovingToStorage(MessageForm message) {
             message.Code = Mc.MoveToStorage;
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Response(message);
         }
 
         //meta! sender="AgentCarpentry", id="55", type="Request"
         public void ProcessMoveToWorkplace(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.MovingToWorkplace);
+            message.Addressee = MyAgent.FindAssistant(SimId.MovingToWorkplace);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
 
         //meta! sender="AgentCarpentry", id="112", type="Request"
         public void ProcessMoveToStorage(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.MovingToStorage);
+            message.Addressee = MyAgent.FindAssistant(SimId.MovingToStorage);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
