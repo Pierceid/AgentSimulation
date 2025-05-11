@@ -1,6 +1,7 @@
 using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentProcesses.ContinualAssistants {
     //meta! id="222"
@@ -14,8 +15,10 @@ namespace Agents.AgentProcesses.ContinualAssistants {
 
 		//meta! sender="AgentProcesses", id="223", type="Start"
 		public void ProcessStart(MessageForm message) {
+            MessageBox.Show("cutting");
             MyMessage myMessage = (MyMessage)message;
             MySimulation mySimulation = (MySimulation)MySim;
+            myMessage.Code = Mc.Finish;
 
             if (myMessage.Product == null) return;
 
@@ -26,11 +29,12 @@ namespace Agents.AgentProcesses.ContinualAssistants {
                 _ => 0
             };
 
-            Hold(cuttingTime, message);
+            Hold(cuttingTime, myMessage);
         }
 
 		//meta! userInfo="Process messages defined in code", id="0"
 		public void ProcessDefault(MessageForm message) {
+            AssistantFinished(message);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"

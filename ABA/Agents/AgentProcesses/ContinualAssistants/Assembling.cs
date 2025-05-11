@@ -17,6 +17,7 @@ namespace Agents.AgentProcesses.ContinualAssistants {
 		public void ProcessStart(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
             MySimulation mySimulation = (MySimulation)MySim;
+            myMessage.Code = Mc.Finish;
 
             if (myMessage.Product == null) return;
 
@@ -27,15 +28,16 @@ namespace Agents.AgentProcesses.ContinualAssistants {
                 _ => 0
             };
 
-            Hold(assemblingTime, message);
+            Hold(assemblingTime, myMessage);
         }
 
 		//meta! userInfo="Process messages defined in code", id="0"
 		public void ProcessDefault(MessageForm message) {
+            AssistantFinished(message);
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		override public void ProcessMessage(MessageForm message)
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        override public void ProcessMessage(MessageForm message)
 		{
 			switch (message.Code)
 			{

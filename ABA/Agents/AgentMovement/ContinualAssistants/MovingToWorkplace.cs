@@ -18,13 +18,9 @@ namespace Agents.AgentMovement.ContinualAssistants {
             Hold(duration, message);
         }
 
-		//meta! userInfo="Removed from model"
-        public void ProcessFinish(MessageForm message) {
-            AssistantFinished(message);
-        }
-
 		//meta! userInfo="Process messages defined in code", id="0"
 		public void ProcessDefault(MessageForm message) {
+            AssistantFinished(message);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"

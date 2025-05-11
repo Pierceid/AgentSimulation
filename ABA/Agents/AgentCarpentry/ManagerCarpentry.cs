@@ -4,7 +4,6 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPDataStruct;
 using Simulation;
-using System.Windows;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -176,6 +175,7 @@ namespace Agents.AgentCarpentry {
 
         public void ProcessResponseWorker(MessageForm message) {
             var myMessage = (MyMessage)message;
+
             if (myMessage.Worker == null || myMessage.Product == null) return;
 
             myMessage.Code = Mc.MoveToStorage;
