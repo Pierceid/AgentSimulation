@@ -1,4 +1,3 @@
-using System.Windows;
 using OSPABA;
 using Simulation;
 
@@ -14,78 +13,66 @@ namespace Agents.AgentWorkers {
         }
 
         public void ProcessGetWorkerForCutting(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message.CreateCopy();
-            MessageBox.Show("ProcessGetWorkerForCutting");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
             message.Code = Mc.GetWorkerA;
             Request(message);
         }
 
         public void ProcessGetWorkerForPainting(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForPainting");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
             message.Code = Mc.GetWorkerC;
             Request(message);
         }
 
         public void ProcessGetWorkerForMounting(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForMounting");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
             message.Code = Mc.GetWorkerC;
             Request(message);
         }
 
         public void ProcessGetWorkerForAssembling(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForAssembling");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
             message.Code = Mc.GetWorkerB;
             Request(message);
         }
 
         public void ProcessGetWorkerForPickling(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForPickling");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
             message.Code = Mc.GetWorkerC;
             Request(message);
         }
 
         public void ProcessGetWorkerA(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerA");
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             message.Code = Mc.GetWorkerToCut;
             Response(message);
         }
 
         public void ProcessGetWorkerB(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerB");
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             message.Code = Mc.GetWorkerToPaint;
             Response(message);
         }
 
         public void ProcessGetWorkerC(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerC");
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             message.Code = Mc.GetWorkerToMount;
             Response(message);
         }
 
         public void ProcessDeassignWorkerA(MessageForm message) {
-            MessageBox.Show("ProcessDeassignWorkerA");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
             message.Code = Mc.DeassignWorkerA;
             Notice(message);
         }
 
         public void ProcessDeassignWorkerB(MessageForm message) {
-            MessageBox.Show("ProcessDeassignWorkerB");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
             message.Code = Mc.DeassignWorkerB;
             Notice(message);
         }
 
         public void ProcessDeassignWorkerC(MessageForm message) {
-            MessageBox.Show("ProcessDeassignWorkerC");
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
             message.Code = Mc.DeassignWorkerC;
             Notice(message);
@@ -104,7 +91,6 @@ namespace Agents.AgentWorkers {
         }
 
         override public void ProcessMessage(MessageForm message) {
-            MessageBox.Show($"ProcessMessage - Code: {message.Code}");
             switch (message.Code) {
                 case Mc.GetWorkerB: ProcessGetWorkerB(message); break;
                 case Mc.GetWorkerForPickling: ProcessGetWorkerForPickling(message); break;

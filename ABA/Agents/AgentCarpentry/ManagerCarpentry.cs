@@ -11,6 +11,7 @@ namespace Agents.AgentCarpentry {
         public SimQueue<MyMessage> QueueB { get; } = new();
         public SimQueue<MyMessage> QueueC { get; } = new();
         public SimQueue<MyMessage> QueueD { get; } = new();
+        public List<Workplace> Workplaces { get; set; } = new();
 
         public ManagerCarpentry(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
             Init();
@@ -27,6 +28,18 @@ namespace Agents.AgentCarpentry {
             QueueB.Clear();
             QueueC.Clear();
             QueueD.Clear();
+            InitWorkplaces();
+        }
+
+        public void InitWorkplaces() {
+            int count = Workplaces.Count;
+            Workplaces.Clear();
+
+            Parallel.For(0, count, w => {
+                lock (Workplaces) {
+                    Workplaces.Add(new Workplace(w));
+                }
+            });
         }
 
         private SimQueue<MyMessage> GetQueueForProduct(Product product) => product.State switch {
@@ -61,6 +74,19 @@ namespace Agents.AgentCarpentry {
             };
         }
 
+        private Workplace? GetFreeWorkplace() {
+            lock (Workplaces) {
+                return Workplaces.FirstOrDefault(w => !w.IsOccupied);
+            }
+        }
+
+        private void ReleaseWorkplace(Workplace workplace) {
+            lock (Workplaces) {
+                workplace.SetState(false);
+                workplace.Product = null;
+            }
+        }
+
         private void CheckQueueAndProcess(MyMessage message) {
             if (message.Product == null) return;
 
@@ -80,10 +106,10 @@ namespace Agents.AgentCarpentry {
 
             if (message.Workplace == null && !message.WorkplaceRequested) {
                 message.WorkplaceRequested = true;
-                Request(new MyMessage(message) {
-                    Code = Mc.GetFreeWorkplace,
-                    Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
-                });
+                var freeWorkplace = GetFreeWorkplace();
+                if (freeWorkplace != null) {
+                    message.Workplace = freeWorkplace;
+                }
             }
 
             if (message.Worker == null && !message.WorkerRequested) {
@@ -92,6 +118,10 @@ namespace Agents.AgentCarpentry {
                     Code = GetWorkerRequestCode(message.Product),
                     Addressee = MySim.FindAgent(SimId.AgentWorkers)
                 });
+            }
+
+            if (message.Worker != null && message.Workplace != null) {
+                CheckQueueAndProcess(message);
             }
         }
 
@@ -147,18 +177,7 @@ namespace Agents.AgentCarpentry {
             if (queued == null) return;
 
             queued.Worker = myMessage.Worker;
-
-            Request(new MyMessage(myMessage) {
-                Code = Mc.MoveToWorkplace,
-                Addressee = MySim.FindAgent(SimId.AgentMovement)
-            });
-        }
-
-        public void ProcessGetWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message;
-            myMessage.Code = Mc.GetWorkerToCut;
-            myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            Request(myMessage);
+            CheckQueueAndProcess(queued);
         }
 
         public void ProcessMoveToWorkplace(MessageForm message) {
@@ -173,10 +192,9 @@ namespace Agents.AgentCarpentry {
         public void ProcessDeassignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
 
-            Notice(new MyMessage(myMessage) {
-                Code = Mc.DeassignWorkplace,
-                Addressee = MySim.FindAgent(SimId.AgentWorkplaces)
-            });
+            if (myMessage.Workplace != null) {
+                ReleaseWorkplace(myMessage.Workplace);
+            }
 
             var code = myMessage.Worker?.Group switch {
                 WorkerGroup.A => Mc.DeassignWorkerA,
@@ -243,7 +261,6 @@ namespace Agents.AgentCarpentry {
 
         public override void ProcessMessage(MessageForm message) {
             switch (message.Code) {
-                case Mc.GetFreeWorkplace: ProcessGetWorkplace(message); break;
                 case Mc.ProcessOrder: ProcessProcessOrder(message); break;
                 case Mc.MoveToWorkplace: ProcessMoveToWorkplace(message); break;
                 case Mc.MoveToStorage: ProcessMoveToStorage(message); break;

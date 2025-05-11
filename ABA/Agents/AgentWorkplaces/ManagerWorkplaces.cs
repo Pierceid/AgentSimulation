@@ -2,7 +2,6 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
-using System.Windows;
 
 namespace Agents.AgentWorkplaces {
     //meta! id="39"
@@ -33,7 +32,6 @@ namespace Agents.AgentWorkplaces {
         }
 
         public void ProcessAssignWorkplace(MessageForm message) {
-            MessageBox.Show("ProcessAssignWorkplace()");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Workplace? workplace = GetFreeWorkplace();
 
@@ -50,36 +48,30 @@ namespace Agents.AgentWorkplaces {
 
         // Cutting
         public void ProcessGetWorkerForCutting(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForCutting()");
             SendWorkerToWork(message, Mc.DoCutting);
         }
 
         // Mounting
         public void ProcessGetWorkerForMounting(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForMounting()");
             SendWorkerToWork(message, Mc.DoMounting);
         }
 
         // Assembling
         public void ProcessGetWorkerForAssembling(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForAssembling()");
             SendWorkerToWork(message, Mc.DoAssembling);
         }
 
         // Painting
         public void ProcessGetWorkerForPainting(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForPainting()");
             SendWorkerToWork(message, Mc.DoPainting);
         }
 
         // Pickling
         public void ProcessGetWorkerForPickling(MessageForm message) {
-            MessageBox.Show("ProcessGetWorkerForPickling()");
             SendWorkerToWork(message, Mc.DoPickling);
         }
 
         public void ProcessGetFreeWorkplace(MessageForm message) {
-            MessageBox.Show("ProcessGetFreeWorkplace()");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Workplace? workplace = GetFreeWorkplace();
 
@@ -94,7 +86,6 @@ namespace Agents.AgentWorkplaces {
         }
 
         public void ProcessDeassignWorkplace(MessageForm message) {
-            MessageBox.Show("ProcessDeassignWorkplace()");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
 
             if (myMessage.Workplace != null) {
@@ -105,7 +96,6 @@ namespace Agents.AgentWorkplaces {
         }
 
         private void SendWorkerToWork(MessageForm message, int processCode) {
-            MessageBox.Show($"SendWorkerToWork() - ProcessCode: {processCode}");
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             myMessage.Code = processCode;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
@@ -125,7 +115,6 @@ namespace Agents.AgentWorkplaces {
         }
 
         public override void ProcessMessage(MessageForm message) {
-            MessageBox.Show($"ProcessMessage() - Code: {message.Code}");
             switch (message.Code) {
                 case Mc.AssignWorkplace:
                     ProcessAssignWorkplace(message);
@@ -172,7 +161,6 @@ namespace Agents.AgentWorkplaces {
         }
 
         private int GetNextProcessCode(Product? product) {
-            MessageBox.Show($"GetNextProcessCode() - State: {product?.State}");
             return product?.State switch {
                 ProductState.Raw => Mc.GetWorkerForCutting,
                 ProductState.Cut => Mc.GetWorkerForPainting,
