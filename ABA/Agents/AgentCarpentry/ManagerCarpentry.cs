@@ -42,12 +42,19 @@ namespace Agents.AgentCarpentry {
             });
         }
 
-        private SimQueue<MyMessage> GetQueueForProduct(Product product) => product.State switch {
+        private SimQueue<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
             ProductState.Raw => QueueA,
             ProductState.Cut or ProductState.Painted => QueueC,
             ProductState.Pickled => QueueB,
             ProductState.Assembled => QueueD,
-            _ => QueueA
+            _ => null
+        };
+
+        private SimQueue<MyMessage>? GetQueueForWorker(Worker worker) => worker.Group switch {
+            WorkerGroup.A => QueueD.Count > 0 ? QueueD : QueueA.Count > 0 ? QueueA : null,
+            WorkerGroup.B => QueueB.Count > 0 ? QueueB : null,
+            WorkerGroup.C => QueueD.Count > 0 ? QueueD : QueueC.Count > 0 ? QueueC : null,
+            _ => null
         };
 
         private int GetWorkerRequestCode(Product product) => product.State switch {
@@ -94,6 +101,8 @@ namespace Agents.AgentCarpentry {
 
             var queue = GetQueueForProduct(message.Product);
 
+            if (queue == null) return;
+
             if (!queue.Contains(message)) {
                 queue.AddLast(message);
             }
@@ -113,7 +122,7 @@ namespace Agents.AgentCarpentry {
                 });
             }
 
-            if (message.Workplace != null && message.Worker != null) {
+            if (message.Workplace != null && message.Worker != null && !message.Workplace.IsOccupied) {
                 queue.Remove(message);
                 message.Workplace.SetState(true);
                 message.Workplace.Product = message.Product;
@@ -144,6 +153,9 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Product == null) return;
 
             var queue = GetQueueForProduct(myMessage.Product);
+
+            if (queue == null) return;
+
             var queued = queue.FirstOrDefault(q => q.Product?.Id == myMessage.Product.Id);
 
             if (queued == null) return;
@@ -233,34 +245,43 @@ namespace Agents.AgentCarpentry {
 
         public void DeassignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
+            var worker = myMessage.Worker;
+
             if (myMessage.Workplace != null) {
                 ReleaseWorkplace(myMessage.Workplace);
+                myMessage.Workplace.Product = null;
+                myMessage.Workplace = null;
             }
 
-            var code = myMessage.Worker?.Group switch {
-                WorkerGroup.A => Mc.DeassignWorkerA,
-                WorkerGroup.B => Mc.DeassignWorkerB,
-                WorkerGroup.C => Mc.DeassignWorkerC,
-                _ => -1
-            };
+            if (worker != null) {
+                var code = worker.Group switch {
+                    WorkerGroup.A => Mc.DeassignWorkerA,
+                    WorkerGroup.B => Mc.DeassignWorkerB,
+                    WorkerGroup.C => Mc.DeassignWorkerC,
+                    _ => -1
+                };
 
-            if (code != -1) {
-                Notice(new MyMessage(myMessage) {
-                    Code = code,
-                    Addressee = MySim.FindAgent(SimId.AgentWorkers)
-                });
+                if (code != -1) {
+                    Notice(new MyMessage(myMessage) {
+                        Code = code,
+                        Addressee = MySim.FindAgent(SimId.AgentWorkers)
+                    });
+                }
+
+                var queue = GetQueueForWorker(worker);
+                if (queue != null) {
+                    var nextMsg = queue.FirstOrDefault(m => m.Worker == null && m.Workplace != null && !m.Workplace.IsOccupied);
+                    if (nextMsg != null) {
+                        nextMsg.Worker = worker;
+                        ProcessResourceAcquired(nextMsg);
+                    }
+                }
             }
 
-            if (myMessage.Product == null) return;
-
-            var msg = (MyMessage)myMessage.CreateCopy();
-
-            if (msg.Product == null) return;
-
-            if (msg.Product.State != ProductState.Finished) {
+            if (myMessage.Product != null && myMessage.Product.State != ProductState.Finished) {
                 var next = new MyMessage(MySim) {
-                    Order = msg.Order,
-                    Product = msg.Product
+                    Order = myMessage.Order,
+                    Product = myMessage.Product
                 };
                 CheckQueueAndProcess(next);
             }
