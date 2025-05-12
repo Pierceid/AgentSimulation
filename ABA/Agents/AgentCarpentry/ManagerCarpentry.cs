@@ -47,7 +47,7 @@ namespace Agents.AgentCarpentry {
             ProductState.Cut => QueueC,
             ProductState.Painted => product.IsPickled ? QueueC : QueueB,
             ProductState.Pickled => QueueB,
-            ProductState.Assembled => product.IsPickled ? QueueC : QueueD,
+            ProductState.Assembled => product.Type == ProductType.Wardrobe ? QueueD : null,
             _ => null
         };
 
@@ -64,7 +64,7 @@ namespace Agents.AgentCarpentry {
             ProductState.Painted => Mc.GetWorkerToPickle,
             ProductState.Pickled => Mc.GetWorkerToAssemble,
             ProductState.Assembled => Mc.GetWorkerToMount,
-            _ => Mc.GetWorkerToCut
+            _ => -1
         };
 
         private void AdvanceProductState(Product product) {
@@ -343,12 +343,15 @@ namespace Agents.AgentCarpentry {
 
             AdvanceProductState(myMessage.Product);
 
+            if (myMessage.Product.Type != ProductType.Wardrobe && myMessage.Product.State == ProductState.Assembled) {
+                AdvanceProductState(myMessage.Product);
+            }
+
             if (myMessage.Product.State == ProductState.Finished) {
                 AdvanceOrderState(myMessage.Product);
 
                 if (myMessage.Workplace != null) {
                     ReleaseWorkplace(myMessage.Workplace);
-                    myMessage.Workplace = null;
                 }
             }
 
