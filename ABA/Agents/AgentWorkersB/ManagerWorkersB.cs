@@ -34,7 +34,6 @@ namespace Agents.AgentWorkersB {
 
             if (availableWorker != null) {
                 availableWorker.SetProduct(myMessage.Product);
-                availableWorker.SetWorkplace(myMessage.Workplace);
                 myMessage.Worker = availableWorker;
             } else {
                 myMessage.Worker = null;

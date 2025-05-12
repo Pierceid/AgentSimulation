@@ -134,8 +134,6 @@ namespace Agents.AgentCarpentry {
                     Order = myMessage.Order,
                     Product = product
                 };
-                var queue = GetQueueForProduct(product);
-                queue.AddLast(productMessage);
                 CheckQueueAndProcess(productMessage);
             }
         }
@@ -188,7 +186,7 @@ namespace Agents.AgentCarpentry {
         }
 
         public void ProcessMoveToWorkplace(MessageForm message) {
-            ProcessAssignWorkplace(message);
+            AssignWorkplace(message);
             var myMessage = (MyMessage)message.CreateCopy();
 
             if (myMessage.Product == null) return;
@@ -217,7 +215,7 @@ namespace Agents.AgentCarpentry {
             Request(myMessage);
         }
 
-        public void ProcessAssignWorkplace(MessageForm message) {
+        public void AssignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message.CreateCopy();
             int code = myMessage.Worker?.Group switch {
                 WorkerGroup.A => Mc.AssignWorkerA,
@@ -233,7 +231,7 @@ namespace Agents.AgentCarpentry {
             }
         }
 
-        public void ProcessDeassignWorkplace(MessageForm message) {
+        public void DeassignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
             if (myMessage.Workplace != null) {
                 ReleaseWorkplace(myMessage.Workplace);
@@ -264,8 +262,6 @@ namespace Agents.AgentCarpentry {
                     Order = msg.Order,
                     Product = msg.Product
                 };
-                var queue = GetQueueForProduct(msg.Product);
-                queue.AddLast(next);
                 CheckQueueAndProcess(next);
             }
         }
@@ -302,17 +298,10 @@ namespace Agents.AgentCarpentry {
 
             AdvanceProductState(myMessage.Product);
 
-            var queue = GetQueueForProduct(myMessage.Product);
-            queue.AddLast(myMessage);
-
             var next = new MyMessage(myMessage);
             CheckQueueAndProcess(next);
 
-            var deassignMsg = new MyMessage(myMessage) {
-                Code = Mc.DeassignWorkplace,
-                Addressee = MySim.FindAgent(SimId.AgentCarpentry)
-            };
-            Request(deassignMsg);
+            DeassignWorkplace(myMessage.CreateCopy());
         }
 
         public void ProcessDefault(MessageForm message) { }
@@ -356,9 +345,6 @@ namespace Agents.AgentCarpentry {
                     case Mc.DoAssemble:
                     case Mc.DoMount:
                         ProcessFinishWorking(message); break;
-
-                    case Mc.DeassignWorkplace:
-                        ProcessDeassignWorkplace(message); break;
 
                     default:
                         ProcessDefault(message); break;

@@ -20,7 +20,7 @@ namespace Agents.AgentWorkers {
         }
 
         public void ProcessGetWorkerForPainting(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
             message.Code = Mc.GetWorkerC;
             Request(message);
         }
@@ -32,13 +32,13 @@ namespace Agents.AgentWorkers {
         }
 
         public void ProcessGetWorkerForAssembling(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
             message.Code = Mc.GetWorkerB;
             Request(message);
         }
 
         public void ProcessGetWorkerForPickling(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
             message.Code = Mc.GetWorkerC;
             Request(message);
         }
@@ -51,7 +51,7 @@ namespace Agents.AgentWorkers {
 
         public void ProcessGetWorkerB(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            message.Code = Mc.GetWorkerToPaint;
+            message.Code = Mc.GetWorkerToAssemble;
             Response(message);
         }
 
@@ -63,19 +63,16 @@ namespace Agents.AgentWorkers {
 
         public void ProcessDeassignWorkerA(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
-            message.Code = Mc.DeassignWorkerA;
             Notice(message);
         }
 
         public void ProcessDeassignWorkerB(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
-            message.Code = Mc.DeassignWorkerB;
             Notice(message);
         }
 
         public void ProcessDeassignWorkerC(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersC);
-            message.Code = Mc.DeassignWorkerC;
             Notice(message);
         }
 

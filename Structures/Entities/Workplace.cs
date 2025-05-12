@@ -22,8 +22,6 @@
         }
 
         public void SetState(bool isOccupied) {
-            if (!isOccupied) Product = null;
-
             IsOccupied = isOccupied;
         }
     }
