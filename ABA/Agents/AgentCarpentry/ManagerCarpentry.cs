@@ -44,9 +44,10 @@ namespace Agents.AgentCarpentry {
 
         private SimQueue<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
             ProductState.Raw => QueueA,
-            ProductState.Cut or ProductState.Painted => QueueC,
+            ProductState.Cut => QueueC,
+            ProductState.Painted => product.IsPickled ? QueueC : QueueB,
             ProductState.Pickled => QueueB,
-            ProductState.Assembled => QueueD,
+            ProductState.Assembled => product.IsPickled ? QueueC : QueueD,
             _ => null
         };
 
@@ -69,17 +70,26 @@ namespace Agents.AgentCarpentry {
         private void AdvanceProductState(Product product) {
             var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
             var match = managerScope?.Products.FirstOrDefault(p => p.Id == product.Id);
+
             if (match == null) return;
 
             match.State = product.State switch {
                 ProductState.Raw => ProductState.Cut,
                 ProductState.Cut => ProductState.Painted,
-                ProductState.Painted => ProductState.Pickled,
+                ProductState.Painted => product.IsPickled ? ProductState.Pickled : ProductState.Assembled,
                 ProductState.Pickled => ProductState.Assembled,
-                ProductState.Assembled => match.Type == ProductType.Wardrobe ? ProductState.Mounted : ProductState.Finished,
-                ProductState.Mounted => ProductState.Finished,
+                ProductState.Assembled => ProductState.Finished,
                 _ => match.State
             };
+        }
+
+        private void AdvanceOrderState(Product product) {
+            var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
+            var match = managerScope?.Orders.FirstOrDefault(o => o.Id == product.Order.Id);
+
+            if (match == null) return;
+
+            match.UpdateProduct(product);
         }
 
         private Workplace? GetFreeWorkplace() {
@@ -87,6 +97,12 @@ namespace Agents.AgentCarpentry {
                 Workplace? workplace = Workplaces.FirstOrDefault(w => !w.IsOccupied);
                 workplace?.SetState(true);
                 return workplace;
+            }
+        }
+
+        private void FreeUpWorkPlace(Workplace workplace) {
+            lock (Workplaces) {
+                workplace.IsOccupied = false;
             }
         }
 
@@ -112,11 +128,12 @@ namespace Agents.AgentCarpentry {
                 if (freeWorkplace != null) {
                     message.Workplace = freeWorkplace;
                     message.Product.Workplace = freeWorkplace;
+                } else {
+                    return;
                 }
             }
 
             if (message.Worker == null) {
-                queue.Remove(message);
                 Request(new MyMessage(message) {
                     Code = GetWorkerRequestCode(message.Product),
                     Addressee = MySim.FindAgent(SimId.AgentWorkers)
@@ -205,16 +222,21 @@ namespace Agents.AgentCarpentry {
             int code = myMessage.Product.State switch {
                 ProductState.Raw => Mc.DoCut,
                 ProductState.Cut => Mc.DoPaint,
-                ProductState.Painted => Mc.DoPickle,
+                ProductState.Painted => myMessage.Product.IsPickled ? Mc.DoPickle : Mc.DoAssemble,
                 ProductState.Pickled => Mc.DoAssemble,
-                ProductState.Assembled => Mc.DoMount,
+                ProductState.Assembled => myMessage.Product.Type == ProductType.Wardrobe ? Mc.DoMount : Mc.Finish,
                 _ => -1
             };
 
             if (code != -1) {
-                myMessage.Code = code;
-                myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-                Request(myMessage.CreateCopy());
+                if (code == Mc.Finish) {
+                    AdvanceOrderState(myMessage.Product);
+                    DeassignWorkplace(myMessage.CreateCopy());
+                } else {
+                    myMessage.Code = code;
+                    myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+                    Request(myMessage.CreateCopy());
+                }
             }
         }
 
@@ -248,7 +270,7 @@ namespace Agents.AgentCarpentry {
             var worker = myMessage.Worker;
 
             if (myMessage.Workplace != null) {
-                ReleaseWorkplace(myMessage.Workplace);
+                FreeUpWorkPlace(myMessage.Workplace);
                 myMessage.Workplace.Product = null;
                 myMessage.Workplace = null;
             }
@@ -309,6 +331,7 @@ namespace Agents.AgentCarpentry {
 
         private void ProcessFinishWorking(MessageForm message) {
             var myMessage = (MyMessage)message;
+
             if (myMessage.Product == null) return;
 
             if (myMessage.Code == Mc.DoPrepare) {
@@ -320,10 +343,19 @@ namespace Agents.AgentCarpentry {
 
             AdvanceProductState(myMessage.Product);
 
-            var next = new MyMessage(myMessage);
-            CheckQueueAndProcess(next);
+            if (myMessage.Product.State == ProductState.Finished) {
+                AdvanceOrderState(myMessage.Product);
+
+                if (myMessage.Workplace != null) {
+                    ReleaseWorkplace(myMessage.Workplace);
+                    myMessage.Workplace = null;
+                }
+            }
 
             DeassignWorkplace(myMessage.CreateCopy());
+
+            var next = new MyMessage(myMessage);
+            CheckQueueAndProcess(next);
         }
 
         public void ProcessDefault(MessageForm message) { }

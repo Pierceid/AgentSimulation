@@ -44,6 +44,15 @@ namespace AgentSimulation.Structures.Objects {
             State = $"0/{Products.Count}";
         }
 
+        public void UpdateProduct(Product product) {
+            var match = Products.FirstOrDefault(p => p.Id == product.Id);
+
+            if (match != null) {
+                match.State = product.State;
+                CheckOrderCompletion();
+            }
+        }
+
         private void ProductPropertyChanged(object? sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == nameof(ProductState.Finished)) {
                 CheckOrderCompletion();

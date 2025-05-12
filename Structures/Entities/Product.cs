@@ -11,6 +11,7 @@ namespace AgentSimulation.Structures.Objects {
         public double EndTime { get; set; }
         public string FormattedTime { get; set; }
         public Workplace? Workplace { get; set; }
+        public bool IsPickled { get; set; }
 
         public Product(int id, ProductType type, Order order) {
             Id = id;
@@ -19,6 +20,7 @@ namespace AgentSimulation.Structures.Objects {
             FormattedTime = Util.FormatTime(StartTime);
             State = ProductState.Raw;
             Workplace = null;
+            IsPickled = false;
         }
 
         private ProductState state;

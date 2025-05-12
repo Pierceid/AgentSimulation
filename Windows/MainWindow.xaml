@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:AgentSimulation.Windows"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="Discrete Simulation" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="Discrete Simulation" Height="800" Width="1280" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
