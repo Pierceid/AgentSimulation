@@ -22,6 +22,7 @@ namespace Agents.AgentMovement.ContinualAssistants {
 		public void ProcessDefault(MessageForm message) {
 			var myMessage = (MyMessage)message;
 			myMessage.Workplace = myMessage.Product?.Workplace;
+            myMessage.Worker?.SetWorkplace(null);
             AssistantFinished(myMessage);
         }
 

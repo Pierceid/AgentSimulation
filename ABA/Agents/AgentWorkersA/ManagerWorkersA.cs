@@ -31,14 +31,8 @@ namespace Agents.AgentWorkersA {
         public void ProcessGetWorkerA(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
-
-            if (availableWorker != null) {
-                availableWorker.SetProduct(myMessage.Product);
-                myMessage.Worker = availableWorker;
-            } else {
-                myMessage.Worker = null;
-            }
-
+            availableWorker?.SetState(true);
+            myMessage.Worker = availableWorker;
             Response(myMessage);
         }
 
@@ -61,7 +55,7 @@ namespace Agents.AgentWorkersA {
 
             if (myMessage.Worker != null) {
                 var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
-                match?.SetState(true);
+                match?.SetProduct(myMessage.Product);
                 match?.SetWorkplace(myMessage.Workplace);
             }
         }

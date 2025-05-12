@@ -116,6 +116,7 @@ namespace Agents.AgentCarpentry {
             }
 
             if (message.Worker == null) {
+                queue.Remove(message);
                 Request(new MyMessage(message) {
                     Code = GetWorkerRequestCode(message.Product),
                     Addressee = MySim.FindAgent(SimId.AgentWorkers)
@@ -160,11 +161,9 @@ namespace Agents.AgentCarpentry {
 
             if (queued == null) return;
 
-            if (myMessage.Worker != null)
-                queued.Worker = myMessage.Worker;
+            if (myMessage.Worker != null) queued.Worker = myMessage.Worker;
 
-            if (myMessage.Workplace != null)
-                queued.Workplace = myMessage.Workplace;
+            if (myMessage.Workplace != null) queued.Workplace = myMessage.Workplace;
 
             CheckQueueAndProcess(queued);
         }
@@ -198,8 +197,8 @@ namespace Agents.AgentCarpentry {
         }
 
         public void ProcessMoveToWorkplace(MessageForm message) {
-            AssignWorkplace(message);
-            var myMessage = (MyMessage)message.CreateCopy();
+            var myMessage = (MyMessage)message;
+            AssignWorkplace(message.CreateCopy());
 
             if (myMessage.Product == null) return;
 
@@ -215,20 +214,21 @@ namespace Agents.AgentCarpentry {
             if (code != -1) {
                 myMessage.Code = code;
                 myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-                Request(myMessage);
+                Request(myMessage.CreateCopy());
             }
         }
 
         public void ProcessMoveToStorage(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
+            var myMessage = (MyMessage)message;
+            AssignWorkplace(myMessage.CreateCopy());
             myMessage.Workplace = null;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             myMessage.Code = Mc.DoPrepare;
-            Request(myMessage);
+            Request(myMessage.CreateCopy());
         }
 
         public void AssignWorkplace(MessageForm message) {
-            var myMessage = (MyMessage)message.CreateCopy();
+            var myMessage = (MyMessage)message;
             int code = myMessage.Worker?.Group switch {
                 WorkerGroup.A => Mc.AssignWorkerA,
                 WorkerGroup.B => Mc.AssignWorkerB,
@@ -272,6 +272,7 @@ namespace Agents.AgentCarpentry {
                 if (queue != null) {
                     var nextMsg = queue.FirstOrDefault(m => m.Worker == null && m.Workplace != null && !m.Workplace.IsOccupied);
                     if (nextMsg != null) {
+                        queue.Remove(nextMsg);
                         nextMsg.Worker = worker;
                         ProcessResourceAcquired(nextMsg);
                     }
