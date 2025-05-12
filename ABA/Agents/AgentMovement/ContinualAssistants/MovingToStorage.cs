@@ -21,7 +21,7 @@ namespace Agents.AgentMovement.ContinualAssistants {
 		//meta! userInfo="Process messages defined in code", id="0"
 		public void ProcessDefault(MessageForm message) {
 			var myMessage = (MyMessage)message;
-			myMessage.Workplace = myMessage.Product?.Workplace;
+			myMessage.Workplace = null;
             myMessage.Worker?.SetWorkplace(null);
             AssistantFinished(myMessage);
         }
