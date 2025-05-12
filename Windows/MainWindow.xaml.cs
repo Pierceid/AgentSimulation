@@ -72,7 +72,7 @@ public partial class MainWindow : Window {
     }
 
     private void UpdateCarpentry() {
-        double[] snapValues = [1, 60, 3600, 36000, 360000, 3600000, double.MaxValue];
+        double[] snapValues = [1, 60, 3600, 36000, double.MaxValue];
         int index = (int)(sldSpeed.Value - 1);
         double speed = snapValues[index];
 
@@ -82,7 +82,7 @@ public partial class MainWindow : Window {
 
     private void InitUI() {
         txtReplications.Text = "1000";
-        sldSpeed.Value = 1;
+        sldSpeed.Value = 3;
         txtWorkersA.Text = "5";
         txtWorkersB.Text = "5";
         txtWorkersC.Text = "15";

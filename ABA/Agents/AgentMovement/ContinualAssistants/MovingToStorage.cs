@@ -11,36 +11,34 @@ namespace Agents.AgentMovement.ContinualAssistants {
             base.PrepareReplication();
         }
 
-		//meta! sender="AgentMovement", id="111", type="Start"
-		public void ProcessStart(MessageForm message) {
+        //meta! sender="AgentMovement", id="111", type="Start"
+        public void ProcessStart(MessageForm message) {
             message.Code = Mc.Finish;
             double duration = ((MySimulation)MySim).Generators.WorkerMoveToStorageTime.Next();
             Hold(duration, message);
         }
 
-		//meta! userInfo="Process messages defined in code", id="0"
-		public void ProcessDefault(MessageForm message) {
-			var myMessage = (MyMessage)message;
-			myMessage.Workplace = null;
-            myMessage.Worker?.SetWorkplace(null);
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) {
+            var myMessage = (MyMessage)message;
+            myMessage.Workplace = myMessage.Product?.Workplace;
+            myMessage.Worker?.SetWorkplace(myMessage.Workplace);
             AssistantFinished(myMessage);
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		override public void ProcessMessage(MessageForm message)
-		{
-			switch (message.Code)
-			{
-			case Mc.Start:
-				ProcessStart(message);
-			break;
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        override public void ProcessMessage(MessageForm message) {
+            switch (message.Code) {
+                case Mc.Start:
+                    ProcessStart(message);
+                    break;
 
-			default:
-				ProcessDefault(message);
-			break;
-			}
-		}
-		//meta! tag="end"
+                default:
+                    ProcessDefault(message);
+                    break;
+            }
+        }
+        //meta! tag="end"
 
         public new AgentMovement MyAgent {
             get { return (AgentMovement)base.MyAgent; }

@@ -94,7 +94,7 @@ namespace Agents.AgentCarpentry {
 
         private Workplace? GetFreeWorkplace() {
             lock (Workplaces) {
-                Workplace? workplace = Workplaces.FirstOrDefault(w => !w.IsOccupied);
+                Workplace? workplace = Workplaces.FirstOrDefault(w => !w.IsOccupied && w.Product == null);
                 workplace?.SetState(true);
                 return workplace;
             }
@@ -126,6 +126,7 @@ namespace Agents.AgentCarpentry {
             if (message.Workplace == null) {
                 var freeWorkplace = GetFreeWorkplace();
                 if (freeWorkplace != null) {
+                    queue.Remove(message);
                     message.Workplace = freeWorkplace;
                     message.Product.Workplace = freeWorkplace;
                 } else {
@@ -141,11 +142,6 @@ namespace Agents.AgentCarpentry {
             }
 
             if (message.Workplace != null && message.Worker != null && !message.Workplace.IsOccupied) {
-                queue.Remove(message);
-                message.Workplace.SetState(true);
-                message.Workplace.Product = message.Product;
-                message.Product.Workplace = message.Workplace;
-
                 message.Code = Mc.MoveToWorkplace;
                 message.Addressee = MySim.FindAgent(SimId.AgentMovement);
                 Request(message);
@@ -154,6 +150,7 @@ namespace Agents.AgentCarpentry {
 
         public void ProcessProcessOrder(MessageForm message) {
             var myMessage = (MyMessage)message;
+
             if (myMessage.Order == null) return;
 
             foreach (var product in myMessage.Order.Products) {
@@ -348,16 +345,17 @@ namespace Agents.AgentCarpentry {
             }
 
             if (myMessage.Product.State == ProductState.Finished) {
-                AdvanceOrderState(myMessage.Product);
-
                 if (myMessage.Workplace != null) {
                     ReleaseWorkplace(myMessage.Workplace);
                 }
+
+                AdvanceOrderState(myMessage.Product);
             }
 
             DeassignWorkplace(myMessage.CreateCopy());
 
             var next = new MyMessage(myMessage);
+
             CheckQueueAndProcess(next);
         }
 
