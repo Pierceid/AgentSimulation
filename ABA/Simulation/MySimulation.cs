@@ -13,9 +13,12 @@ using OSPStat;
 
 namespace Simulation {
     public class MySimulation : OSPABA.Simulation {
-        public Stat FinishedOrdersCount { get; set; } = new();
-        public Stat PendingOrdersCount { get; set; } = new();
+        public Stat AverageFinishedOrdersCount { get; set; } = new();
+        public Stat AveragePendingOrdersCount { get; set; } = new();
         public Stat AverageOrderTime { get; set; } = new();
+        public Stat AverageUtilityA { get; set; } = new();
+        public Stat AverageUtilityB { get; set; } = new();
+        public Stat AverageUtilityC { get; set; } = new();
         public RandomGenerators Generators { get; set; } = new();
         public double Speed { get; set; } = 1.0;
 
@@ -28,9 +31,12 @@ namespace Simulation {
 
             Clear();
 
-            FinishedOrdersCount.Clear();
-            PendingOrdersCount.Clear();
+            AverageFinishedOrdersCount.Clear();
+            AveragePendingOrdersCount.Clear();
             AverageOrderTime.Clear();
+            AverageUtilityA.Clear();
+            AverageUtilityB.Clear();
+            AverageUtilityC.Clear();
         }
 
         override public void PrepareReplication() {
@@ -41,6 +47,21 @@ namespace Simulation {
 
         override public void ReplicationFinished() {
             base.ReplicationFinished();
+
+            var managerScope = AgentScope.MyManager as ManagerScope;
+            var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
+            var managerWorkersA = AgentWorkersA.MyManager as ManagerWorkersA;
+            var managerWorkersB = AgentWorkersB.MyManager as ManagerWorkersB;
+            var managerWorkersC = AgentWorkersC.MyManager as ManagerWorkersC;
+
+            if (managerScope != null && managerCarpentry != null && managerWorkersA != null && managerWorkersB != null && managerWorkersC != null) {
+                AverageFinishedOrdersCount.AddSample(managerScope.FinishedOrdersCount.SampleSize);
+                AveragePendingOrdersCount.AddSample(managerCarpentry.QueueA.Count);
+                AverageOrderTime.AddSample(managerScope.OrderTimes.Mean());
+                AverageUtilityA.AddSample(managerWorkersA.GetAverageUtility());
+                AverageUtilityB.AddSample(managerWorkersB.GetAverageUtility());
+                AverageUtilityC.AddSample(managerWorkersC.GetAverageUtility());
+            }
 
             OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
         }

@@ -1,5 +1,9 @@
 ﻿using Agents.AgentCarpentry;
 using Agents.AgentScope;
+using Agents.AgentWorkers;
+using Agents.AgentWorkersA;
+using Agents.AgentWorkersB;
+using Agents.AgentWorkersC;
 using AgentSimulation.Utilities;
 using OSPABA;
 using Simulation;
@@ -28,18 +32,18 @@ namespace AgentSimulation.Delegates {
                         this.textBlocks[3].Text = $"{managerCarpentry.QueueC.Count:F0}";
                         this.textBlocks[4].Text = $"{managerCarpentry.QueueD.Count:F0}";
                     }
+                } else {
+                    this.textBlocks[5].Text = $"{(100 * ms.AverageUtilityA.Mean()):F2}%";
+                    this.textBlocks[6].Text = $"{(100 * ms.AverageUtilityB.Mean()):F2}%";
+                    this.textBlocks[7].Text = $"{(100 * ms.AverageUtilityC.Mean()):F2}%";
+
+                    this.textBlocks[8].Text = $"{ms.AverageFinishedOrdersCount.Mean():F2}";
+                    this.textBlocks[9].Text = $"{ms.AveragePendingOrdersCount.Mean():F2}";
+
+                    double[] interval = (ms.AverageOrderTime.SampleSize < 2) ? [double.NaN, double.NaN] : ms.AverageOrderTime.ConfidenceInterval95;
+
+                    this.textBlocks[10].Text = $"< {interval[0]:F0} , {interval[1]:F0} >";
                 }
-
-                //this.textBlocks[5].Text = $"{(100 * ms.AgentWorkersA.AverageUtilityA.GetAverage()):F2}%";
-                //this.textBlocks[6].Text = $"{(100 * ms.AgentWorkersB.AverageUtilityB.GetAverage()):F2}%";
-                //this.textBlocks[7].Text = $"{(100 * ms.AgentWorkersC.AverageUtilityC.GetAverage()):F2}%";
-
-                this.textBlocks[8].Text = $"{ms.FinishedOrdersCount.Mean():F2}";
-                this.textBlocks[9].Text = $"{ms.PendingOrdersCount.Mean():F2}";
-
-                double[] interval = (ms.AverageOrderTime.SampleSize < 2) ? [double.NaN, double.NaN] : ms.AverageOrderTime.ConfidenceInterval95;
-
-                this.textBlocks[10].Text = $"< {interval[0]:F0} , {interval[1]:F0} >";
             }
         }
 

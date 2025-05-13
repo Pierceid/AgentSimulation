@@ -3,12 +3,15 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
+using OSPStat;
+
 namespace Agents.AgentScope {
     //meta! id="3"
     public class ManagerScope : OSPABA.Manager {
         public List<Order> Orders { get; set; } = new();
         public List<Product> Products { get; set; } = new();
-
+        public Stat FinishedOrdersCount { get; set; } = new();
+        public Stat OrderTimes { get; set; } = new();
         private static int orderId = 0;
         private static int productId = 0;
 
@@ -19,13 +22,14 @@ namespace Agents.AgentScope {
         public void Clear() {
             Orders.Clear();
             Products.Clear();
+            FinishedOrdersCount.Clear();
+            OrderTimes.Clear();
             orderId = 0;
             productId = 0;
         }
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-
             PetriNet?.Clear();
         }
 
@@ -47,8 +51,8 @@ namespace Agents.AgentScope {
 
             myMessage.Order.EndTime = MySim.CurrentTime;
 
-            ((MySimulation)MySim).FinishedOrdersCount.AddSample(1);
-            ((MySimulation)MySim).AverageOrderTime.AddSample(myMessage.Order.EndTime - myMessage.Order.StartTime);
+            FinishedOrdersCount.AddSample(1);
+            OrderTimes.AddSample(myMessage.Order.EndTime - myMessage.Order.StartTime);
 
             if (MySim.CurrentTime >= Constants.SIMULATION_TIME) {
                 MySim.StopReplication();

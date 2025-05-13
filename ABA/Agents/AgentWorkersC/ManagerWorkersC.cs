@@ -1,3 +1,4 @@
+using AgentSimulation.Structures;
 using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
@@ -43,6 +44,7 @@ namespace Agents.AgentWorkersC {
             if (myMessage.Worker != null) {
                 var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
                 match?.SetState(false);
+                match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
 
@@ -57,6 +59,7 @@ namespace Agents.AgentWorkersC {
                 var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
                 match?.SetProduct(myMessage.Product);
                 match?.SetWorkplace(myMessage.Workplace);
+                match?.Utility.AddSample(myMessage.DeliveryTime, true);
             }
         }
 
@@ -84,6 +87,13 @@ namespace Agents.AgentWorkersC {
             }
         }
         //meta! tag="end"
+
+        public double GetAverageUtility() {
+            double time = 0.0;
+            Workers.ForEach(w => time += w.Utility.GetUtility(Constants.SIMULATION_TIME));
+            time /= Workers.Count;
+            return time;
+        }
 
         public new AgentWorkersC MyAgent => (AgentWorkersC)base.MyAgent;
     }
