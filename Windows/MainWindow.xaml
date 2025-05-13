@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AgentSimulation.Windows"
         xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:osp="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="Discrete Simulation" Height="820" Width="1320" WindowStartupLocation="CenterScreen">
     <Grid>
@@ -14,8 +15,8 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="5*"/>
-            <RowDefinition Height="6*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Left Column: Controls -->
@@ -104,8 +105,9 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
-                            
+
                             <Label Content="Config 1" VerticalAlignment="Center" Margin="0,0,2,0"/>
                             <CheckBox x:Name="chkConfig1" Grid.Column="1" VerticalAlignment="Center" Click="CheckBoxClick"/>
 
@@ -117,6 +119,9 @@
 
                             <Label Content="Config 4" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,2,0"/>
                             <CheckBox x:Name="chkConfig4" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Animation" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0" Foreground="Red"/>
+                            <CheckBox x:Name="chkAnimation" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Click="CheckBoxClick"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
@@ -184,7 +189,7 @@
                         <Label Content="Queue D:" Margin="0,0,2,0"/>
                         <TextBlock x:Name="txtQueueD" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
                     </Grid>
-                    
+
                     <Grid Grid.Row="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -243,8 +248,10 @@
         </StackPanel>
 
         <oxy:PlotView x:Name="plotView" Grid.Column="1" Margin="2"/>
+        
+        <ContentControl x:Name="contentControl" Grid.Column="1" Grid.RowSpan="2" Margin="2" Visibility="Collapsed"/>
 
-        <GroupBox Header="Simulation Status" Grid.Row="1" Grid.Column="1" Margin="2" BorderBrush="DarkBlue" Foreground="DarkBlue">
+        <GroupBox x:Name="simStatus" Header="Simulation Status" Grid.Row="1" Grid.Column="1" Margin="2" BorderBrush="DarkBlue" Foreground="DarkBlue">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="28"/>

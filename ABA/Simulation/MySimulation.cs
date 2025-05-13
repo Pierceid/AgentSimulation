@@ -9,7 +9,11 @@ using Agents.AgentWorkersB;
 using Agents.AgentWorkersC;
 using Agents.AgentWorkplaces;
 using AgentSimulation.Generators;
+using AgentSimulation.Utilities;
 using OSPStat;
+using System.Drawing;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Simulation {
     public class MySimulation : OSPABA.Simulation {
@@ -107,6 +111,33 @@ namespace Simulation {
                 SetMaxSimSpeed();
             } else if (Speed > 0) {
                 SetSimSpeed(Speed, 0.1);
+            }
+        }
+
+        private void IniAnimator(ContentControl contentControl) {
+            if (AnimatorExists) {
+                Animator.ClearAll();
+            } else {
+                CreateAnimator();
+            }
+
+            Animator.SetBackgroundImage(new Bitmap(Util.GetFilePath("grey_background.png")));
+            Animator.Canvas.Width = 1000;
+            Animator.Canvas.Height = 800;
+            Animator.Canvas.Margin = new Thickness(10);
+
+            contentControl.Content = Animator.Canvas;
+        }
+
+        public void StartAnimation(ContentControl contentControl) {
+            IniAnimator(contentControl);
+
+            Animator.SetSynchronizedTime(false);
+        }
+
+        public void StopAnimation() {
+            if (AnimatorExists) {
+                Animator.ClearAll();
             }
         }
 

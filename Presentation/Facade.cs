@@ -92,5 +92,15 @@ namespace AgentSimulation.Presentation {
             mySimulation.RegisterDelegate(textBlockObserver);
             mySimulation.RegisterDelegate(dataGridObserver);
         }
+
+        public void SetAnimator(bool start, ContentControl contentControl) {
+            if (mySimulation == null) return;
+
+            if (start) {
+                mySimulation.StartAnimation(contentControl);
+            } else {
+                mySimulation.StopAnimation();
+            }
+        }
     }
 }

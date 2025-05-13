@@ -50,6 +50,13 @@ namespace Agents.AgentCarpentry {
             _ => null
         };
 
+        private SimQueue<MyMessage>? GetQueueForWorker(Worker worker) => worker.Group switch {
+            WorkerGroup.A => QueueD.Count > 0 ? QueueD : QueueA.Count > 0 ? QueueA : null,
+            WorkerGroup.B => QueueB.Count > 0 ? QueueB : null,
+            WorkerGroup.C => QueueD.Count > 0 ? QueueD : QueueC.Count > 0 ? QueueC : null,
+            _ => null
+        };
+
         private int GetWorkerRequestCode(Product product) => product.State switch {
             ProductState.Raw => Mc.GetWorkerToCut,
             ProductState.Cut => Mc.GetWorkerToPaint,

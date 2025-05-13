@@ -1,4 +1,7 @@
-﻿namespace AgentSimulation.Utilities {
+﻿using AgentSimulation.Structures;
+using System.IO;
+
+namespace AgentSimulation.Utilities {
     public static class Util {
         public static string FormatRange(object min, object max) {
             return $"<{min.ToString()?.Replace(',', '.')},{max.ToString()?.Replace(',', '.')})";
@@ -12,6 +15,10 @@
             int seconds = daySeconds % 60;
 
             return $"{days:D2}d {hours:D2}h {minutes:D2}m {seconds:D2}s";
+        }
+
+        public static string GetFilePath(string fileName) {
+            return Path.GetFullPath(Path.Combine(Constants.IMAGE_PATH, fileName));
         }
     }
 }
