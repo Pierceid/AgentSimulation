@@ -109,12 +109,7 @@ public partial class MainWindow : Window {
     }
 
     private void InitUI() {
-        txtReplications.Text = "1000";
         sldSpeed.Value = 3;
-        txtWorkersA.Text = "6";
-        txtWorkersB.Text = "5";
-        txtWorkersC.Text = "38";
-        txtWorkplaces.Text = "58";
         txtTime.Text = "00d 00h 00m 00s";
         txtFinishedOrders.Text = "0.00";
         txtPendingOrders.Text = "0.00";
@@ -125,7 +120,9 @@ public partial class MainWindow : Window {
         txtQueueB.Text = "0";
         txtQueueC.Text = "0";
         txtQueueD.Text = "0";
+        chkConfig1.IsChecked = true;
 
+        UpdateUI(new Config1());
         InitCarpentry();
     }
 }
