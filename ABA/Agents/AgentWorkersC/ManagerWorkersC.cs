@@ -32,7 +32,7 @@ namespace Agents.AgentWorkersC {
         public void ProcessGetWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
-            availableWorker?.SetState(true);
+            availableWorker?.SetIsBusy(true);
             myMessage.Worker = availableWorker;
             Response(myMessage);
         }
@@ -43,7 +43,8 @@ namespace Agents.AgentWorkersC {
 
             if (myMessage.Worker != null) {
                 var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
-                match?.SetState(false);
+                match?.SetIsBusy(false);
+                match?.SetState(myMessage.Worker.State);
                 match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
@@ -58,6 +59,7 @@ namespace Agents.AgentWorkersC {
             if (myMessage.Worker != null) {
                 var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
                 match?.SetProduct(myMessage.Product);
+                match?.SetState(myMessage.Worker.State);
                 match?.SetWorkplace(myMessage.Workplace);
                 match?.Utility.AddSample(myMessage.DeliveryTime, true);
             }

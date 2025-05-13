@@ -7,6 +7,16 @@ namespace AgentSimulation.Structures.Objects {
         public int Id { get; }
         public WorkerGroup Group { get; set; }
         public Utility Utility { get; set; }
+        private WorkerState state;
+        public WorkerState State {
+            get => state;
+            set {
+                if (state != value) {
+                    state = value;
+                    OnPropertyChanged(nameof(State));
+                }
+            }
+        }
 
         private bool isBusy;
         public bool IsBusy {
@@ -47,13 +57,17 @@ namespace AgentSimulation.Structures.Objects {
             IsBusy = false;
             Product = null;
             Workplace = null;
+            State = WorkerState.WAITING;
             Utility = new();
         }
 
-        public void SetState(bool isBusy) {
+        public void SetIsBusy(bool isBusy) {
             if (!isBusy) Product = null;
-
             IsBusy = isBusy;
+        }
+
+        public void SetState(WorkerState workerState) {
+            State = workerState;
         }
 
         public void SetProduct(Product? order) {

@@ -50,13 +50,6 @@ namespace Agents.AgentCarpentry {
             _ => null
         };
 
-        private SimQueue<MyMessage>? GetQueueForWorker(Worker worker) => worker.Group switch {
-            WorkerGroup.A => QueueD.Count > 0 ? QueueD : QueueA.Count > 0 ? QueueA : null,
-            WorkerGroup.B => QueueB.Count > 0 ? QueueB : null,
-            WorkerGroup.C => QueueD.Count > 0 ? QueueD : QueueC.Count > 0 ? QueueC : null,
-            _ => null
-        };
-
         private int GetWorkerRequestCode(Product product) => product.State switch {
             ProductState.Raw => Mc.GetWorkerToCut,
             ProductState.Cut => Mc.GetWorkerToPaint,
@@ -115,15 +108,12 @@ namespace Agents.AgentCarpentry {
             }
 
             var nextMessage = new MyMessage(myMessage);
-
             var currentQueue = GetQueueForProduct(myMessage.Product);
-
-            if (currentQueue != null) RemoveMessageFromQueue(currentQueue, myMessage);
-
             var nextQueue = GetQueueForProduct(myMessage.Product);
 
             if (nextQueue != null) {
                 nextQueue.AddLast(nextMessage);
+                if (currentQueue != null) RemoveMessageFromQueue(currentQueue, myMessage);
                 ContinueWorkingOnProduct(nextMessage);
             }
         }
@@ -259,8 +249,10 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Worker == null) return;
 
             QueueA.Remove(myMessage);
+
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.MOVING;
+            
             AssignWorkplace(myMessage.CreateCopy());
-            AssignWorker(myMessage.CreateCopy());
 
             myMessage.Code = Mc.MoveToStorage;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
@@ -273,8 +265,10 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Worker == null) return;
 
             QueueD.Remove(myMessage);
+
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.MOVING;
+            
             AssignWorkplace(myMessage.CreateCopy());
-            AssignWorker(myMessage.CreateCopy());
 
             myMessage.Code = Mc.MoveToWorkplace;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
@@ -287,8 +281,10 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Worker == null) return;
 
             QueueB.Remove(myMessage);
+
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.MOVING;
+            
             AssignWorkplace(myMessage.CreateCopy());
-            AssignWorker(myMessage.CreateCopy());
 
             myMessage.Code = Mc.MoveToWorkplace;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
@@ -301,8 +297,10 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Worker == null) return;
 
             QueueC.Remove(myMessage);
+
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.MOVING;
+
             AssignWorkplace(myMessage.CreateCopy());
-            AssignWorker(myMessage.CreateCopy());
 
             myMessage.Code = Mc.MoveToWorkplace;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
@@ -315,26 +313,14 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Worker == null) return;
 
             QueueC.Remove(myMessage);
+
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.MOVING;
+
             AssignWorkplace(myMessage.CreateCopy());
-            AssignWorker(myMessage.CreateCopy());
 
             myMessage.Code = Mc.MoveToWorkplace;
             myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
             Request(myMessage);
-        }
-
-        private void AssignWorker(MessageForm message) {
-            var myMessage = (MyMessage)message;
-
-            if (myMessage.Workplace != null) {
-                var workplace = Workplaces.FirstOrDefault(w => w.Id == myMessage.Workplace.Id);
-
-                if (workplace != null) {
-                    workplace.Worker = myMessage.Worker;
-                }
-
-                myMessage.Workplace.Worker = myMessage.Worker;
-            }
         }
 
         public void ProcessMoveToWorkplace(MessageForm message) {
@@ -351,6 +337,10 @@ namespace Agents.AgentCarpentry {
                 _ => -1
             };
 
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.WORKING;
+
+            AssignWorkplace(myMessage.CreateCopy());
+
             if (code != -1) {
                 if (code == Mc.Finish) {
                     AdvanceOrderState(myMessage.CreateCopy());
@@ -365,6 +355,11 @@ namespace Agents.AgentCarpentry {
 
         public void ProcessMoveToStorage(MessageForm message) {
             var myMessage = (MyMessage)message;
+
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.WORKING;
+
+            AssignWorkplace(myMessage.CreateCopy());
+
             myMessage.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             myMessage.Code = Mc.DoPrepare;
             Request(myMessage.CreateCopy());
@@ -388,7 +383,6 @@ namespace Agents.AgentCarpentry {
 
         public void DeassignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
-            var worker = myMessage.Worker;
 
             if (myMessage.Workplace != null) {
                 FreeUpWorkPlace(myMessage.Workplace);
@@ -396,20 +390,19 @@ namespace Agents.AgentCarpentry {
                 myMessage.Workplace = null;
             }
 
-            if (worker != null) {
-                var code = worker.Group switch {
-                    WorkerGroup.A => Mc.DeassignWorkerA,
-                    WorkerGroup.B => Mc.DeassignWorkerB,
-                    WorkerGroup.C => Mc.DeassignWorkerC,
-                    _ => -1
-                };
+            if (myMessage.Worker != null) myMessage.Worker.State = WorkerState.WAITING;
 
-                if (code != -1) {
-                    Notice(new MyMessage(myMessage) {
-                        Code = code,
-                        Addressee = MySim.FindAgent(SimId.AgentWorkers)
-                    });
-                }
+            int code = myMessage.Worker?.Group switch {
+                WorkerGroup.A => Mc.DeassignWorkerA,
+                WorkerGroup.B => Mc.DeassignWorkerB,
+                WorkerGroup.C => Mc.DeassignWorkerC,
+                _ => -1
+            };
+
+            if (code != -1) {
+                myMessage.Code = code;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+                Notice(myMessage);
             }
         }
 

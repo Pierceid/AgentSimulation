@@ -2,6 +2,7 @@
 using Agents.AgentWorkersA;
 using Agents.AgentWorkersB;
 using Agents.AgentWorkersC;
+using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
@@ -53,8 +54,17 @@ namespace AgentSimulation.Delegates {
                     var managerWorkersC = ms.AgentWorkersC.MyManager as ManagerWorkersC;
 
                     if (managerScope != null) {
-                        SyncCollection(Orders, managerScope.Orders);
-                        SyncCollection(Products, managerScope.Products);
+                        var orders = managerScope.Orders.ToList();
+                        if (orders.Count > 100) {
+                            orders = orders.Where(o => o.State != "Completed").ToList();
+                        }
+                        SyncCollection(Orders, orders);
+
+                        var products = managerScope.Products.ToList();
+                        if (products.Count > 300) {
+                            products = products.Where(p => p.State != ProductState.Finished).ToList();
+                        }
+                        SyncCollection(Products, products);
                     }
 
                     if (managerWorkersA != null && managerWorkersB != null && managerWorkersC != null) {
