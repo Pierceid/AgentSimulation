@@ -43,11 +43,12 @@ namespace Agents.AgentScope {
         public void ProcessOrderExit(MessageForm message) {
             var myMessage = (MyMessage)message.CreateCopy();
 
-            if (myMessage.Product == null) return;
+            if (myMessage.Order == null) return;
 
-            myMessage.Product.EndTime = MySim.CurrentTime;
+            myMessage.Order.EndTime = MySim.CurrentTime;
 
-            ((MySimulation)MySim).AverageOrderTime.AddSample(myMessage.Product.EndTime - myMessage.Product.StartTime);
+            ((MySimulation)MySim).FinishedOrdersCount.AddSample(1);
+            ((MySimulation)MySim).AverageOrderTime.AddSample(myMessage.Order.EndTime - myMessage.Order.StartTime);
 
             if (MySim.CurrentTime >= Constants.SIMULATION_TIME) {
                 MySim.StopReplication();

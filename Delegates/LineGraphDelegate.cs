@@ -2,6 +2,7 @@
 using System.Windows.Threading;
 using System.Windows;
 using OSPABA;
+using Simulation;
 
 namespace AgentSimulation.Delegates {
     public class LineGraphDelegate : ISimDelegate {
@@ -15,7 +16,11 @@ namespace AgentSimulation.Delegates {
 
         public void Refresh(OSPABA.Simulation simulation) {
             window.Dispatcher.Invoke(() => {
-                lineGraph.UpdatePlot(simulation);
+                if (simulation is MySimulation ms) {
+                    if (ms.Speed == double.MaxValue) {
+                        lineGraph.UpdatePlot(ms);
+                    }
+                }
             }, DispatcherPriority.Input);
         }
 

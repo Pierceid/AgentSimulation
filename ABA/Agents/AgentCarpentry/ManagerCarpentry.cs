@@ -83,13 +83,23 @@ namespace Agents.AgentCarpentry {
             };
         }
 
-        private void AdvanceOrderState(Product product) {
+        private void AdvanceOrderState(MessageForm message) {
+            var myMessage = (MyMessage)message;
+
+            if (myMessage.Order == null || myMessage.Product == null) return;
+
             var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
-            var match = managerScope?.Orders.FirstOrDefault(o => o.Id == product.Order.Id);
+            var match = managerScope?.Orders.FirstOrDefault(o => o.Id == myMessage.Order.Id);
 
             if (match == null) return;
 
-            match.UpdateProduct(product);
+            match.UpdateProduct(myMessage.Product);
+
+            if (match.State == "Completed") {
+                myMessage.Code = Mc.ProcessOrder;
+                myMessage.Addressee = MySim.FindAgent(SimId.AgentModel);
+                Notice(myMessage);
+            }
         }
 
         private Workplace? GetFreeWorkplace() {
@@ -227,7 +237,7 @@ namespace Agents.AgentCarpentry {
 
             if (code != -1) {
                 if (code == Mc.Finish) {
-                    AdvanceOrderState(myMessage.Product);
+                    AdvanceOrderState(myMessage.CreateCopy());
                     DeassignWorkplace(myMessage.CreateCopy());
                 } else {
                     myMessage.Code = code;
@@ -334,7 +344,7 @@ namespace Agents.AgentCarpentry {
             if (myMessage.Code == Mc.DoPrepare) {
                 myMessage.Code = Mc.MoveToWorkplace;
                 myMessage.Addressee = MySim.FindAgent(SimId.AgentMovement);
-                Request(myMessage);
+                Request(myMessage.CreateCopy());
                 return;
             }
 
@@ -345,11 +355,11 @@ namespace Agents.AgentCarpentry {
             }
 
             if (myMessage.Product.State == ProductState.Finished) {
+                AdvanceOrderState(myMessage.CreateCopy());
+
                 if (myMessage.Workplace != null) {
                     ReleaseWorkplace(myMessage.Workplace);
                 }
-
-                AdvanceOrderState(myMessage.Product);
             }
 
             DeassignWorkplace(myMessage.CreateCopy());
@@ -405,7 +415,7 @@ namespace Agents.AgentCarpentry {
                         ProcessDefault(message); break;
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show($"{ex.Message}");
                 throw;
             }
         }

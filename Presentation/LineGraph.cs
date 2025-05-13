@@ -58,7 +58,7 @@ namespace AgentSimulation.Presentation {
 
                 mainSeries.Points.Add(new DataPoint(rep, mean));
 
-                if (ms.CurrentReplication % 2 == 0 && !double.IsNaN(interval[0]) && !double.IsNaN(interval[1])) {
+                if (!double.IsNaN(interval[0]) && !double.IsNaN(interval[1])) {
                     upperSeries.Points.Add(new DataPoint(rep, interval[1]));
                     lowerSeries.Points.Add(new DataPoint(rep, interval[0]));
                 }

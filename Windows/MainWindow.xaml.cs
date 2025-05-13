@@ -82,11 +82,11 @@ public partial class MainWindow : Window {
 
     private void InitUI() {
         txtReplications.Text = "1000";
-        sldSpeed.Value = 3;
-        txtWorkersA.Text = "5";
+        sldSpeed.Value = 4;
+        txtWorkersA.Text = "6";
         txtWorkersB.Text = "5";
-        txtWorkersC.Text = "15";
-        txtWorkplaces.Text = "20";
+        txtWorkersC.Text = "38";
+        txtWorkplaces.Text = "58";
         txtTime.Text = "00d 00h 00m 00s";
         txtFinishedOrders.Text = "0.00";
         txtPendingOrders.Text = "0.00";
