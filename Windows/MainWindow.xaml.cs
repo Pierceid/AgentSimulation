@@ -1,4 +1,5 @@
 ﻿using AgentSimulation.Presentation;
+using AgentSimulation.Utilities;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -31,6 +32,25 @@ public partial class MainWindow : Window {
                 btnStart.IsEnabled = true;
             } else if (button == btnAnalyze) {
                 facade?.AnalyzeReplication();
+            }
+        }
+    }
+
+    private void CheckBoxClick(object sender, RoutedEventArgs e) {
+        if (sender is CheckBox checkBox) {
+            chkConfig1.IsChecked = checkBox == chkConfig1;
+            chkConfig2.IsChecked = checkBox == chkConfig2;
+            chkConfig3.IsChecked = checkBox == chkConfig3;
+            chkConfig4.IsChecked = checkBox == chkConfig4;
+
+            if (checkBox == chkConfig1) {
+                UpdateUI(new Config1());
+            } else if (checkBox == chkConfig2) {
+                UpdateUI(new Config2());
+            } else if (checkBox == chkConfig3) {
+                UpdateUI(new Config3());
+            } else if (checkBox == chkConfig4) {
+                UpdateUI(new Config4());
             }
         }
     }
@@ -80,9 +100,17 @@ public partial class MainWindow : Window {
         lblSpeed.Content = $"Speed: {(index == snapValues.Length - 1 ? "VIRTUAL" : speed):0x}";
     }
 
+    private void UpdateUI(Config config) {
+        txtReplications.Text = config.Replications.ToString();
+        txtWorkersA.Text = config.WorkersA.ToString();
+        txtWorkersB.Text = config.WorkersB.ToString();
+        txtWorkersC.Text = config.WorkersC.ToString();
+        txtWorkplaces.Text = config.Workplaces.ToString();
+    }
+
     private void InitUI() {
         txtReplications.Text = "1000";
-        sldSpeed.Value = 4;
+        sldSpeed.Value = 3;
         txtWorkersA.Text = "6";
         txtWorkersB.Text = "5";
         txtWorkersC.Text = "38";

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AgentSimulation.Windows"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="Discrete Simulation" Height="800" Width="1280" WindowStartupLocation="CenterScreen">
+        Title="Discrete Simulation" Height="820" Width="1280" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
@@ -91,6 +91,32 @@
                             </Grid.ColumnDefinitions>
                             <Label Content="Workerplaces:" VerticalAlignment="Center" Margin="0,0,2,0"/>
                             <TextBox x:Name="txtWorkplaces" Grid.Column="1" Height="20"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            
+                            <Label Content="Config 1" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig1" Grid.Column="1" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Config 2" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig2" Grid.Column="3" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Config 3" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Config 4" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig4" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Click="CheckBoxClick"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
