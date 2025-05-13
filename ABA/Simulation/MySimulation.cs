@@ -121,7 +121,7 @@ namespace Simulation {
                 CreateAnimator();
             }
 
-            Animator.SetBackgroundImage(new Bitmap(Util.GetFilePath("grey_background.png")));
+            Animator.SetBackgroundImage(new Bitmap(Util.GetFilePath("background.png")));
             Animator.Canvas.Width = 1000;
             Animator.Canvas.Height = 800;
             Animator.Canvas.Margin = new Thickness(10);
