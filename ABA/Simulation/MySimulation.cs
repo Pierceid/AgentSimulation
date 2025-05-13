@@ -9,11 +9,16 @@ using Agents.AgentWorkersB;
 using Agents.AgentWorkersC;
 using Agents.AgentWorkplaces;
 using AgentSimulation.Generators;
+using AgentSimulation.Structures;
 using AgentSimulation.Utilities;
+using OSPAnimator;
 using OSPStat;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Windows.Shapes;
 
 namespace Simulation {
     public class MySimulation : OSPABA.Simulation {
@@ -114,31 +119,89 @@ namespace Simulation {
             }
         }
 
-        private void IniAnimator(ContentControl contentControl) {
+        public void InitAnimator(ContentControl contentControl) {
             if (AnimatorExists) {
                 Animator.ClearAll();
             } else {
                 CreateAnimator();
             }
 
-            Animator.SetBackgroundImage(new Bitmap(Util.GetFilePath("background.png")));
-            Animator.Canvas.Width = 1000;
-            Animator.Canvas.Height = 800;
+            var backGroundImage = new Bitmap(Util.GetFilePath("background.png"));
+            Animator.SetBackgroundImage(backGroundImage);
+            Animator.Canvas.Width = Constants.ANIMATION_WIDTH;
+            Animator.Canvas.Height = Constants.ANIMATION_HEIGHT;
             Animator.Canvas.Margin = new Thickness(10);
+
+            var storageImage = new AnimImageItem(Util.GetFilePath("storage.png"));
+            storageImage.SetPosition(0, 0);
+            Animator.Register(storageImage);
+
+            var wallShape = new AnimShapeItem(AnimShape.RECTANGLE, 10, 740) { Color = Colors.Black, Fill = true };
+            wallShape.SetPosition(780, 10);
+            Animator.Register(wallShape);
+
+            var queueShape1 = new AnimShapeItem(AnimShape.RECTANGLE, 120, 60) { Color = Colors.Blue, Fill = true };
+            var queueShape2 = new AnimShapeItem(AnimShape.RECTANGLE, 120, 60) { Color = Colors.Red, Fill = true };
+            var queueShape3 = new AnimShapeItem(AnimShape.RECTANGLE, 120, 60) { Color = Colors.Green, Fill = true };
+            var queueShape4 = new AnimShapeItem(AnimShape.RECTANGLE, 120, 60) { Color = Colors.Purple, Fill = true };
+
+            var queueText1 = new AnimTextItem("Queue A", Colors.White, null, 20);
+            var queueText2 = new AnimTextItem("Queue B", Colors.White, null, 20);
+            var queueText3 = new AnimTextItem("Queue C", Colors.White, null, 20);
+            var queueText4 = new AnimTextItem("Queue D", Colors.White, null, 20);
+
+            var queueCountText1 = new AnimTextItem("0", Colors.White, null, 20);
+            var queueCountText2 = new AnimTextItem("0", Colors.White, null, 20);
+            var queueCountText3 = new AnimTextItem("0", Colors.White, null, 20);
+            var queueCountText4 = new AnimTextItem("0", Colors.White, null, 20);
+
+            queueShape1.SetPosition(0, 700);
+            queueText1.SetPosition(24, 700);
+            queueCountText1.SetPosition(56, 730);
+            Animator.Register(queueShape1);
+            Animator.Register(queueText1);
+            Animator.Register(queueCountText1);
+
+            queueShape2.SetPosition(212, 700);
+            queueText2.SetPosition(236, 700);
+            queueCountText2.SetPosition(268, 730);
+            Animator.Register(queueShape2);
+            Animator.Register(queueText2);
+            Animator.Register(queueCountText2);
+
+            queueShape3.SetPosition(428, 700);
+            queueText3.SetPosition(452, 700);
+            queueCountText3.SetPosition(484, 730);
+            Animator.Register(queueShape3);
+            Animator.Register(queueText3);
+            Animator.Register(queueCountText3);
+
+            queueShape4.SetPosition(644, 700);
+            queueText4.SetPosition(668, 700);
+            queueCountText4.SetPosition(700, 730);
+            Animator.Register(queueShape4);
+            Animator.Register(queueText4);
+            Animator.Register(queueCountText4);
+
+            var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
+            managerCarpentry?.Workplaces.ForEach(wp => {
+                Animator.Register(wp.Id, wp.Image);
+                wp.Image.SetPosition(wp.X, wp.Y);
+            });
 
             contentControl.Content = Animator.Canvas;
         }
 
         public void StartAnimation(ContentControl contentControl) {
-            IniAnimator(contentControl);
+            InitAnimator(contentControl);
 
             Animator.SetSynchronizedTime(false);
         }
 
         public void StopAnimation() {
-            if (AnimatorExists) {
-                Animator.ClearAll();
-            }
+            //if (AnimatorExists) {
+            //    Animator.ClearAll();
+            //}
         }
 
         //meta! userInfo="Generated code: do not modify", tag="begin"

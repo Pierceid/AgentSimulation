@@ -1,7 +1,9 @@
 ﻿using Agents.AgentScope;
+using AgentSimulation.Structures;
 using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
+using OSPAnimator;
 using OSPDataStruct;
 using Simulation;
 using System.Windows;
@@ -32,13 +34,9 @@ namespace Agents.AgentCarpentry {
             InitWorkplaces(Workplaces.Count);
         }
 
-        public void InitWorkplaces(int count) {
+        public void InitWorkplaces(int workplaces) {
             Workplaces.Clear();
-            Parallel.For(0, count, i => {
-                lock (Workplaces) {
-                    Workplaces.Add(new Workplace(i));
-                }
-            });
+            Parallel.For(0, workplaces, w => { lock (Workplaces) { Workplaces.Add(new Workplace(w)); } });
         }
 
         private SimQueue<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
