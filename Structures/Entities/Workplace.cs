@@ -12,7 +12,7 @@
             Worker = null;
         }
 
-        public void AssignOrder(Product? product) {
+        public void AssignProduct(Product? product) {
             Product = product;
             IsOccupied = product != null;
         }
@@ -22,7 +22,10 @@
         }
 
         public void SetState(bool isOccupied) {
-            if (!isOccupied) Product = null;
+            if (!isOccupied) {
+                Worker = null;
+                Product = null;
+            }
             IsOccupied = isOccupied;
         }
     }
