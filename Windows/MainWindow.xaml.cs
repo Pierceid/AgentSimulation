@@ -120,6 +120,7 @@ public partial class MainWindow : Window {
         txtQueueB.Text = "0";
         txtQueueC.Text = "0";
         txtQueueD.Text = "0";
+        txtConfidenceInterval.Text = "< - ; - >";
         chkConfig1.IsChecked = true;
 
         UpdateUI(new Config1());

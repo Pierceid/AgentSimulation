@@ -42,7 +42,9 @@ namespace AgentSimulation.Delegates {
 
                     double[] interval = (ms.AverageOrderTime.SampleSize < 2) ? [double.NaN, double.NaN] : ms.AverageOrderTime.ConfidenceInterval95;
 
-                    this.textBlocks[10].Text = $"< {(interval[0] / 3600):F2}h ; {(interval[1] / 3600):F2}h >";
+                    if (!double.IsNaN(interval[0]) && !double.IsNaN(interval[1])) {
+                        this.textBlocks[10].Text = $"< {(interval[0] / 3600):F2}h ; {(interval[1] / 3600):F2}h >";
+                    }
                 }
             }
         }
