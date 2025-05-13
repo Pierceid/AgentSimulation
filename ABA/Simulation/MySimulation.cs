@@ -17,8 +17,6 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using System.Windows.Shapes;
 
 namespace Simulation {
     public class MySimulation : OSPABA.Simulation {
@@ -128,6 +126,8 @@ namespace Simulation {
 
             var backGroundImage = new Bitmap(Util.GetFilePath("background.png"));
             Animator.SetBackgroundImage(backGroundImage);
+            Animator.Canvas.VerticalAlignment = VerticalAlignment.Top;
+            Animator.Canvas.HorizontalAlignment = HorizontalAlignment.Left;
             Animator.Canvas.Width = Constants.ANIMATION_WIDTH;
             Animator.Canvas.Height = Constants.ANIMATION_HEIGHT;
             Animator.Canvas.Margin = new Thickness(10);
@@ -160,28 +160,28 @@ namespace Simulation {
             queueCountText1.SetPosition(56, 730);
             Animator.Register(queueShape1);
             Animator.Register(queueText1);
-            Animator.Register(queueCountText1);
+            Animator.Register(1001, queueCountText1);
 
             queueShape2.SetPosition(212, 700);
             queueText2.SetPosition(236, 700);
             queueCountText2.SetPosition(268, 730);
             Animator.Register(queueShape2);
             Animator.Register(queueText2);
-            Animator.Register(queueCountText2);
+            Animator.Register(1002, queueCountText2);
 
             queueShape3.SetPosition(428, 700);
             queueText3.SetPosition(452, 700);
             queueCountText3.SetPosition(484, 730);
             Animator.Register(queueShape3);
             Animator.Register(queueText3);
-            Animator.Register(queueCountText3);
+            Animator.Register(1003, queueCountText3);
 
             queueShape4.SetPosition(644, 700);
             queueText4.SetPosition(668, 700);
             queueCountText4.SetPosition(700, 730);
             Animator.Register(queueShape4);
             Animator.Register(queueText4);
-            Animator.Register(queueCountText4);
+            Animator.Register(1004, queueCountText4);
 
             var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
             managerCarpentry?.Workplaces.ForEach(wp => {

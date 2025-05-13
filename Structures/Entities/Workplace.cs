@@ -18,10 +18,10 @@ namespace AgentSimulation.Structures.Objects {
             Worker = null;
             Image = new(Util.GetFilePath("workplace.png"));
 
-            int columns = (Constants.ANIMATION_WIDTH / Constants.IMAGE_SIZE) - 2;
+            int columns = (Constants.ANIMATION_WIDTH / Constants.IMAGE_SIZE) - 5;
 
-            X = (Id % columns) * (Constants.IMAGE_SIZE + 10);
-            Y = (Id / columns + 3) * (Constants.IMAGE_SIZE + 10);
+            X = (Id % columns) * (Constants.IMAGE_SIZE + 22);
+            Y = (Id / columns + 3) * (Constants.IMAGE_SIZE + 22);
         }
 
         public void AssignProduct(Product? product) {

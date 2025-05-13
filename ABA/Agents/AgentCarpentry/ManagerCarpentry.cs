@@ -1,9 +1,7 @@
 ﻿using Agents.AgentScope;
-using AgentSimulation.Structures;
 using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
-using OSPAnimator;
 using OSPDataStruct;
 using Simulation;
 using System.Windows;
