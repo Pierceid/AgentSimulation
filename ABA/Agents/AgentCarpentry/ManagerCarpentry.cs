@@ -367,6 +367,17 @@ namespace Agents.AgentCarpentry {
 
         public void AssignWorkplace(MessageForm message) {
             var myMessage = (MyMessage)message;
+
+            if (myMessage.Workplace != null) {
+                var workplace = Workplaces.FirstOrDefault(w => w.Id == myMessage.Workplace.Id);
+
+                if (workplace != null) {
+                    workplace.Worker = myMessage.Worker;
+                }
+
+                myMessage.Workplace.Worker = myMessage.Worker;
+            }
+
             int code = myMessage.Worker?.Group switch {
                 WorkerGroup.A => Mc.AssignWorkerA,
                 WorkerGroup.B => Mc.AssignWorkerB,
