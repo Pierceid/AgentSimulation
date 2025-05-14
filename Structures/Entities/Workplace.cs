@@ -17,7 +17,7 @@ namespace AgentSimulation.Structures.Objects {
             Product = null;
             Worker = null;
             Image = new(Util.GetFilePath("workplace.png"));
-
+            Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
             int columns = (Constants.ANIMATION_WIDTH / Constants.IMAGE_SIZE) - 5;
 
             X = (Id % columns) * (Constants.IMAGE_SIZE + 22);
@@ -27,10 +27,12 @@ namespace AgentSimulation.Structures.Objects {
         public void AssignProduct(Product? product) {
             Product = product;
             IsOccupied = product != null;
+            Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
         }
 
         public void AssignWorker(Worker? worker) {
             Worker = worker;
+            Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
         }
 
         public void SetState(bool isOccupied) {
@@ -39,6 +41,7 @@ namespace AgentSimulation.Structures.Objects {
                 Product = null;
             }
             IsOccupied = isOccupied;
+            Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
         }
     }
 }

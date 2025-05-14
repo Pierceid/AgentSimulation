@@ -18,7 +18,7 @@ namespace Agents.AgentMovement.ContinualAssistants {
             myMessage.Code = Mc.Finish;
             double duration = mySimulation.Generators.WorkerMoveToStorageTime.Next();
 
-            if (myMessage.Worker != null && myMessage.Product != null && myMessage.Product.Workplace != null) {
+            if (myMessage.Worker != null && myMessage.Product != null && myMessage.Product.Workplace != null && mySimulation.AnimatorExists) {
                 var (x, y) = myMessage.Worker.GetRandomPosition();
                 myMessage.Worker.Image.MoveTo(mySimulation.CurrentTime, duration, new(x, y));
             }

@@ -1,6 +1,7 @@
 using OSPABA;
 using OSPAnimator;
 using Simulation;
+using System.Windows;
 
 namespace Agents.AgentMovement.ContinualAssistants {
     //meta! id="101"
@@ -15,12 +16,11 @@ namespace Agents.AgentMovement.ContinualAssistants {
         //meta! sender="AgentMovement", id="102", type="Start"
         public void ProcessStart(MessageForm message) {
             var myMessage = (MyMessage)message;
-            var mySimulation = (MySimulation)MySim;
+            var mySimulation = (MySimulation)message.MySim;
             myMessage.Code = Mc.Finish;
             double duration = mySimulation.Generators.WorkerMoveBetweenStationsTime.Next();
 
-            if (myMessage.Worker != null && myMessage.Product != null && myMessage.Product.Workplace != null) {
-                var animator = mySimulation.Animator;
+            if (myMessage.Worker != null && myMessage.Product != null && myMessage.Product.Workplace != null && mySimulation.AnimatorExists) {              
                 myMessage.Worker?.Image.MoveTo(mySimulation.CurrentTime, duration, new(myMessage.Product.Workplace.X, myMessage.Product.Workplace.Y));
             }
 

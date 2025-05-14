@@ -70,6 +70,7 @@ namespace AgentSimulation.Structures.Objects {
             var (x, y) = GetRandomPosition();     
             X = x;
             Y = y;
+            Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }
 
         public (int x, int y) GetRandomPosition() => (Random.Next(0, 576), Random.Next(0, 120));
@@ -77,25 +78,30 @@ namespace AgentSimulation.Structures.Objects {
         public void SetIsBusy(bool isBusy) {
             if (!isBusy) Product = null;
             IsBusy = isBusy;
+            Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }
 
         public void SetState(WorkerState workerState) {
             State = workerState;
+            Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }
 
         public void SetProduct(Product? order) {
             Product = order;
             IsBusy = order != null;
+            Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }
 
         public void SetWorkplace(Workplace? workplace) {
             Workplace = workplace;
+            Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }
 
         public void Clear() {
             Product = null;
             Workplace = null;
             IsBusy = false;
+            Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
