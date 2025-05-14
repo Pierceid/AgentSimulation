@@ -110,6 +110,11 @@ namespace Agents.AgentCarpentry {
             if (msg.Product == null) return;
 
             if (msg.Code == Mc.DoPrepare) {
+                if (QueueA.Count > 0) {
+                    var queued = QueueA.FirstOrDefault(m => m.Product?.Id == msg.Product?.Id);
+                    if (queued != null) QueueA.Remove(queued);
+                }
+
                 msg.Code = Mc.MoveToWorkplace;
                 msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
                 Request(msg.CreateCopy());
