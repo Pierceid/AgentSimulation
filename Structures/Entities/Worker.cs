@@ -1,5 +1,7 @@
 ﻿using AgentSimulation.Statistics;
 using AgentSimulation.Structures.Enums;
+using AgentSimulation.Utilities;
+using OSPAnimator;
 using System.ComponentModel;
 
 namespace AgentSimulation.Structures.Objects {
@@ -51,6 +53,11 @@ namespace AgentSimulation.Structures.Objects {
             }
         }
 
+        public AnimImageItem Image { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public static Random Random { get; } = new();
+
         public Worker(int id, WorkerGroup group) {
             Id = id;
             Group = group;
@@ -59,7 +66,13 @@ namespace AgentSimulation.Structures.Objects {
             Workplace = null;
             State = WorkerState.WAITING;
             Utility = new();
+            Image = new(Util.GetFilePath(group == WorkerGroup.A ? "worker_a.png" : group == WorkerGroup.B ? "worker_b.png" : "worker_c.png"));
+            var (x, y) = GetRandomPosition();     
+            X = x;
+            Y = y;
         }
+
+        public (int x, int y) GetRandomPosition() => (Random.Next(0, 576), Random.Next(0, 120));
 
         public void SetIsBusy(bool isBusy) {
             if (!isBusy) Product = null;

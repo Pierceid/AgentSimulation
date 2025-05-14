@@ -93,11 +93,11 @@ namespace AgentSimulation.Presentation {
             mySimulation.RegisterDelegate(dataGridObserver);
         }
 
-        public void SetAnimator(bool start, ContentControl contentControl) {
+        public void SetAnimator(bool start) {
             if (mySimulation == null) return;
 
             if (start) {
-                mySimulation.StartAnimation(contentControl);
+                mySimulation.StartAnimation();
             } else {
                 mySimulation.StopAnimation();
             }

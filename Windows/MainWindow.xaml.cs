@@ -53,10 +53,7 @@ public partial class MainWindow : Window {
                 UpdateUI(new Config4());
             } else if (checkBox == chkAnimation) {
                 bool isAnimation = chkAnimation.IsChecked!.Value;
-                contentControl.Visibility = isAnimation ? Visibility.Visible : Visibility.Collapsed;
-                plotView.Visibility = !isAnimation ? Visibility.Visible : Visibility.Collapsed;
-                simStatus.Visibility = !isAnimation ? Visibility.Visible : Visibility.Collapsed;
-                facade?.SetAnimator(isAnimation, contentControl);
+                facade?.SetAnimator(isAnimation);
             }
         }
     }

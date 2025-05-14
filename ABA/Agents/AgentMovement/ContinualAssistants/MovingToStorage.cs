@@ -13,8 +13,16 @@ namespace Agents.AgentMovement.ContinualAssistants {
 
         //meta! sender="AgentMovement", id="111", type="Start"
         public void ProcessStart(MessageForm message) {
-            message.Code = Mc.Finish;
-            double duration = ((MySimulation)MySim).Generators.WorkerMoveToStorageTime.Next();
+            var myMessage = (MyMessage)message;
+            var mySimulation = (MySimulation)MySim;
+            myMessage.Code = Mc.Finish;
+            double duration = mySimulation.Generators.WorkerMoveToStorageTime.Next();
+
+            if (myMessage.Worker != null && myMessage.Product != null && myMessage.Product.Workplace != null) {
+                var (x, y) = myMessage.Worker.GetRandomPosition();
+                myMessage.Worker.Image.MoveTo(mySimulation.CurrentTime, duration, new(x, y));
+            }
+
             Hold(duration, message);
         }
 

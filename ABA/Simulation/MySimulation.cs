@@ -117,9 +117,9 @@ namespace Simulation {
             }
         }
 
-        public void InitAnimator(ContentControl contentControl) {
+        public void InitAnimator() {
             if (AnimatorExists) {
-                Animator.ClearAll();
+                return;
             } else {
                 CreateAnimator();
             }
@@ -189,13 +189,37 @@ namespace Simulation {
                 wp.Image.SetPosition(wp.X, wp.Y);
             });
 
-            contentControl.Content = Animator.Canvas;
+            var managerWorkersA = AgentWorkersA.MyManager as ManagerWorkersA;
+            var managerWorkersB = AgentWorkersB.MyManager as ManagerWorkersB;
+            var managerWorkersC = AgentWorkersC.MyManager as ManagerWorkersC;
+
+            managerWorkersA?.Workers.ForEach(w => {
+                Animator.Register(10000 + w.Id, w.Image);
+                w.Image.SetPosition(w.X, w.Y);
+            });
+
+            managerWorkersB?.Workers.ForEach(w => {
+                Animator.Register(20000 + w.Id, w.Image);
+                w.Image.SetPosition(w.X, w.Y);
+            });
+
+            managerWorkersC?.Workers.ForEach(w => {
+                Animator.Register(30000 + w.Id, w.Image);
+                w.Image.SetPosition(w.X, w.Y);
+            });
+
+            Animator.SetSynchronizedTime(true);
+
+            var window = new Window {
+                Width = 1000,
+                Height = 800,
+                Content = Animator.Canvas
+            };
+            window.Show();
         }
 
-        public void StartAnimation(ContentControl contentControl) {
-            InitAnimator(contentControl);
-
-            Animator.SetSynchronizedTime(false);
+        public void StartAnimation() {
+            InitAnimator();
         }
 
         public void StopAnimation() {
