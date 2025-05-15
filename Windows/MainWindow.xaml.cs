@@ -38,23 +38,30 @@ public partial class MainWindow : Window {
 
     private void CheckBoxClick(object sender, RoutedEventArgs e) {
         if (sender is CheckBox checkBox) {
+            if (checkBox == chkAnimation) {
+                bool isAnimation = chkAnimation.IsChecked!.Value;
+                facade?.SetAnimator(isAnimation);
+                return;
+            }
+
             chkConfig1.IsChecked = checkBox == chkConfig1;
             chkConfig2.IsChecked = checkBox == chkConfig2;
             chkConfig3.IsChecked = checkBox == chkConfig3;
             chkConfig4.IsChecked = checkBox == chkConfig4;
 
+            Config? config = null;
+
             if (checkBox == chkConfig1) {
-                UpdateUI(new Config1());
+                config = Util.LoadConfig("config.xlsx", 1);
             } else if (checkBox == chkConfig2) {
-                UpdateUI(new Config2());
+                config = Util.LoadConfig("config.xlsx", 2);
             } else if (checkBox == chkConfig3) {
-                UpdateUI(new Config3());
+                config = Util.LoadConfig("config.xlsx", 3);
             } else if (checkBox == chkConfig4) {
-                UpdateUI(new Config4());
-            } else if (checkBox == chkAnimation) {
-                bool isAnimation = chkAnimation.IsChecked!.Value;
-                facade?.SetAnimator(isAnimation);
+                config = Util.LoadConfig("config.xlsx", 4);
             }
+
+            if (config != null) UpdateUI(config);
         }
     }
 

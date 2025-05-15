@@ -34,7 +34,9 @@ namespace Agents.AgentCarpentry {
 
         public void InitWorkplaces(int workplaces) {
             Workplaces.Clear();
-            Parallel.For(0, workplaces, w => { lock (Workplaces) { Workplaces.Add(new Workplace(w)); } });
+            for (int i = 0; i < workplaces; i++) {
+                Workplaces.Add(new Workplace(i));
+            }
         }
 
         private SimQueue<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
@@ -43,13 +45,6 @@ namespace Agents.AgentCarpentry {
             ProductState.Painted => product.IsPickled ? QueueC : QueueB,
             ProductState.Pickled => QueueB,
             ProductState.Assembled => product.Type == ProductType.Wardrobe ? QueueD : null,
-            _ => null
-        };
-
-        private SimQueue<MyMessage>? GetQueueForWorker(Worker worker) => worker.Group switch {
-            WorkerGroup.A => QueueD.Count > 0 ? QueueD : QueueA.Count > 0 ? QueueA : null,
-            WorkerGroup.B => QueueB.Count > 0 ? QueueB : null,
-            WorkerGroup.C => QueueD.Count > 0 ? QueueD : QueueC.Count > 0 ? QueueC : null,
             _ => null
         };
 

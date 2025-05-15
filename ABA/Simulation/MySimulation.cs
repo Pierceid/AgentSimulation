@@ -28,7 +28,7 @@ namespace Simulation {
         public RandomGenerators Generators { get; set; } = new();
         public double Speed { get; set; } = 1.0;
 
-        private Window animatorWindow;
+        private Window? animatorWindow = null;
 
         public MySimulation() {
             Init();
@@ -53,24 +53,22 @@ namespace Simulation {
         override public void ReplicationFinished() {
             base.ReplicationFinished();
 
-            RunOnUIThread(() => {
-                var managerScope = AgentScope.MyManager as ManagerScope;
-                var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
-                var managerWorkersA = AgentWorkersA.MyManager as ManagerWorkersA;
-                var managerWorkersB = AgentWorkersB.MyManager as ManagerWorkersB;
-                var managerWorkersC = AgentWorkersC.MyManager as ManagerWorkersC;
+            var managerScope = AgentScope.MyManager as ManagerScope;
+            var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
+            var managerWorkersA = AgentWorkersA.MyManager as ManagerWorkersA;
+            var managerWorkersB = AgentWorkersB.MyManager as ManagerWorkersB;
+            var managerWorkersC = AgentWorkersC.MyManager as ManagerWorkersC;
 
-                if (managerScope != null && managerCarpentry != null && managerWorkersA != null && managerWorkersB != null && managerWorkersC != null) {
-                    AverageFinishedOrdersCount.AddSample(managerScope.FinishedOrdersCount.SampleSize);
-                    AveragePendingOrdersCount.AddSample(managerCarpentry.QueueA.Count);
-                    AverageOrderTime.AddSample(managerScope.OrderTimes.Mean());
-                    AverageUtilityA.AddSample(managerWorkersA.GetAverageUtility());
-                    AverageUtilityB.AddSample(managerWorkersB.GetAverageUtility());
-                    AverageUtilityC.AddSample(managerWorkersC.GetAverageUtility());
-                }
+            if (managerScope != null && managerCarpentry != null && managerWorkersA != null && managerWorkersB != null && managerWorkersC != null) {
+                AverageFinishedOrdersCount.AddSample(managerScope.FinishedOrdersCount.SampleSize);
+                AveragePendingOrdersCount.AddSample(managerCarpentry.QueueA.Count);
+                AverageOrderTime.AddSample(managerScope.OrderTimes.Mean());
+                AverageUtilityA.AddSample(managerWorkersA.GetAverageUtility());
+                AverageUtilityB.AddSample(managerWorkersB.GetAverageUtility());
+                AverageUtilityC.AddSample(managerWorkersC.GetAverageUtility());
+            }
 
-                OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
-            });
+            OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
         }
 
         override public void SimulationFinished() {
@@ -109,45 +107,43 @@ namespace Simulation {
 
             CreateAnimator();
 
-            RunOnUIThread(() => {
-                var backgroundImage = new Bitmap(Util.GetFilePath("background.png"));
-                Animator.SetBackgroundImage(backgroundImage);
+            var backgroundImage = new Bitmap(Util.GetFilePath("background.png"));
+            Animator.SetBackgroundImage(backgroundImage);
 
-                Animator.Canvas.VerticalAlignment = VerticalAlignment.Top;
-                Animator.Canvas.HorizontalAlignment = HorizontalAlignment.Left;
-                Animator.Canvas.Width = Constants.ANIMATION_WIDTH;
-                Animator.Canvas.Height = Constants.ANIMATION_HEIGHT;
-                Animator.Canvas.Margin = new Thickness(10);
+            Animator.Canvas.VerticalAlignment = VerticalAlignment.Top;
+            Animator.Canvas.HorizontalAlignment = HorizontalAlignment.Left;
+            Animator.Canvas.Width = Constants.ANIMATION_WIDTH;
+            Animator.Canvas.Height = Constants.ANIMATION_HEIGHT;
+            Animator.Canvas.Margin = new Thickness(10);
 
-                SetupQueues();
+            SetupQueues();
 
-                var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
-                managerCarpentry?.Workplaces.ForEach(wp => {
-                    Animator.Register(wp.Id, wp.Image);
-                    wp.Image.SetPosition(wp.X, wp.Y);
-                });
-
-                (AgentWorkersA.MyManager as ManagerWorkersA)?.Workers.ForEach(w => {
-                    Animator.Register(10000 + w.Id, w.Image);
-                    w.Image.SetPosition(w.X, w.Y);
-                });
-                (AgentWorkersB.MyManager as ManagerWorkersB)?.Workers.ForEach(w => {
-                    Animator.Register(20000 + w.Id, w.Image);
-                    w.Image.SetPosition(w.X, w.Y);
-                });
-                (AgentWorkersC.MyManager as ManagerWorkersC)?.Workers.ForEach(w => {
-                    Animator.Register(30000 + w.Id, w.Image);
-                    w.Image.SetPosition(w.X, w.Y);
-                });
-
-                animatorWindow = new Window {
-                    Title = "Animator",
-                    Width = 1000,
-                    Height = 800,
-                    Content = Animator.Canvas
-                };
-                animatorWindow.Show();
+            var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
+            managerCarpentry?.Workplaces.ForEach(wp => {
+                Animator.Register(wp.Image);
+                wp.Image.SetPosition(wp.X, wp.Y);
             });
+
+            (AgentWorkersA.MyManager as ManagerWorkersA)?.Workers.ForEach(w => {
+                Animator.Register(w.Image);
+                w.Image.SetPosition(w.X, w.Y);
+            });
+            (AgentWorkersB.MyManager as ManagerWorkersB)?.Workers.ForEach(w => {
+                Animator.Register(w.Image);
+                w.Image.SetPosition(w.X, w.Y);
+            });
+            (AgentWorkersC.MyManager as ManagerWorkersC)?.Workers.ForEach(w => {
+                Animator.Register(w.Image);
+                w.Image.SetPosition(w.X, w.Y);
+            });
+
+            animatorWindow = new Window {
+                Title = "Animator",
+                Width = Constants.ANIMATION_WIDTH,
+                Height = Constants.ANIMATION_HEIGHT,
+                Content = Animator.Canvas
+            };
+            animatorWindow.Show();
         }
 
         private void SetupQueues() {
@@ -182,23 +178,15 @@ namespace Simulation {
         }
 
         public void StartAnimation() {
+            if (IsMaxSpeed()) SetSimSpeed(60, 1);
             InitAnimator();
         }
 
         public void StopAnimation() {
-            RunOnUIThread(() => {
-                if (animatorWindow != null) {
-                    animatorWindow.Close();
-                    animatorWindow = null;
-                }
-            });
-        }
-
-        private void RunOnUIThread(Action action) {
-            if (Application.Current?.Dispatcher != null && !Application.Current.Dispatcher.CheckAccess()) {
-                Application.Current.Dispatcher.Invoke(action);
-            } else {
-                action();
+            if (animatorWindow != null) {
+                RemoveAnimator();
+                animatorWindow.Close();
+                animatorWindow = null;
             }
         }
 

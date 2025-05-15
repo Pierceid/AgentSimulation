@@ -7,6 +7,7 @@ namespace AgentSimulation.Structures {
         public const int IMAGE_SIZE = 48;
         public const int ANIMATION_WIDTH = 780;
         public const int ANIMATION_HEIGHT = 700;
-        public static string IMAGE_PATH = Path.GetFullPath(Path.Combine("..", "..", "..", "Images"));
+        public static string CONFIG_PATH = Path.GetFullPath(Path.Combine("..", "..", "..", "Files"));
+        public static string IMAGE_PATH = Path.GetFullPath(Path.Combine("..", "..", "..", "Files", "Images"));
     }
 }
