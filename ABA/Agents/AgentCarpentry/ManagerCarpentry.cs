@@ -2,16 +2,16 @@
 using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
-using OSPDataStruct;
 using Simulation;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
-        public SimQueue<MyMessage> QueueA { get; } = new();
-        public SimQueue<MyMessage> QueueB { get; } = new();
-        public SimQueue<MyMessage> QueueC { get; } = new();
-        public SimQueue<MyMessage> QueueD { get; } = new();
+        public LinkedList<MyMessage> QueueA { get; } = new();
+        public LinkedList<MyMessage> QueueB { get; } = new();
+        public LinkedList<MyMessage> QueueC { get; } = new();
+        public LinkedList<MyMessage> QueueD { get; } = new();
         public List<Workplace> Workplaces { get; set; } = new();
 
         public ManagerCarpentry(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
@@ -36,7 +36,10 @@ namespace Agents.AgentCarpentry {
                 };
 
                 QueueA.AddLast(productMsg);
-                AssignOrderToWorkplace(productMsg);
+            }
+
+            for (int i = 0; i < QueueA.Count; i++) {
+                AssignOrderToWorkplace(QueueA.ElementAt(i));
             }
         }
 
@@ -56,10 +59,58 @@ namespace Agents.AgentCarpentry {
             Request(msg);
         }
 
+        public void AssignWorkerToWorkplace(MyMessage msg) {
+            if (msg.Product == null || msg.Workplace == null || msg.Worker == null) return;
+
+            var fittingWorkplace = FindFittingWorkplace(msg);
+
+            if (fittingWorkplace == null) return;
+
+            var message = new MyMessage(MySim) {
+                Worker = msg.Worker,
+                Order = fittingWorkplace.Product?.Order,
+                Product = fittingWorkplace.Product,
+                Workplace = fittingWorkplace,
+                Code = Mc.MoveToWorkplace,
+                Addressee = MySim.FindAgent(SimId.AgentMovement)
+            };
+            Request(message);
+        }
+
+        private Workplace? FindFittingWorkplace(MyMessage message) {
+            if (message.Worker == null) return null;
+
+            ProductState? targetState = null;
+
+            switch (message.Worker.Group) {
+                case WorkerGroup.A:
+                    if (QueueD.Count != 0) targetState = ProductState.Assembled;
+                    else if (QueueA.Count != 0) targetState = ProductState.Raw;
+                    break;
+
+                case WorkerGroup.B:
+                    if (QueueB.Count != 0) targetState = ProductState.Painted;
+                    break;
+
+                case WorkerGroup.C:
+                    if (QueueD.Count != 0) targetState = ProductState.Assembled;
+                    else if (QueueC.Count != 0) targetState = ProductState.Cut;
+                    break;
+
+                default:
+                    return null;
+            }
+
+            if (targetState == null) return null;
+
+            return Workplaces.FirstOrDefault(wp => wp.Product?.State == targetState && !wp.IsOccupied && wp.Worker == null);
+        }
+
         public void ContinueWorkingOnProduct(MyMessage msg) {
             if (msg.Product == null) return;
 
             int code = GetWorkerRequestCode(msg.Product);
+
             if (code == -1) return;
 
             msg.Code = code;
@@ -95,7 +146,7 @@ namespace Agents.AgentCarpentry {
 
         public void ProcessResponseWorkerToMount(MessageForm msg) => ProcessResponseWorker(msg, QueueD, Mc.MoveToWorkplace);
 
-        private void ProcessResponseWorker(MessageForm message, SimQueue<MyMessage> queue, int moveCode) {
+        private void ProcessResponseWorker(MessageForm message, LinkedList<MyMessage> queue, int moveCode) {
             var msg = (MyMessage)message;
 
             if (msg.Worker == null) return;
@@ -230,12 +281,12 @@ namespace Agents.AgentCarpentry {
             }
         }
 
-        private void RemoveMessageFromQueue(SimQueue<MyMessage> queue, MyMessage message) {
+        private void RemoveMessageFromQueue(LinkedList<MyMessage> queue, MyMessage message) {
             var match = queue.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
             if (match != null) queue.Remove(match);
         }
 
-        private SimQueue<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
+        private LinkedList<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
             ProductState.Raw => QueueA,
             ProductState.Cut => QueueC,
             ProductState.Painted => product.IsPickled ? QueueC : QueueB,
@@ -289,7 +340,7 @@ namespace Agents.AgentCarpentry {
 
         private Workplace? GetFreeWorkplace() {
             lock (Workplaces) {
-                var free = Workplaces.FirstOrDefault(w => !w.IsOccupied && w.Product == null && w.Worker == null);
+                var free = Workplaces.FirstOrDefault(wp => !wp.IsOccupied && wp.Product == null && wp.Worker == null);
                 free?.SetState(true);
                 return free;
             }
@@ -299,7 +350,7 @@ namespace Agents.AgentCarpentry {
             var msg = (MyMessage)message;
 
             if (msg.Workplace != null) {
-                var workplace = Workplaces.FirstOrDefault(w => w.Id == msg.Workplace.Id);
+                var workplace = Workplaces.FirstOrDefault(wp => wp.Id == msg.Workplace.Id);
                 if (workplace != null) workplace.Worker = msg.Worker;
 
                 msg.Workplace.Worker = msg.Worker;
@@ -324,9 +375,9 @@ namespace Agents.AgentCarpentry {
 
             if (msg.Workplace != null) {
                 FreeUpWorkPlace(msg.Workplace);
-                msg.Workplace.Product = null;
-                msg.Workplace = null;
             }
+
+            AssignWorkerToWorkplace(msg);
 
             if (msg.Worker != null) msg.Worker.State = WorkerState.WAITING;
 
@@ -340,7 +391,7 @@ namespace Agents.AgentCarpentry {
             if (code != -1) {
                 msg.Code = code;
                 msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-                Notice(msg);
+                Notice(msg.CreateCopy());
             }
         }
 

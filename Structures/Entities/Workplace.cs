@@ -26,7 +26,6 @@ namespace AgentSimulation.Structures.Objects {
 
         public void AssignProduct(Product? product) {
             Product = product;
-            IsOccupied = product != null;
             Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
         }
 
