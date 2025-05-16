@@ -28,8 +28,8 @@ namespace Agents.AgentWorkersC {
             InitWorkers(count);
         }
 
-        //meta! sender="AgentWorkers", id="156", type="Request"
-        public void ProcessGetWorkerC(MessageForm message) {
+		//meta! sender="AgentWorkers", id="156", type="Request"
+		public void ProcessGetWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
             availableWorker?.SetIsBusy(true);
@@ -37,8 +37,8 @@ namespace Agents.AgentWorkersC {
             Response(myMessage);
         }
 
-        //meta! sender="AgentWorkers", id="203", type="Notice"
-        public void ProcessDeassignWorkerC(MessageForm message) {
+		//meta! sender="AgentWorkers", id="203", type="Notice"
+		public void ProcessDeassignWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Worker != null) {
@@ -49,11 +49,11 @@ namespace Agents.AgentWorkersC {
             }
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) { }
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) { }
 
-        //meta! sender="AgentWorkers", id="266", type="Notice"
-        public void ProcessAssignWorkerC(MessageForm message) {
+		//meta! sender="AgentWorkers", id="266", type="Notice"
+		public void ProcessAssignWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
 
             if (myMessage.Worker != null) {
@@ -65,30 +65,33 @@ namespace Agents.AgentWorkersC {
             }
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message) {
-            switch (message.Code) {
-                case Mc.GetWorkerC:
-                    ProcessGetWorkerC(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.GetWorkerC:
+				ProcessGetWorkerC(message);
+			break;
 
-                case Mc.AssignWorkerC:
-                    ProcessAssignWorkerC(message);
-                    break;
+			case Mc.DeassignWorkerC:
+				ProcessDeassignWorkerC(message);
+			break;
 
-                case Mc.DeassignWorkerC:
-                    ProcessDeassignWorkerC(message);
-                    break;
+			case Mc.AssignWorkerC:
+				ProcessAssignWorkerC(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
 
         public double GetAverageUtility() {
             double time = 0.0;

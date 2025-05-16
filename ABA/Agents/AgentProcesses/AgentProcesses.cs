@@ -18,12 +18,14 @@ namespace Agents.AgentProcesses {
 		private void Init()
 		{
 			new ManagerProcesses(SimId.ManagerProcesses, MySim, this);
+			new Pickling(SimId.Pickling, MySim, this);
 			new Cutting(SimId.Cutting, MySim, this);
 			new Assembling(SimId.Assembling, MySim, this);
 			new Preparing(SimId.Preparing, MySim, this);
-			new Mounting(SimId.Mounting, MySim, this);
-			new Pickling(SimId.Pickling, MySim, this);
 			new Painting(SimId.Painting, MySim, this);
+			new Drying(SimId.Drying, MySim, this);
+			new Mounting(SimId.Mounting, MySim, this);
+			AddOwnMessage(Mc.DoDry);
 			AddOwnMessage(Mc.DoPrepare);
 			AddOwnMessage(Mc.DoPaint);
 			AddOwnMessage(Mc.DoCut);

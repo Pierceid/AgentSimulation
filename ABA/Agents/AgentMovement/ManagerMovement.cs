@@ -59,10 +59,6 @@ namespace Agents.AgentMovement {
 		{
 			switch (message.Code)
 			{
-			case Mc.MoveToStorage:
-				ProcessMoveToStorage(message);
-			break;
-
 			case Mc.Finish:
 				switch (message.Sender.Id)
 				{
@@ -78,6 +74,10 @@ namespace Agents.AgentMovement {
 
 			case Mc.MoveToWorkplace:
 				ProcessMoveToWorkplace(message);
+			break;
+
+			case Mc.MoveToStorage:
+				ProcessMoveToStorage(message);
 			break;
 
 			default:

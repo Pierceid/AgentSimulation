@@ -43,6 +43,12 @@ namespace Agents.AgentWorkers {
             Request(message);
         }
 
+        public void ProcessGetWorkerForDrying(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
+            message.Code = Mc.GetWorkerA;
+            Request(message);
+        }
+
         public void ProcessGetWorkerA(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             message.Code = Mc.GetWorkerToCut;
@@ -117,6 +123,7 @@ namespace Agents.AgentWorkers {
                 case Mc.GetWorkerToCut: ProcessGetWorkerForCutting(message); break;
                 case Mc.GetWorkerToPaint: ProcessGetWorkerForPainting(message); break;
                 case Mc.GetWorkerToPickle: ProcessGetWorkerForPickling(message); break;
+                case Mc.GetWorkerToDry: ProcessGetWorkerForDrying(message); break;
                 case Mc.GetWorkerToAssemble: ProcessGetWorkerForAssembling(message); break;
                 case Mc.GetWorkerToMount: ProcessGetWorkerForMounting(message); break;
                 default: ProcessDefault(message); break;

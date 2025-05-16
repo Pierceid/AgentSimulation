@@ -24,6 +24,7 @@ namespace Agents.AgentWorkers {
 			AddOwnMessage(Mc.AssignWorkerA);
 			AddOwnMessage(Mc.AssignWorkerB);
 			AddOwnMessage(Mc.AssignWorkerC);
+			AddOwnMessage(Mc.GetWorkerToDry);
 			AddOwnMessage(Mc.GetWorkerToAssemble);
 			AddOwnMessage(Mc.DeassignWorkerA);
 			AddOwnMessage(Mc.GetWorkerToPickle);

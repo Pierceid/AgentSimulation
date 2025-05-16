@@ -43,12 +43,12 @@ namespace Agents.AgentScope.ContinualAssistants {
 		{
 			switch (message.Code)
 			{
-			case Mc.Start:
-				ProcessStart(message);
-			break;
-
 			case Mc.PlanOrderArrival:
 				ProcessPlanOrderArrival(message);
+			break;
+
+			case Mc.Start:
+				ProcessStart(message);
 			break;
 
 			default:

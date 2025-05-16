@@ -10,6 +10,8 @@ namespace Simulation
 		public const int OrderExit = 1002;
 		public const int ProcessOrder = 1003;
 		public const int DoPrepare = 1054;
+		public const int GetWorkerToDry = 1088;
+		public const int DoDry = 1089;
 		public const int OrderEnter = 1004;
 		public const int GetWorkerC = 1055;
 		public const int GetWorkerB = 1056;

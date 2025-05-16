@@ -30,8 +30,8 @@ namespace Agents.AgentWorkplaces {
             Workplaces.Clear();
             InitWorkplaces(count);
         }
-        //meta! sender="AgentCarpentry", id="257", type="Notice"
-        public void ProcessAssignWorkplace(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="257", type="Notice"
+		public void ProcessAssignWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Workplace? workplace = GetFreeWorkplace();
 
@@ -46,32 +46,32 @@ namespace Agents.AgentWorkplaces {
             Request(myMessage);
         }
 
-        //meta! sender="AgentCarpentry", id="115", type="Response"
-        public void ProcessGetWorkerForCutting(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="115", type="Response"
+		public void ProcessGetWorkerForCutting(MessageForm message) {
             SendWorkerToWork(message, Mc.DoCutting);
         }
 
-        //meta! sender="AgentCarpentry", id="119", type="Response"
-        public void ProcessGetWorkerForMounting(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="119", type="Response"
+		public void ProcessGetWorkerForMounting(MessageForm message) {
             SendWorkerToWork(message, Mc.DoMounting);
         }
 
-        //meta! sender="AgentCarpentry", id="118", type="Response"
-        public void ProcessGetWorkerForAssembling(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="118", type="Response"
+		public void ProcessGetWorkerForAssembling(MessageForm message) {
             SendWorkerToWork(message, Mc.DoAssembling);
         }
 
-        //meta! sender="AgentCarpentry", id="117", type="Response"
-        public void ProcessGetWorkerForPainting(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="117", type="Response"
+		public void ProcessGetWorkerForPainting(MessageForm message) {
             SendWorkerToWork(message, Mc.DoPainting);
         }
 
-        //meta! sender="AgentCarpentry", id="120", type="Response"
-        public void ProcessGetWorkerForPickling(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="120", type="Response"
+		public void ProcessGetWorkerForPickling(MessageForm message) {
             SendWorkerToWork(message, Mc.DoPickling);
         }
-        //meta! sender="AgentCarpentry", id="170", type="Request"
-        public void ProcessGetFreeWorkplace(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="170", type="Request"
+		public void ProcessGetFreeWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Workplace? workplace = GetFreeWorkplace();
 
@@ -84,8 +84,8 @@ namespace Agents.AgentWorkplaces {
             myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             Response(myMessage);
         }
-        //meta! sender="AgentCarpentry", id="73", type="Notice"
-        public void ProcessDeassignWorkplace(MessageForm message) {
+		//meta! sender="AgentCarpentry", id="73", type="Notice"
+		public void ProcessDeassignWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
 
             if (myMessage.Workplace != null) {
@@ -105,8 +105,8 @@ namespace Agents.AgentWorkplaces {
         public void ProcessInit(MessageForm message) {
 
         }
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) {
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message) {
 
         }
 

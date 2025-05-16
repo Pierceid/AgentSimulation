@@ -34,10 +34,12 @@ namespace Agents.AgentCarpentry {
 			AddOwnMessage(Mc.GetWorkerForCutting);
 			AddOwnMessage(Mc.DoPickling);
 			AddOwnMessage(Mc.GetWorkerToMount);
-			AddOwnMessage(Mc.GetWorkerForMounting);
 			AddOwnMessage(Mc.DoCut);
+			AddOwnMessage(Mc.GetWorkerForMounting);
 			AddOwnMessage(Mc.DoMount);
+			AddOwnMessage(Mc.GetWorkerToDry);
 			AddOwnMessage(Mc.GetWorkerToAssemble);
+			AddOwnMessage(Mc.DoDry);
 			AddOwnMessage(Mc.GetFreeWorkplace);
 			AddOwnMessage(Mc.GetWorkerForPainting);
 			AddOwnMessage(Mc.GetWorkerToPickle);

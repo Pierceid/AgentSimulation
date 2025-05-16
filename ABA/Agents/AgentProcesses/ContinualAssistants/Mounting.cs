@@ -28,8 +28,8 @@ namespace Agents.AgentProcesses.ContinualAssistants {
             AssistantFinished(message);
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        override public void ProcessMessage(MessageForm message)
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		override public void ProcessMessage(MessageForm message)
 		{
 			switch (message.Code)
 			{

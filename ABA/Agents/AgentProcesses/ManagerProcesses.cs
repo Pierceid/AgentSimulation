@@ -1,6 +1,5 @@
 using OSPABA;
 using Simulation;
-using System.Windows;
 
 namespace Agents.AgentProcesses {
     //meta! id="77"
@@ -54,6 +53,18 @@ namespace Agents.AgentProcesses {
             message.Addressee = MyAgent.FindAssistant(SimId.Preparing);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
+        }
+
+        public void ProcessDoDry(MessageForm message) {
+            message.Addressee = MyAgent.FindAssistant(SimId.Drying);
+            message.Code = Mc.Start;
+            StartContinualAssistant(message);
+        }
+
+        public void ProcessFinishDrying(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            message.Code = Mc.DoDry;
+            Response(message);
         }
 
         //meta! sender="Cutting", id="223", type="Finish"
@@ -126,6 +137,10 @@ namespace Agents.AgentProcesses {
                         case SimId.Cutting:
                             ProcessFinishCutting(message);
                             break;
+
+                        case SimId.Drying:
+                            ProcessFinishDrying(message);
+                            break;
                     }
                     break;
             }
@@ -137,20 +152,52 @@ namespace Agents.AgentProcesses {
 
         override public void ProcessMessage(MessageForm message) {
             switch (message.Code) {
+                case Mc.Finish:
+                    switch (message.Sender.Id) {
+                        case SimId.Mounting:
+                            ProcessFinishMounting(message);
+                            break;
+
+                        case SimId.Drying:
+                            ProcessFinishDrying(message);
+                            break;
+
+                        case SimId.Cutting:
+                            ProcessFinishCutting(message);
+                            break;
+
+                        case SimId.Assembling:
+                            ProcessFinishAssembling(message);
+                            break;
+
+                        case SimId.Pickling:
+                            ProcessFinishPickling(message);
+                            break;
+
+                        case SimId.Painting:
+                            ProcessFinishPainting(message);
+                            break;
+
+                        case SimId.Preparing:
+                            ProcessFinishPreparing(message);
+                            break;
+                    }
+                    break;
+
                 case Mc.DoPickle:
                     ProcessDoPickle(message);
                     break;
 
-                case Mc.DoPrepare:
-                    ProcessDoPrepare(message);
+                case Mc.DoPaint:
+                    ProcessDoPaint(message);
                     break;
 
                 case Mc.DoCut:
                     ProcessDoCut(message);
                     break;
 
-                case Mc.DoPaint:
-                    ProcessDoPaint(message);
+                case Mc.DoDry:
+                    ProcessDoDry(message);
                     break;
 
                 case Mc.DoAssemble:
@@ -159,6 +206,10 @@ namespace Agents.AgentProcesses {
 
                 case Mc.DoMount:
                     ProcessDoMount(message);
+                    break;
+
+                case Mc.DoPrepare:
+                    ProcessDoPrepare(message);
                     break;
 
                 default:
