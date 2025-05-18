@@ -4,6 +4,7 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -153,7 +154,34 @@ namespace Agents.AgentCarpentry {
         }
 
         private void DoPickling(MyMessage message) {
+            if (message.GetWorkerForPickling() == null || message.Workplace == null) {
+                MessageBox.Show("Missing worker or workplace for pickling");
+                throw new Exception();
+            }
 
+            var queued = QueueC.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
+
+            if (queued != null) QueueC.Remove(queued);
+
+            if (message.Workplace != null) {
+                message.Workplace.Worker = message.GetWorkerForPickling ();
+                UpdateWorkplace(message);
+            }
+
+            var msg = new MyMessage(message);
+            msg.GetWorkerForPickling()?.SetState(WorkerState.WORKING);
+            var currentWorkplace = msg.GetWorkerForPickling()?.Workplace?.Id;
+            var targetWorkplace = msg.Product?.Workplace?.Id;
+
+            if (currentWorkplace != targetWorkplace) {
+                msg.Code = Mc.MoveToWorkplace;
+                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            } else {
+                msg.Code = Mc.DoPickle;
+                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            }
+
+            Request(msg);
         }
 
         private void DoAssembling(MyMessage message) {
@@ -223,6 +251,10 @@ namespace Agents.AgentCarpentry {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
                 queuedD.Product.WorkerToMount = worker;
+                if (queuedD.Workplace != null) {
+                    queuedD.Workplace.Worker = worker;
+                    UpdateWorkplace(queuedD);
+                }
                 DoMounting(queuedD);
                 return;
             }
@@ -243,8 +275,11 @@ namespace Agents.AgentCarpentry {
                     Notice(message);
                     return;
                 }
-
                 queuedA.Workplace = freeWorkplace;
+                if (queuedA.Workplace != null) {
+                    queuedA.Workplace.Worker = worker;
+                    UpdateWorkplace(queuedA);
+                }
                 DoCutting(queuedA);
                 return;
             }
@@ -262,6 +297,10 @@ namespace Agents.AgentCarpentry {
                 var queuedB = QueueB.First();
                 if (queuedB.Product == null) return;
                 queuedB.Product.WorkerToAssemble = worker;
+                if (queuedB.Workplace != null) {
+                    queuedB.Workplace.Worker = worker;
+                    UpdateWorkplace(queuedB);
+                }
                 DoAssembling(queuedB);
                 return;
             }
@@ -279,6 +318,10 @@ namespace Agents.AgentCarpentry {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
                 queuedD.Product.WorkerToMount = worker;
+                if (queuedD.Workplace != null) {
+                    queuedD.Workplace.Worker = worker;
+                    UpdateWorkplace(queuedD);
+                }
                 DoMounting(queuedD);
                 return;
             }
@@ -287,6 +330,10 @@ namespace Agents.AgentCarpentry {
                 var queuedC = QueueC.First();
                 if (queuedC.Product == null) return;
                 queuedC.Product.WorkerToPaint = worker;
+                if (queuedC.Workplace != null) {
+                    queuedC.Workplace.Worker = worker;
+                    UpdateWorkplace(queuedC);
+                }
                 DoPainting(queuedC);
                 return;
             }
@@ -355,6 +402,10 @@ namespace Agents.AgentCarpentry {
                         var workerAssemble = msg.GetWorkerForAssembling();
                         msg.Product.WorkerToAssemble = null;
                         if (msg.Product.Type == ProductType.Wardrobe) {
+                            if (msg.Workplace != null) {
+                                msg.Workplace.Worker = workerAssemble;
+                                UpdateWorkplace(msg);
+                            }
                             QueueD.AddLast(msg);
                             PlanMounting(QueueD.First());
                         } else {
@@ -362,6 +413,7 @@ namespace Agents.AgentCarpentry {
                                 ReleaseWorkplace(msg.Workplace);
                                 msg.Workplace.Clear();
                                 msg.Product.Workplace = null;
+                                UpdateWorkplace(msg);
                             }
 
                             AdvanceProductState(msg.Product);
