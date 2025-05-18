@@ -70,10 +70,6 @@ namespace Agents.AgentCarpentry {
         }
 
         public void PlanPainting(MyMessage message) {
-            if (message.Workplace != null) {
-                message.Workplace.IsOccupied = true;
-                UpdateWorkplace(message);
-            }
             message.Code = Mc.GetWorkerToPaint;
             message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
             Request(message.CreateCopy());
@@ -165,7 +161,7 @@ namespace Agents.AgentCarpentry {
             if (queued != null) QueueC.Remove(queued);
 
             if (message.Workplace != null) {
-                message.Workplace.Worker = message.GetWorkerForPickling ();
+                message.Workplace.Worker = message.GetWorkerForPickling();
                 UpdateWorkplace(message);
             }
 
@@ -252,10 +248,6 @@ namespace Agents.AgentCarpentry {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
                 queuedD.Product.WorkerToMount = worker;
-                if (queuedD.Workplace != null) {
-                    queuedD.Workplace.Worker = worker;
-                    UpdateWorkplace(queuedD);
-                }
                 DoMounting(queuedD);
                 return;
             }
@@ -277,10 +269,6 @@ namespace Agents.AgentCarpentry {
                     return;
                 }
                 queuedA.Workplace = freeWorkplace;
-                if (queuedA.Workplace != null) {
-                    queuedA.Workplace.Worker = worker;
-                    UpdateWorkplace(queuedA);
-                }
                 DoCutting(queuedA);
                 return;
             }
@@ -298,10 +286,6 @@ namespace Agents.AgentCarpentry {
                 var queuedB = QueueB.First();
                 if (queuedB.Product == null) return;
                 queuedB.Product.WorkerToAssemble = worker;
-                if (queuedB.Workplace != null) {
-                    queuedB.Workplace.Worker = worker;
-                    UpdateWorkplace(queuedB);
-                }
                 DoAssembling(queuedB);
                 return;
             }
@@ -319,10 +303,6 @@ namespace Agents.AgentCarpentry {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
                 queuedD.Product.WorkerToMount = worker;
-                if (queuedD.Workplace != null) {
-                    queuedD.Workplace.Worker = worker;
-                    UpdateWorkplace(queuedD);
-                }
                 DoMounting(queuedD);
                 return;
             }
@@ -331,10 +311,6 @@ namespace Agents.AgentCarpentry {
                 var queuedC = QueueC.First();
                 if (queuedC.Product == null) return;
                 queuedC.Product.WorkerToPaint = worker;
-                if (queuedC.Workplace != null) {
-                    queuedC.Workplace.Worker = worker;
-                    UpdateWorkplace(queuedC);
-                }
                 DoPainting(queuedC);
                 return;
             }
@@ -401,18 +377,15 @@ namespace Agents.AgentCarpentry {
                         var workerAssemble = msg.GetWorkerForAssembling();
                         msg.Product.WorkerToAssemble = null;
                         if (msg.Product.Type == ProductType.Wardrobe) {
-                            if (msg.Workplace != null) {
-                                msg.Workplace.Worker = workerAssemble;
-                                UpdateWorkplace(msg);
-                            }
                             QueueD.AddLast(msg);
                             PlanMounting(QueueD.First());
                         } else {
+                            AdvanceProductState(msg.Product);
+
                             if (msg.Workplace != null) {
                                 ReleaseWorkplace(msg.Workplace);
                             }
 
-                            AdvanceProductState(msg.Product);
                         }
                         if (workerAssemble != null) ReassignWorkerB(workerAssemble);
                     }
