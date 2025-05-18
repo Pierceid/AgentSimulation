@@ -5,6 +5,7 @@ using OSPABA;
 using Simulation;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -374,9 +375,7 @@ namespace Agents.AgentCarpentry {
                         msg.Product.WorkerToPaint = null;
                         if (msg.Product.IsPickled) {
                             msg.Product.WorkerToPickle = workerPaint;
-                            msg.Code = Mc.DoPickle;
-                            msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-                            Request(msg);
+                            DoPickling(msg);
                         } else {
                             QueueB.AddLast(msg);
                             PlanAssembling(QueueB.First());
@@ -389,7 +388,7 @@ namespace Agents.AgentCarpentry {
                         AdvanceProductState(msg.Product);
 
                         var workerPickle = msg.GetWorkerForPickling();
-                        msg.Product.WorkerToPaint = null;
+                        msg.Product.WorkerToPickle = null;
                         QueueB.AddLast(msg);
                         PlanAssembling(QueueB.First());
                         if (workerPickle != null) ReassignWorkerC(workerPickle);
@@ -411,9 +410,6 @@ namespace Agents.AgentCarpentry {
                         } else {
                             if (msg.Workplace != null) {
                                 ReleaseWorkplace(msg.Workplace);
-                                msg.Workplace.Clear();
-                                msg.Product.Workplace = null;
-                                UpdateWorkplace(msg);
                             }
 
                             AdvanceProductState(msg.Product);
@@ -425,8 +421,8 @@ namespace Agents.AgentCarpentry {
                     if (msg.Product != null) {
                         AdvanceProductState(msg.Product);
 
-                        var workerMount = msg.GetWorkerForAssembling();
-                        msg.Product.WorkerToAssemble = null;
+                        var workerMount = msg.GetWorkerForMounting();
+                        msg.Product.WorkerToMount = null;
                         if (workerMount != null) {
                             if (workerMount.Group == WorkerGroup.A) {
                                 ReassignWorkerA(workerMount);
@@ -437,10 +433,8 @@ namespace Agents.AgentCarpentry {
 
                         if (msg.Workplace != null) {
                             ReleaseWorkplace(msg.Workplace);
-                            msg.Workplace.Worker = null;
-                            UpdateWorkplace(msg);
                             msg.Workplace.Clear();
-                            msg.Product.Workplace = null;
+                            UpdateWorkplace(msg);
                         }
                     }
                     break;
@@ -683,8 +677,8 @@ namespace Agents.AgentCarpentry {
 
                     if (queuedA != null && queuedA.GetWorkerForCutting() != null) {
                         QueueA.RemoveFirst();
-                        queuedA.Workplace = matchedWorkplace;
                         matchedWorkplace?.SetState(true);
+                        queuedA.Workplace = matchedWorkplace;
                         DoCutting(queuedA);
                         return;
                     }

@@ -45,21 +45,24 @@ namespace Agents.AgentWorkers {
         }
 
         public void ProcessGetWorkerA(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            message.Code = Mc.GetWorkerToCut;
-            Response(message);
+            var msg = new MyMessage(message);
+            msg.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            msg.Code = msg.GetAssignedWorker()?.Product?.State == ProductState.Raw ? Mc.GetWorkerToCut : Mc.GetWorkerToMount;
+            Response(msg);
         }
 
         public void ProcessGetWorkerB(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            message.Code = Mc.GetWorkerToAssemble;
-            Response(message);
+            var msg = new MyMessage(message);
+            msg.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            msg.Code = Mc.GetWorkerToAssemble;
+            Response(msg);
         }
 
         public void ProcessGetWorkerC(MessageForm message) {
-            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            message.Code = Mc.GetWorkerToPaint;
-            Response(message);
+            var msg = new MyMessage(message);
+            msg.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            msg.Code = msg.GetAssignedWorker()?.Product?.State == ProductState.Cut ? Mc.GetWorkerToPaint : Mc.GetWorkerToMount;
+            Response(msg);
         }
 
         public void ProcessDeassignWorkerA(MessageForm message) {
