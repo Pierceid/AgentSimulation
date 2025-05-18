@@ -33,7 +33,16 @@ namespace Agents.AgentWorkersA {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
             availableWorker?.SetIsBusy(true);
-            myMessage.Worker = availableWorker;
+            availableWorker?.SetProduct(myMessage.Product);
+
+            if (myMessage.Product != null) {
+                if (myMessage.Product.State == ProductState.Raw) {
+                    myMessage.Product.WorkerToCut = availableWorker;
+                } else {
+                    myMessage.Product.WorkerToMount = availableWorker;
+                }
+            }
+
             Response(myMessage);
         }
 
@@ -42,12 +51,19 @@ namespace Agents.AgentWorkersA {
 
         //meta! sender="AgentWorkers", id="205", type="Notice"
         public void ProcessDeassignWorkerA(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            Worker? worker = null;
 
-            if (myMessage.Worker != null) {
-                var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
-                match?.SetIsBusy(false);
-                match?.SetState(myMessage.Worker.State);
+            if (myMessage.WorkerToRelease != null && myMessage.WorkerToRelease.Group == WorkerGroup.A) {
+                worker = myMessage.WorkerToRelease;
+            } else if (myMessage.GetWorkerForMounting() != null && myMessage.GetWorkerForMounting()?.Group == WorkerGroup.A) {
+                worker = myMessage.GetWorkerForMounting();
+            }
+
+            if (worker != null) {
+                worker.SetState(WorkerState.WAITING);
+                var match = Workers.FirstOrDefault(w => w.Id == worker.Id);
+                match?.SetState(worker.State);
                 match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
@@ -55,11 +71,11 @@ namespace Agents.AgentWorkersA {
         //meta! sender="AgentWorkers", id="267", type="Notice"
         public void ProcessAssignWorkerA(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
+            var assignedWorker = myMessage.GetAssignedWorker();
 
-            if (myMessage.Worker != null) {
-                var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
+            if (assignedWorker != null) {
+                var match = Workers.FirstOrDefault(w => w.Id == assignedWorker.Id);
                 match?.SetProduct(myMessage.Product);
-                match?.SetState(myMessage.Worker.State);
                 match?.SetWorkplace(myMessage.Workplace);
                 match?.Utility.AddSample(myMessage.DeliveryTime, true);
             }

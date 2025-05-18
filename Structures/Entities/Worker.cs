@@ -67,7 +67,7 @@ namespace AgentSimulation.Structures.Objects {
             State = WorkerState.WAITING;
             Utility = new();
             Image = new(Util.GetFilePath(group == WorkerGroup.A ? "worker_a.png" : group == WorkerGroup.B ? "worker_b.png" : "worker_c.png"));
-            var (x, y) = GetRandomPosition();     
+            var (x, y) = GetRandomPosition();
             X = x;
             Y = y;
             Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
@@ -82,6 +82,9 @@ namespace AgentSimulation.Structures.Objects {
         }
 
         public void SetState(WorkerState workerState) {
+            if (workerState != WorkerState.WORKING) Product = null;
+
+            IsBusy = workerState == WorkerState.WORKING;
             State = workerState;
             Image.SetToolTip($"Worker: {Id}\nGroup: {Group}\nState: {State}\nProduct: {Product?.Id}\nIsBusy: {IsBusy}");
         }

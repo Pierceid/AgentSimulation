@@ -4,7 +4,6 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 using System.Windows;
-using System.Windows.Interop;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -24,8 +23,8 @@ namespace Agents.AgentCarpentry {
             Clear();
         }
 
-        public void ProcessProcessOrder(MessageForm message) {
-            var msg = (MyMessage)message;
+        public void ProcessOrder(MessageForm message) {
+            var msg = (MyMessage)message.CreateCopy();
 
             if (msg.Order == null) return;
 
@@ -34,390 +33,493 @@ namespace Agents.AgentCarpentry {
                     Order = msg.Order,
                     Product = product
                 };
-
                 QueueA.AddLast(productMsg);
             }
 
-            for (int i = 0; i < QueueA.Count; i++) {
-                AssignOrderToWorkplace(QueueA.ElementAt(i));
+            if (QueueA.Count > 0) {
+                PlanCutting(QueueA.First());
             }
         }
 
-        public void AssignOrderToWorkplace(MyMessage msg) {
-            if (msg.Product == null || msg.Workplace != null) return;
+        public void PlanCutting(MyMessage message) {
+            if (message.GetWorkerForCutting() != null) {
+                var workplace = GetFreeWorkplace();
 
-            var freeWorkplace = GetFreeWorkplace();
+                if (workplace == null) return;
 
-            if (freeWorkplace == null) return;
-
-            freeWorkplace.AssignProduct(msg.Product);
-            msg.Workplace = freeWorkplace;
-            msg.Product.Workplace = freeWorkplace;
-
-            msg.Code = Mc.GetWorkerToCut;
-            msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            Request(msg);
-        }
-
-        public void AssignWorkerToWorkplace(MyMessage msg) {
-            if (msg.Product == null || msg.Workplace == null || msg.Worker == null) return;
-
-            var fittingWorkplace = FindFittingWorkplace(msg);
-
-            if (fittingWorkplace == null) return;
-
-            var message = new MyMessage(MySim) {
-                Worker = msg.Worker,
-                Order = fittingWorkplace.Product?.Order,
-                Product = fittingWorkplace.Product,
-                Workplace = fittingWorkplace,
-                Code = Mc.MoveToWorkplace,
-                Addressee = MySim.FindAgent(SimId.AgentMovement)
-            };
-            Request(message);
-        }
-
-        private Workplace? FindFittingWorkplace(MyMessage message) {
-            if (message.Worker == null) return null;
-
-            ProductState? targetState = null;
-
-            switch (message.Worker.Group) {
-                case WorkerGroup.A:
-                    if (QueueD.Count != 0) targetState = ProductState.Assembled;
-                    else if (QueueA.Count != 0) targetState = ProductState.Raw;
-                    break;
-
-                case WorkerGroup.B:
-                    if (QueueB.Count != 0) targetState = ProductState.Painted;
-                    break;
-
-                case WorkerGroup.C:
-                    if (QueueD.Count != 0) targetState = ProductState.Assembled;
-                    else if (QueueC.Count != 0) targetState = ProductState.Cut;
-                    break;
-
-                default:
-                    return null;
-            }
-
-            if (targetState == null) return null;
-
-            return Workplaces.FirstOrDefault(wp => wp.Product?.State == targetState && !wp.IsOccupied && wp.Worker == null);
-        }
-
-        public void ContinueWorkingOnProduct(MyMessage msg) {
-            if (msg.Product == null) return;
-
-            int code = GetWorkerRequestCode(msg.Product);
-
-            if (code == -1) return;
-
-            msg.Code = code;
-            msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            Request(msg);
-        }
-
-        public void ProcessRequestWorker(MessageForm message) {
-            var msg = (MyMessage)message;
-            int code = msg.Code switch {
-                Mc.GetWorkerForCutting => Mc.GetWorkerToCut,
-                Mc.GetWorkerForPainting => Mc.GetWorkerToPaint,
-                Mc.GetWorkerForPickling => Mc.GetWorkerToPickle,
-                Mc.GetWorkerForAssembling => Mc.GetWorkerToAssemble,
-                Mc.GetWorkerForMounting => Mc.GetWorkerToMount,
-                _ => -1
-            };
-
-            if (code != -1) {
-                msg.Code = code;
-                msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-                Request(msg);
-            }
-        }
-
-        public void ProcessResponseWorkerToCut(MessageForm msg) => ProcessResponseWorker(msg, QueueA, Mc.MoveToStorage);
-
-        public void ProcessResponseWorkerToPaint(MessageForm msg) => ProcessResponseWorker(msg, QueueC, Mc.MoveToWorkplace);
-
-        public void ProcessResponseWorkerToPickle(MessageForm msg) => ProcessResponseWorker(msg, QueueC, Mc.MoveToWorkplace);
-
-        public void ProcessResponseWorkerToAssemble(MessageForm msg) => ProcessResponseWorker(msg, QueueB, Mc.MoveToWorkplace);
-
-        public void ProcessResponseWorkerToMount(MessageForm msg) => ProcessResponseWorker(msg, QueueD, Mc.MoveToWorkplace);
-
-        private void ProcessResponseWorker(MessageForm message, LinkedList<MyMessage> queue, int moveCode) {
-            var msg = (MyMessage)message;
-
-            if (msg.Worker == null) return;
-
-            queue.Remove(msg);
-            msg.Worker.State = WorkerState.MOVING;
-
-            AssignWorkplace(msg.CreateCopy());
-
-            msg.Code = moveCode;
-            msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
-            Request(msg);
-        }
-
-        public void ProcessMoveToStorage(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            if (msg.Worker != null) msg.Worker.State = WorkerState.WORKING;
-
-            AssignWorkplace(msg.CreateCopy());
-
-            msg.Code = Mc.DoPrepare;
-            msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-            Request(msg.CreateCopy());
-        }
-
-        public void ProcessMoveToWorkplace(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            if (msg.Product == null) return;
-
-            int code = msg.Product.State switch {
-                ProductState.Raw => Mc.DoCut,
-                ProductState.Cut => Mc.DoPaint,
-                ProductState.Painted => msg.Product.IsPickled ? Mc.DoPickle : Mc.DoAssemble,
-                ProductState.Pickled => Mc.DoAssemble,
-                ProductState.Assembled => msg.Product.Type == ProductType.Wardrobe ? Mc.DoMount : Mc.Finish,
-                _ => -1
-            };
-
-            if (msg.Worker != null) msg.Worker.State = WorkerState.WORKING;
-
-            AssignWorkplace(msg.CreateCopy());
-
-            if (code == Mc.Finish) {
-                AdvanceOrderState(msg.CreateCopy());
-                DeassignWorkplace(msg.CreateCopy());
-            } else if (code != -1) {
-                msg.Code = code;
-                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-                Request(msg.CreateCopy());
-            }
-        }
-
-        public void Clear() {
-            QueueA.Clear();
-            QueueB.Clear();
-            QueueC.Clear();
-            QueueD.Clear();
-            InitWorkplaces(Workplaces.Count);
-        }
-
-        public void InitWorkplaces(int workplaces) {
-            Workplaces.Clear();
-            for (int i = 0; i < workplaces; i++) {
-                Workplaces.Add(new Workplace(i));
-            }
-        }
-
-        private void ProcessStartWorking(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            int code = msg.Code switch {
-                Mc.DoPreparing => Mc.DoPrepare,
-                Mc.DoCutting => Mc.DoCut,
-                Mc.DoPainting => Mc.DoPaint,
-                Mc.DoPickling => Mc.DoPickle,
-                Mc.DoAssembling => Mc.DoAssemble,
-                Mc.DoMounting => Mc.DoMount,
-                _ => -1
-            };
-
-            if (code != -1) {
-                msg.Code = code;
-                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-                Request(msg);
-            }
-        }
-
-        private void ProcessFinishWorking(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            if (msg.Product == null) return;
-
-            if (msg.Code == Mc.DoPrepare) {
-                if (QueueA.Count > 0) {
-                    var queued = QueueA.FirstOrDefault(m => m.Product?.Id == msg.Product?.Id);
-                    if (queued != null) QueueA.Remove(queued);
+                if (message.Product != null) {
+                    workplace.Product = message.Product;
+                    workplace.IsOccupied = true;
+                    message.Workplace = workplace;
+                    message.Product.Workplace = workplace;
+                    UpdateWorkplace(message);
+                    DoCutting(message);
                 }
 
+                if (QueueA.Count > 0) {
+                    PlanCutting(QueueA.First());
+                }
+                return;
+            }
+
+            message.Code = Mc.GetWorkerToCut;
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+            Request(message.CreateCopy());
+        }
+
+        public void PlanPainting(MyMessage message) {
+            if (message.Workplace != null) {
+                message.Workplace.IsOccupied = true;
+                UpdateWorkplace(message);
+            }
+            message.Code = Mc.GetWorkerToPaint;
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+            Request(message.CreateCopy());
+        }
+
+        public void PlanAssembling(MyMessage message) {
+            message.Code = Mc.GetWorkerToAssemble;
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+            Request(message.CreateCopy());
+        }
+
+        public void PlanMounting(MyMessage message) {
+            message.Code = Mc.GetWorkerToMount;
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+            Request(message.CreateCopy());
+        }
+
+        private void DoCutting(MyMessage message) {
+            if (message.GetWorkerForCutting() == null || message.Workplace == null) {
+                MessageBox.Show("Missing worker or workplace for cutting");
+                throw new Exception();
+            }
+
+            var queued = QueueA.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
+
+            if (queued != null) QueueA.Remove(queued);
+
+            if (message.Product != null) message.Product.Workplace = message.Workplace;
+
+            if (message.Workplace != null) {
+                message.Workplace.Worker = message.GetWorkerForCutting();
+                UpdateWorkplace(message);
+            }
+
+            var msg = new MyMessage(message);
+            msg.GetWorkerForCutting()?.SetState(WorkerState.WORKING);
+            var currentWorkplace = msg.GetWorkerForCutting()?.Workplace?.Id;
+
+            if (currentWorkplace == null) {
+                msg.Code = Mc.DoPrepare;
+                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            } else {
+                msg.Code = Mc.MoveToStorage;
+                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            }
+
+            Request(msg);
+        }
+
+        private void DoPainting(MyMessage message) {
+            if (message.GetWorkerForPainting() == null || message.Workplace == null) {
+                MessageBox.Show("Missing worker or workplace for painting");
+                throw new Exception();
+            }
+
+            var queued = QueueC.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
+
+            if (queued != null) QueueC.Remove(queued);
+
+            if (message.Workplace != null) {
+                message.Workplace.Worker = message.GetWorkerForPainting();
+                UpdateWorkplace(message);
+            }
+
+            var msg = new MyMessage(message);
+            msg.GetWorkerForPainting()?.SetState(WorkerState.WORKING);
+            var currentWorkplace = msg.GetWorkerForPainting()?.Workplace?.Id;
+            var targetWorkplace = msg.Product?.Workplace?.Id;
+
+            if (currentWorkplace != targetWorkplace) {
                 msg.Code = Mc.MoveToWorkplace;
                 msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
-                Request(msg.CreateCopy());
+            } else {
+                msg.Code = Mc.DoCut;
+                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            }
+
+            Request(msg);
+        }
+
+        private void DoPickling(MyMessage message) {
+
+        }
+
+        private void DoAssembling(MyMessage message) {
+            if (message.GetWorkerForAssembling() == null || message.Workplace == null) {
+                MessageBox.Show("Missing worker or workplace for assembling");
+                throw new Exception();
+            }
+
+            var queued = QueueB.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
+
+            if (queued != null) QueueB.Remove(queued);
+
+            if (message.Workplace != null) {
+                message.Workplace.Worker = message.GetWorkerForAssembling();
+                UpdateWorkplace(message);
+            }
+
+            var msg = new MyMessage(message);
+            msg.GetWorkerForAssembling()?.SetState(WorkerState.WORKING);
+            var currentWorkplace = msg.GetWorkerForAssembling()?.Workplace?.Id;
+            var targetWorkplace = msg.Product?.Workplace?.Id;
+
+            if (currentWorkplace != targetWorkplace) {
+                msg.Code = Mc.MoveToWorkplace;
+                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            } else {
+                msg.Code = Mc.DoAssemble;
+                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            }
+
+            Request(msg);
+        }
+
+        private void DoMounting(MyMessage message) {
+            if (message.GetWorkerForMounting() == null || message.Workplace == null) {
+                MessageBox.Show("Missing worker or workplace for mounting");
+                throw new Exception();
+            }
+
+            var queued = QueueD.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
+
+            if (queued != null) QueueD.Remove(queued);
+
+            if (message.Workplace != null) {
+                message.Workplace.Worker = message.GetWorkerForMounting();
+                UpdateWorkplace(message);
+            }
+
+            var msg = new MyMessage(message);
+            msg.GetWorkerForMounting()?.SetState(WorkerState.WORKING);
+            var currentWorkplace = msg.GetWorkerForMounting()?.Workplace?.Id;
+            var targetWorkplace = msg.Product?.Workplace?.Id;
+
+            if (currentWorkplace != targetWorkplace) {
+                msg.Code = Mc.MoveToWorkplace;
+                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            } else {
+                msg.Code = Mc.DoMount;
+                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            }
+
+            Request(msg);
+        }
+
+        private void ReassignWorkerA(Worker worker) {
+            if (QueueD.Count > 0) {
+                var queuedD = QueueD.First();
+                if (queuedD.Product == null) return;
+                queuedD.Product.WorkerToMount = worker;
+                DoMounting(queuedD);
                 return;
             }
 
             if (QueueA.Count > 0) {
-                AssignOrderToWorkplace(QueueA.First());
+                var queuedA = QueueA.First();
+                if (queuedA.Product == null) return;
+                queuedA.Product.WorkerToCut = worker;
+                var freeWorkplace = GetFreeWorkplace();
+
+                if (freeWorkplace == null) {
+                    var message = new MyMessage(MySim) {
+                        Code = Mc.DeassignWorkerA,
+                        Addressee = MySim.FindAgent(SimId.AgentWorkers),
+                        WorkerToRelease = worker
+                    };
+                    queuedA.Product.WorkerToCut = null;
+                    Notice(message);
+                    return;
+                }
+
+                queuedA.Workplace = freeWorkplace;
+                DoCutting(queuedA);
+                return;
             }
 
-            AdvanceProductState(msg.Product);
-
-            if (msg.Product.Type != ProductType.Wardrobe && msg.Product.State == ProductState.Assembled) {
-                AdvanceProductState(msg.Product);
-            }
-
-            DeassignWorkplace(msg.CreateCopy());
-
-            if (msg.Product.State == ProductState.Finished) {
-                AdvanceOrderState(msg.CreateCopy());
-                if (msg.Workplace != null) ReleaseWorkplace(msg.Workplace);
-            }
-
-            var nextMessage = new MyMessage(msg);
-            var currentQueue = GetQueueForProduct(msg.Product);
-            var nextQueue = GetQueueForProduct(msg.Product);
-
-            if (nextQueue != null) {
-                nextQueue.AddLast(nextMessage);
-                if (currentQueue != null) RemoveMessageFromQueue(currentQueue, msg);
-                ContinueWorkingOnProduct(nextMessage);
-            }
-        }
-
-        private void RemoveMessageFromQueue(LinkedList<MyMessage> queue, MyMessage message) {
-            var match = queue.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
-            if (match != null) queue.Remove(match);
-        }
-
-        private LinkedList<MyMessage>? GetQueueForProduct(Product product) => product.State switch {
-            ProductState.Raw => QueueA,
-            ProductState.Cut => QueueC,
-            ProductState.Painted => product.IsPickled ? QueueC : QueueB,
-            ProductState.Pickled => QueueB,
-            ProductState.Assembled => product.Type == ProductType.Wardrobe ? QueueD : null,
-            _ => null
-        };
-
-        private int GetWorkerRequestCode(Product product) => product.State switch {
-            ProductState.Raw => Mc.GetWorkerToCut,
-            ProductState.Cut => Mc.GetWorkerToPaint,
-            ProductState.Painted => product.IsPickled ? Mc.GetWorkerToPickle : Mc.GetWorkerToAssemble,
-            ProductState.Pickled => Mc.GetWorkerToAssemble,
-            ProductState.Assembled => Mc.GetWorkerToMount,
-            _ => -1
-        };
-
-        private void AdvanceProductState(Product product) {
-            var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
-            var match = managerScope?.Products.FirstOrDefault(p => p.Id == product.Id);
-
-            if (match == null) return;
-
-            match.State = product.State switch {
-                ProductState.Raw => ProductState.Cut,
-                ProductState.Cut => ProductState.Painted,
-                ProductState.Painted => product.IsPickled ? ProductState.Pickled : ProductState.Assembled,
-                ProductState.Pickled => ProductState.Assembled,
-                ProductState.Assembled => ProductState.Finished,
-                _ => match.State
+            var msg = new MyMessage(MySim) {
+                Code = Mc.DeassignWorkerA,
+                Addressee = MySim.FindAgent(SimId.AgentWorkers),
+                WorkerToRelease = worker
             };
+            Notice(msg);
         }
 
-        private void AdvanceOrderState(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            if (msg.Order == null || msg.Product == null) return;
-
-            var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
-            var match = managerScope?.Orders.FirstOrDefault(o => o.Id == msg.Order.Id);
-            if (match == null) return;
-
-            match.UpdateProduct(msg.Product);
-
-            if (match.State == "Completed") {
-                msg.Code = Mc.ProcessOrder;
-                msg.Addressee = MySim.FindAgent(SimId.AgentModel);
-                Notice(msg);
-            }
-        }
-
-        private Workplace? GetFreeWorkplace() {
-            lock (Workplaces) {
-                var free = Workplaces.FirstOrDefault(wp => !wp.IsOccupied && wp.Product == null && wp.Worker == null);
-                free?.SetState(true);
-                return free;
-            }
-        }
-
-        private void AssignWorkplace(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            if (msg.Workplace != null) {
-                var workplace = Workplaces.FirstOrDefault(wp => wp.Id == msg.Workplace.Id);
-                if (workplace != null) workplace.Worker = msg.Worker;
-
-                msg.Workplace.Worker = msg.Worker;
+        private void ReassignWorkerB(Worker worker) {
+            if (QueueB.Count > 0) {
+                var queuedB = QueueB.First();
+                if (queuedB.Product == null) return;
+                queuedB.Product.WorkerToAssemble = worker;
+                DoAssembling(queuedB);
+                return;
             }
 
-            int code = msg.Worker?.Group switch {
-                WorkerGroup.A => Mc.AssignWorkerA,
-                WorkerGroup.B => Mc.AssignWorkerB,
-                WorkerGroup.C => Mc.AssignWorkerC,
-                _ => -1
+            var msg = new MyMessage(MySim) {
+                Code = Mc.DeassignWorkerB,
+                Addressee = MySim.FindAgent(SimId.AgentWorkers),
+                WorkerToRelease = worker
             };
-
-            if (code != -1) {
-                msg.Code = code;
-                msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-                Notice(msg);
-            }
+            Notice(msg);
         }
 
-        private void DeassignWorkplace(MessageForm message) {
-            var msg = (MyMessage)message;
-
-            if (msg.Workplace != null) {
-                FreeUpWorkPlace(msg.Workplace);
+        private void ReassignWorkerC(Worker worker) {
+            if (QueueD.Count > 0) {
+                var queuedD = QueueD.First();
+                if (queuedD.Product == null) return;
+                queuedD.Product.WorkerToMount = worker;
+                DoMounting(queuedD);
+                return;
             }
 
-            AssignWorkerToWorkplace(msg);
+            if (QueueC.Count > 0) {
+                var queuedC = QueueC.First();
+                if (queuedC.Product == null) return;
+                queuedC.Product.WorkerToPaint = worker;
+                DoPainting(queuedC);
+                return;
+            }
 
-            if (msg.Worker != null) msg.Worker.State = WorkerState.WAITING;
-
-            int code = msg.Worker?.Group switch {
-                WorkerGroup.A => Mc.DeassignWorkerA,
-                WorkerGroup.B => Mc.DeassignWorkerB,
-                WorkerGroup.C => Mc.DeassignWorkerC,
-                _ => -1
+            var msg = new MyMessage(MySim) {
+                Code = Mc.DeassignWorkerC,
+                Addressee = MySim.FindAgent(SimId.AgentWorkers),
+                WorkerToRelease = worker
             };
+            Notice(msg);
+        }
 
-            if (code != -1) {
-                msg.Code = code;
-                msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-                Notice(msg.CreateCopy());
+        private void ProcessFinishWorking(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            switch (msg.Code) {
+                case Mc.DoPrepare:
+                    msg.Code = Mc.MoveToWorkplace;
+                    msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
+                    Request(msg);
+                    break;
+                case Mc.DoCut:
+                    if (msg.Product != null) {
+                        AdvanceProductState(msg.Product);
+
+                        var workerCut = msg.GetWorkerForCutting();
+                        msg.Product.WorkerToCut = null;
+                        QueueC.AddLast(msg);
+                        PlanPainting(QueueC.First());
+                        if (workerCut != null) ReassignWorkerA(workerCut);
+                    }
+                    break;
+                case Mc.DoPaint:
+                    if (msg.Product != null) {
+                        AdvanceProductState(msg.Product);
+
+                        var workerPaint = msg.GetWorkerForPainting();
+                        msg.Product.WorkerToPaint = null;
+                        if (msg.Product.IsPickled) {
+                            msg.Product.WorkerToPickle = workerPaint;
+                            msg.Code = Mc.DoPickle;
+                            msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+                            Request(msg);
+                        } else {
+                            QueueB.AddLast(msg);
+                            PlanAssembling(QueueB.First());
+                            if (workerPaint != null) ReassignWorkerC(workerPaint);
+                        }
+                    }
+                    break;
+                case Mc.DoPickle:
+                    if (msg.Product != null) {
+                        AdvanceProductState(msg.Product);
+
+                        var workerPickle = msg.GetWorkerForPickling();
+                        msg.Product.WorkerToPaint = null;
+                        QueueB.AddLast(msg);
+                        PlanAssembling(QueueB.First());
+                        if (workerPickle != null) ReassignWorkerC(workerPickle);
+                    }
+                    break;
+                case Mc.DoAssemble:
+                    if (msg.Product != null) {
+                        AdvanceProductState(msg.Product);
+
+                        var workerAssemble = msg.GetWorkerForAssembling();
+                        msg.Product.WorkerToAssemble = null;
+                        if (msg.Product.Type == ProductType.Wardrobe) {
+                            QueueD.AddLast(msg);
+                            PlanMounting(QueueD.First());
+                        } else {
+                            if (msg.Workplace != null) {
+                                ReleaseWorkplace(msg.Workplace);
+                                msg.Workplace.Clear();
+                                msg.Product.Workplace = null;
+                            }
+
+                            AdvanceProductState(msg.Product);
+                        }
+                        if (workerAssemble != null) ReassignWorkerB(workerAssemble);
+                    }
+                    break;
+                case Mc.DoMount:
+                    if (msg.Product != null) {
+                        AdvanceProductState(msg.Product);
+
+                        var workerMount = msg.GetWorkerForAssembling();
+                        msg.Product.WorkerToAssemble = null;
+                        if (workerMount != null) {
+                            if (workerMount.Group == WorkerGroup.A) {
+                                ReassignWorkerA(workerMount);
+                            } else if (workerMount.Group == WorkerGroup.C) {
+                                ReassignWorkerC(workerMount);
+                            }
+                        }
+
+                        if (msg.Workplace != null) {
+                            ReleaseWorkplace(msg.Workplace);
+                            msg.Workplace.Worker = null;
+                            UpdateWorkplace(msg);
+                            msg.Workplace.Clear();
+                            msg.Product.Workplace = null;
+                        }
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
-        private void FreeUpWorkPlace(Workplace workplace) {
-            lock (Workplaces) {
-                workplace.IsOccupied = false;
-                workplace.AssignWorker(null);
+        private void ProcessResponseWorkerToMount(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.GetWorkerForMounting() == null) return;
+
+            DoMounting(msg);
+        }
+
+        private void ProcessResponseWorkerToAssemble(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.GetWorkerForAssembling() == null) return;
+
+            DoAssembling(msg);
+        }
+
+        private void ProcessResponseWorkerToPickle(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.GetWorkerForPickling() == null) return;
+
+            DoPickling(msg);
+        }
+
+        private void ProcessResponseWorkerToPaint(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.GetWorkerForPainting() == null) return;
+
+            DoPainting(msg);
+        }
+
+        private void ProcessResponseWorkerToCut(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.GetWorkerForCutting() == null) return;
+
+            var freeWorkplace = GetFreeWorkplace();
+
+            if (freeWorkplace == null) {
+                var returnMsg = new MyMessage(MySim) {
+                    WorkerToRelease = msg.GetWorkerForCutting(),
+                    Code = Mc.DeassignWorkerA,
+                    Addressee = MySim.FindAgent(SimId.AgentWorkers)
+                };
+                if (msg.Product != null) msg.Product.WorkerToCut = null;
+                Notice(returnMsg);
+                return;
+            }
+
+            msg.Workplace = freeWorkplace;
+            DoCutting(msg);
+
+            if (QueueA.Count > 0) {
+                PlanCutting(QueueA.First());
             }
         }
 
-        private void ReleaseWorkplace(Workplace workplace) {
-            lock (Workplaces) {
-                workplace.SetState(false);
+        private void ProcessRequestWorker(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            switch (msg.Code) {
+                case Mc.GetWorkerToCut:
+                    ProcessResponseWorkerToCut(msg);
+                    break;
+                case Mc.GetWorkerToPaint:
+                    ProcessResponseWorkerToPaint(msg);
+                    break;
+                case Mc.GetWorkerToPickle:
+                    ProcessResponseWorkerToPickle(msg);
+                    break;
+                case Mc.GetWorkerToAssemble:
+                    ProcessResponseWorkerToAssemble(msg);
+                    break;
+                case Mc.GetWorkerToMount:
+                    ProcessResponseWorkerToMount(msg);
+                    break;
+                default:
+                    break;
             }
+        }
+
+        private void ProcessMoveToStorage(MessageForm message) {
+            message.Code = Mc.DoPrepare;
+            message.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            Request(message);
+        }
+
+        private void ProcessMoveToWorkplace(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.Product == null) return;
+
+            if (msg.GetWorkerForCutting() != null) {
+                msg.Code = Mc.DoCut;
+            } else if (msg.GetWorkerForPainting() != null) {
+                msg.Code = Mc.DoPaint;
+            } else if (msg.GetWorkerForPickling() != null) {
+                msg.Code = Mc.DoPickle;
+            } else if (msg.GetWorkerForAssembling() != null) {
+                msg.Code = Mc.DoAssemble;
+            } else if (msg.GetWorkerForMounting() != null) {
+                msg.Code = Mc.DoMount;
+            } else {
+                MessageBox.Show("Missing worker for moving to workplace");
+                throw new Exception();
+            }
+
+            var assignMsg = new MyMessage(msg);
+            AssignWorkplace(assignMsg);
+
+            msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            Request(msg);
         }
 
         public void ProcessDefault(MessageForm message) { }
-
         public void ProcessInit(MessageForm message) { }
-
         public void Init() { }
 
         public override void ProcessMessage(MessageForm message) {
             try {
                 switch (message.Code) {
-                    case Mc.ProcessOrder: ProcessProcessOrder(message); break;
+                    case Mc.ProcessOrder: ProcessOrder(message); break;
                     case Mc.MoveToWorkplace: ProcessMoveToWorkplace(message); break;
                     case Mc.MoveToStorage: ProcessMoveToStorage(message); break;
                     case Mc.Init: ProcessInit(message); break;
@@ -435,14 +537,6 @@ namespace Agents.AgentCarpentry {
                     case Mc.GetWorkerToAssemble: ProcessResponseWorkerToAssemble(message); break;
                     case Mc.GetWorkerToMount: ProcessResponseWorkerToMount(message); break;
 
-                    case Mc.DoPreparing:
-                    case Mc.DoCutting:
-                    case Mc.DoPainting:
-                    case Mc.DoPickling:
-                    case Mc.DoAssembling:
-                    case Mc.DoMounting:
-                        ProcessStartWorking(message); break;
-
                     case Mc.DoPrepare:
                     case Mc.DoCut:
                     case Mc.DoPaint:
@@ -451,13 +545,120 @@ namespace Agents.AgentCarpentry {
                     case Mc.DoMount:
                         ProcessFinishWorking(message); break;
 
-                    default:
-                        ProcessDefault(message); break;
+                    default: ProcessDefault(message); break;
                 }
             } catch (Exception ex) {
                 MessageBox.Show($"Error: {ex.Message}");
                 throw;
             }
+        }
+
+        public void Clear() {
+            QueueA.Clear();
+            QueueB.Clear();
+            QueueC.Clear();
+            QueueD.Clear();
+            InitWorkplaces(Workplaces.Count);
+        }
+
+        public void InitWorkplaces(int workplaces) {
+            Workplaces.Clear();
+            for (int i = 0; i < workplaces; i++) {
+                lock (Workplaces) {
+                    Workplaces.Add(new Workplace(i));
+                }
+            }
+        }
+
+        private void AdvanceProductState(Product product) {
+            var managerScope = ((MySimulation)MySim).AgentScope.MyManager as ManagerScope;
+            var orderMatch = managerScope?.Orders.FirstOrDefault(o => o.Id == product.Order.Id);
+
+            if (orderMatch == null) return;
+
+            var productMatch = orderMatch.Products.FirstOrDefault(p => p.Id == product.Id);
+
+            if (productMatch == null) return;
+
+            productMatch.State = product.State switch {
+                ProductState.Raw => ProductState.Cut,
+                ProductState.Cut => ProductState.Painted,
+                ProductState.Painted => product.IsPickled ? ProductState.Pickled : ProductState.Assembled,
+                ProductState.Pickled => ProductState.Assembled,
+                ProductState.Assembled => ProductState.Finished,
+                _ => productMatch.State
+            };
+
+            orderMatch.UpdateProduct(productMatch);
+
+            if (orderMatch.State == "Completed") {
+                var msg = new MyMessage(MySim) {
+                    Order = orderMatch,
+                    Code = Mc.ProcessOrder,
+                    Addressee = MySim.FindAgent(SimId.AgentModel)
+                };
+                Notice(msg);
+            }
+        }
+
+        private Workplace? GetFreeWorkplace() {
+            lock (Workplaces) {
+                var freeWorkplace = Workplaces.FirstOrDefault(wp => wp.Product == null && wp.Worker == null && !wp.IsOccupied);
+                freeWorkplace?.SetState(true);
+                return freeWorkplace;
+            }
+        }
+
+        private void UpdateWorkplace(MyMessage message) {
+            lock (Workplaces) {
+                var matchedWorkplace = Workplaces.FirstOrDefault(wp => wp.Id == message.Workplace?.Id);
+                if (matchedWorkplace != null && message.Workplace != null) {
+                    matchedWorkplace.IsOccupied = message.Workplace.IsOccupied;
+                    matchedWorkplace.Worker = message.Workplace.Worker;
+                }
+            }
+        }
+
+        private void ReleaseWorkplace(Workplace workplace) {
+            lock (Workplaces) {
+                if (workplace == null) return;
+
+                var matchedWorkplace = Workplaces.FirstOrDefault(wp => wp.Id == workplace.Id);
+                matchedWorkplace?.Clear();
+
+                if (QueueA.Count > 0) {
+                    var queuedA = QueueA.First();
+
+                    if (queuedA != null && queuedA.GetWorkerForCutting() != null) {
+                        QueueA.RemoveFirst();
+                        queuedA.Workplace = matchedWorkplace;
+                        matchedWorkplace?.SetState(true);
+                        DoCutting(queuedA);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void AssignWorkplace(MyMessage msg) {
+            var worker = msg.GetAssignedWorker();
+
+            if (msg.Product == null || worker == null) return;
+
+            switch (worker.Group) {
+                case WorkerGroup.A:
+                    msg.Code = Mc.AssignWorkerA;
+                    break;
+                case WorkerGroup.B:
+                    msg.Code = Mc.AssignWorkerB;
+                    break;
+                case WorkerGroup.C:
+                    msg.Code = Mc.AssignWorkerC;
+                    break;
+            }
+
+            msg.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+            Notice(msg);
         }
 
         public new AgentCarpentry MyAgent => (AgentCarpentry)base.MyAgent;

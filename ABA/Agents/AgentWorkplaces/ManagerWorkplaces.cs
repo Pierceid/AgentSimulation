@@ -37,7 +37,7 @@ namespace Agents.AgentWorkplaces {
 
             if (workplace != null) {
                 workplace.Product = myMessage.Product;
-                workplace.Worker = myMessage.Worker;
+                workplace.Worker = myMessage.WorkerToRelease;
             }
 
             myMessage.Workplace = workplace;

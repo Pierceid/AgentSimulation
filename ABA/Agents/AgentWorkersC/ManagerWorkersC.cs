@@ -33,18 +33,30 @@ namespace Agents.AgentWorkersC {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
             availableWorker?.SetIsBusy(true);
-            myMessage.Worker = availableWorker;
+            availableWorker?.SetProduct(myMessage.Product);
+
+            if (myMessage.Product != null) {
+                if (myMessage.Product.State == ProductState.Cut) {
+                    myMessage.Product.WorkerToPaint = availableWorker;
+                } else if (myMessage.Product.State == ProductState.Painted && myMessage.Product.IsPickled) {
+                    myMessage.Product.WorkerToPickle = availableWorker;
+                } else {
+                    myMessage.Product.WorkerToMount = availableWorker;
+                }
+            }
+
             Response(myMessage);
         }
 
         //meta! sender="AgentWorkers", id="203", type="Notice"
         public void ProcessDeassignWorkerC(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            Worker? worker = myMessage.WorkerToRelease;
 
-            if (myMessage.Worker != null) {
-                var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
-                match?.SetIsBusy(false);
-                match?.SetState(myMessage.Worker.State);
+            if (worker != null && worker.Group == WorkerGroup.C) {
+                worker.SetState(WorkerState.WAITING);
+                var match = Workers.FirstOrDefault(w => w.Id == worker.Id);
+                match?.SetState(worker.State);
                 match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
@@ -55,11 +67,11 @@ namespace Agents.AgentWorkersC {
         //meta! sender="AgentWorkers", id="266", type="Notice"
         public void ProcessAssignWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message;
+            var assignedWorker = myMessage.GetAssignedWorker();
 
-            if (myMessage.Worker != null) {
-                var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
+            if (assignedWorker != null) {
+                var match = Workers.FirstOrDefault(w => w.Id == assignedWorker.Id);
                 match?.SetProduct(myMessage.Product);
-                match?.SetState(myMessage.Worker.State);
                 match?.SetWorkplace(myMessage.Workplace);
                 match?.Utility.AddSample(myMessage.DeliveryTime, true);
             }

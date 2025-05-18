@@ -26,6 +26,7 @@ namespace AgentSimulation.Structures.Objects {
 
         public void AssignProduct(Product? product) {
             Product = product;
+            IsOccupied = product != null;
             Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
         }
 
@@ -35,12 +36,15 @@ namespace AgentSimulation.Structures.Objects {
         }
 
         public void SetState(bool isOccupied) {
-            if (!isOccupied) {
-                Worker = null;
-                Product = null;
-            }
+            if (!isOccupied) Product = null;
             IsOccupied = isOccupied;
             Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
+        }
+
+        public void Clear() {
+            Product = null;
+            Worker = null;
+            IsOccupied = false;
         }
     }
 }

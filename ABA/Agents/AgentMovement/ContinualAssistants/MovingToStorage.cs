@@ -17,10 +17,11 @@ namespace Agents.AgentMovement.ContinualAssistants {
             var mySimulation = (MySimulation)MySim;
             myMessage.Code = Mc.Finish;
             double duration = mySimulation.Generators.WorkerMoveToStorageTime.Next();
+            var worker = myMessage.GetAssignedWorker();
 
-            if (myMessage.Worker != null && myMessage.Product != null && myMessage.Product.Workplace != null && mySimulation.AnimatorExists) {
-                var (x, y) = myMessage.Worker.GetRandomPosition();
-                myMessage.Worker.Image.MoveTo(mySimulation.CurrentTime, duration, new(x, y));
+            if (worker != null && myMessage.Product != null && myMessage.Product.Workplace != null && mySimulation.AnimatorExists) {
+                var (x, y) = worker.GetRandomPosition();
+                worker.Image.MoveTo(mySimulation.CurrentTime, duration, new(x, y));
             }
 
             Hold(duration, message);
@@ -30,7 +31,7 @@ namespace Agents.AgentMovement.ContinualAssistants {
         public void ProcessDefault(MessageForm message) {
             var myMessage = (MyMessage)message;
             myMessage.Workplace = myMessage.Product?.Workplace;
-            myMessage.Worker?.SetWorkplace(myMessage.Workplace);
+            myMessage.GetAssignedWorker()?.SetWorkplace(myMessage.Workplace);
             AssistantFinished(myMessage);
         }
 
