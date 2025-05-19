@@ -32,7 +32,6 @@ namespace Agents.AgentWorkersA {
         public void ProcessGetWorkerA(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
-            availableWorker?.SetIsBusy(true);
             availableWorker?.SetProduct(myMessage.Product);
 
             if (myMessage.Product != null) {
@@ -46,27 +45,20 @@ namespace Agents.AgentWorkersA {
             Response(myMessage);
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) { }
-
         //meta! sender="AgentWorkers", id="205", type="Notice"
         public void ProcessDeassignWorkerA(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
-            Worker? worker = null;
+            Worker? worker = myMessage.WorkerToRelease;
 
-            if (myMessage.WorkerToRelease != null && myMessage.WorkerToRelease.Group == WorkerGroup.A) {
-                worker = myMessage.WorkerToRelease;
-            } else if (myMessage.GetWorkerForMounting() != null && myMessage.GetWorkerForMounting()?.Group == WorkerGroup.A) {
-                worker = myMessage.GetWorkerForMounting();
-            }
-
-            if (worker != null) {
-                worker.SetState(WorkerState.WAITING);
+            if (worker != null && worker.Group == WorkerGroup.A) {
                 var match = Workers.FirstOrDefault(w => w.Id == worker.Id);
-                match?.SetState(worker.State);
+                match?.SetState(WorkerState.WAITING);
                 match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
+
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) { }
 
         //meta! sender="AgentWorkers", id="267", type="Notice"
         public void ProcessAssignWorkerA(MessageForm message) {

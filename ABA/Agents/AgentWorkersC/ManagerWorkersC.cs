@@ -32,7 +32,6 @@ namespace Agents.AgentWorkersC {
         public void ProcessGetWorkerC(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
-            availableWorker?.SetIsBusy(true);
             availableWorker?.SetProduct(myMessage.Product);
 
             if (myMessage.Product != null) {
@@ -54,9 +53,8 @@ namespace Agents.AgentWorkersC {
             Worker? worker = myMessage.WorkerToRelease;
 
             if (worker != null && worker.Group == WorkerGroup.C) {
-                worker.SetState(WorkerState.WAITING);
                 var match = Workers.FirstOrDefault(w => w.Id == worker.Id);
-                match?.SetState(worker.State);
+                match?.SetState(WorkerState.WAITING);
                 match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
