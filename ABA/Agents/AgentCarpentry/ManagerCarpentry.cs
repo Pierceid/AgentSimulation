@@ -328,8 +328,8 @@ namespace Agents.AgentCarpentry {
 
             switch (msg.Code) {
                 case Mc.DoPrepare:
-                    msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, false);
-                    msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
+                    msg.GetWorkerForCutting()?.Utility.AddSample(MySim.CurrentTime, false);
+                    msg.GetWorkerForCutting()?.Utility.AddSample(MySim.CurrentTime, true);
                     msg.Code = Mc.MoveToWorkplace;
                     msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
                     Request(msg);
@@ -389,7 +389,6 @@ namespace Agents.AgentCarpentry {
                                 UpdateWorkplace(msg);
                                 ReleaseWorkplace(msg.Workplace);
                             }
-
                         }
                         if (workerAssemble != null) ReassignWorkerB(workerAssemble);
                     }
