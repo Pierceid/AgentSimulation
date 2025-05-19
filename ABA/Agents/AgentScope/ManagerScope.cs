@@ -1,6 +1,6 @@
 using AgentSimulation.Structures;
+using AgentSimulation.Structures.Entities;
 using AgentSimulation.Structures.Enums;
-using AgentSimulation.Structures.Objects;
 using OSPABA;
 using OSPStat;
 using Simulation;

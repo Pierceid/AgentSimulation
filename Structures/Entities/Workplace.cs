@@ -1,10 +1,11 @@
 ﻿using AgentSimulation.Utilities;
 using OSPAnimator;
 
-namespace AgentSimulation.Structures.Objects {
+namespace AgentSimulation.Structures.Entities {
     public class Workplace {
         public int Id { get; }
         public bool IsOccupied { get; set; }
+        public bool IsReserved { get; set; }
         public Product? Product { get; set; }
         public Worker? Worker { get; set; }
         public AnimImageItem Image { get; set; }
@@ -14,13 +15,14 @@ namespace AgentSimulation.Structures.Objects {
         public Workplace(int id) {
             Id = id;
             IsOccupied = false;
+            IsReserved = false;
             Product = null;
             Worker = null;
             Image = new(Util.GetFilePath("workplace.png"));
             Image.SetToolTip($"Product: {Product?.Id}\nType: {Product?.Type}\nState: {Product?.State}\nIsOccupied: {IsOccupied}");
-            int columns = (Constants.ANIMATION_WIDTH / Constants.IMAGE_SIZE) - 5;
+            int columns = Constants.ANIMATION_WIDTH / Constants.IMAGE_SIZE - 5;
 
-            X = (Id % columns) * (Constants.IMAGE_SIZE + 22);
+            X = Id % columns * (Constants.IMAGE_SIZE + 22);
             Y = (Id / columns + 3) * (Constants.IMAGE_SIZE + 22);
         }
 

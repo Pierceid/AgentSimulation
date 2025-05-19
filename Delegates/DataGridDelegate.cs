@@ -2,8 +2,8 @@
 using Agents.AgentWorkersA;
 using Agents.AgentWorkersB;
 using Agents.AgentWorkersC;
+using AgentSimulation.Structures.Entities;
 using AgentSimulation.Structures.Enums;
-using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 using System.Collections.ObjectModel;

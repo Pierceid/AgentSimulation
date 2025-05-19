@@ -1,4 +1,4 @@
-using AgentSimulation.Structures.Objects;
+using AgentSimulation.Structures.Entities;
 using OSPABA;
 
 namespace Simulation {

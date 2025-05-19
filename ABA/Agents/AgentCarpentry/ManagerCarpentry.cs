@@ -1,11 +1,9 @@
 ﻿using Agents.AgentScope;
+using AgentSimulation.Structures.Entities;
 using AgentSimulation.Structures.Enums;
-using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
-using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -105,7 +103,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForCutting()?.SetState(WorkerState.WORKING);
-            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
+            msg.GetWorkerForCutting()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForCutting()?.Workplace?.Id;
 
             if (currentWorkplace == null) {
@@ -136,7 +134,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForPainting()?.SetState(WorkerState.WORKING);
-            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
+            msg.GetWorkerForPainting()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForPainting()?.Workplace?.Id;
             var targetWorkplace = msg.Product?.Workplace?.Id;
 
@@ -159,7 +157,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForPickling()?.SetState(WorkerState.WORKING);
-            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
+            msg.GetWorkerForPickling()?.Utility.AddSample(MySim.CurrentTime, true);
             msg.Code = Mc.DoPickle;
             msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             Request(msg);
@@ -182,7 +180,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForAssembling()?.SetState(WorkerState.WORKING);
-            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
+            msg.GetWorkerForAssembling()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForAssembling()?.Workplace?.Id;
             var targetWorkplace = msg.Product?.Workplace?.Id;
 
@@ -214,7 +212,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForMounting()?.SetState(WorkerState.WORKING);
-            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
+            msg.GetWorkerForMounting()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForMounting()?.Workplace?.Id;
             var targetWorkplace = msg.Product?.Workplace?.Id;
 

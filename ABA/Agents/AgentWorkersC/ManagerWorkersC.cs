@@ -1,6 +1,6 @@
 using AgentSimulation.Structures;
+using AgentSimulation.Structures.Entities;
 using AgentSimulation.Structures.Enums;
-using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 
@@ -16,10 +16,15 @@ namespace Agents.AgentWorkersC {
         override public void PrepareReplication() {
             base.PrepareReplication();
             PetriNet?.Clear();
+            Clear();
         }
 
         public void InitWorkers(int workersC) {
-            Parallel.For(0, workersC, c => { lock (Workers) { Workers.Add(new Worker(c, WorkerGroup.C)); } });
+            lock (Workers) {
+                for (int i = 0; i < workersC; i++) {
+                    Workers.Add(new Worker(i, WorkerGroup.C));
+                }
+            }
         }
 
         public void Clear() {

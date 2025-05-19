@@ -4,7 +4,7 @@ using AgentSimulation.Utilities;
 using OSPAnimator;
 using System.ComponentModel;
 
-namespace AgentSimulation.Structures.Objects {
+namespace AgentSimulation.Structures.Entities {
     public class Worker : INotifyPropertyChanged {
         public int Id { get; }
         public WorkerGroup Group { get; set; }

@@ -2,7 +2,7 @@
 using AgentSimulation.Utilities;
 using System.ComponentModel;
 
-namespace AgentSimulation.Structures.Objects {
+namespace AgentSimulation.Structures.Entities {
     public class Order : INotifyPropertyChanged {
         public int Id { get; set; }
         public double StartTime { get; set; }
