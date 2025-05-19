@@ -280,7 +280,6 @@
                         <DataGridTextColumn Header="Order" Binding="{Binding Order.Id}" Width="*"/>
                         <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
                         <DataGridTextColumn Header="State" Binding="{Binding State}" Width="*"/>
-                        <DataGridTextColumn Header="Workplace" Binding="{Binding Workplace.Id}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 

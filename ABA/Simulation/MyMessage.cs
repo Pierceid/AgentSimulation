@@ -29,11 +29,16 @@ namespace Simulation {
             Workplace = ((MyMessage)original).Workplace;
         }
 
-        public Worker? GetWorkerForCutting() => this.Product?.WorkerToCut;
-        public Worker? GetWorkerForPainting() => this.Product?.WorkerToPaint;
-        public Worker? GetWorkerForPickling() => this.Product?.WorkerToPickle;
-        public Worker? GetWorkerForAssembling() => this.Product?.WorkerToAssemble;
-        public Worker? GetWorkerForMounting() => this.Product?.WorkerToMount;
+        public Worker? GetWorkerForCutting() => Product?.WorkerToCut;
+
+        public Worker? GetWorkerForPainting() => Product?.WorkerToPaint;
+
+        public Worker? GetWorkerForPickling() => Product?.WorkerToPickle;
+
+        public Worker? GetWorkerForAssembling() => Product?.WorkerToAssemble;
+
+        public Worker? GetWorkerForMounting() => Product?.WorkerToMount;
+
         public Worker? GetAssignedWorker() {
             if (GetWorkerForCutting() != null) return GetWorkerForCutting();
             if (GetWorkerForPainting() != null) return GetWorkerForPainting();

@@ -47,7 +47,7 @@ namespace Agents.AgentWorkers {
         public void ProcessGetWorkerA(MessageForm message) {
             var msg = new MyMessage(message);
             msg.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            msg.Code = msg.GetAssignedWorker()?.Product?.State == ProductState.Raw ? Mc.GetWorkerToCut : Mc.GetWorkerToMount;
+            msg.Code = msg.Product?.State == ProductState.Raw ? Mc.GetWorkerToCut : Mc.GetWorkerToMount;
             Response(msg);
         }
 
@@ -61,7 +61,7 @@ namespace Agents.AgentWorkers {
         public void ProcessGetWorkerC(MessageForm message) {
             var msg = new MyMessage(message);
             msg.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            msg.Code = msg.GetAssignedWorker()?.Product?.State == ProductState.Cut ? Mc.GetWorkerToPaint : Mc.GetWorkerToMount;
+            msg.Code = msg.Product?.State == ProductState.Cut ? Mc.GetWorkerToPaint : Mc.GetWorkerToMount;
             Response(msg);
         }
 

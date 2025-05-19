@@ -4,8 +4,6 @@ using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Interop;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -54,7 +52,6 @@ namespace Agents.AgentCarpentry {
                     workplace.IsOccupied = true;
                     message.Workplace = workplace;
                     message.Product.Workplace = workplace;
-                    UpdateWorkplace(message);
                     DoCutting(message);
                 }
 
@@ -156,28 +153,10 @@ namespace Agents.AgentCarpentry {
                 throw new Exception();
             }
 
-            var queued = QueueC.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
-
-            if (queued != null) QueueC.Remove(queued);
-
-            if (message.Workplace != null) {
-                message.Workplace.Worker = message.GetWorkerForPickling();
-                UpdateWorkplace(message);
-            }
-
             var msg = new MyMessage(message);
             msg.GetWorkerForPickling()?.SetState(WorkerState.WORKING);
-            var currentWorkplace = msg.GetWorkerForPickling()?.Workplace?.Id;
-            var targetWorkplace = msg.Product?.Workplace?.Id;
-
-            if (currentWorkplace != targetWorkplace) {
-                msg.Code = Mc.MoveToWorkplace;
-                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
-            } else {
-                msg.Code = Mc.DoPickle;
-                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
-            }
-
+            msg.Code = Mc.DoPickle;
+            msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             Request(msg);
         }
 
@@ -255,7 +234,6 @@ namespace Agents.AgentCarpentry {
             if (QueueA.Count > 0) {
                 var queuedA = QueueA.First();
                 if (queuedA.Product == null) return;
-                queuedA.Product.WorkerToCut = worker;
                 var freeWorkplace = GetFreeWorkplace();
 
                 if (freeWorkplace == null) {
@@ -264,10 +242,11 @@ namespace Agents.AgentCarpentry {
                         Addressee = MySim.FindAgent(SimId.AgentWorkers),
                         WorkerToRelease = worker
                     };
-                    queuedA.Product.WorkerToCut = null;
                     Notice(message);
                     return;
                 }
+
+                queuedA.Product.WorkerToCut = worker;
                 queuedA.Workplace = freeWorkplace;
                 DoCutting(queuedA);
                 return;
@@ -383,6 +362,8 @@ namespace Agents.AgentCarpentry {
                             AdvanceProductState(msg.Product);
 
                             if (msg.Workplace != null) {
+                                msg.Workplace.Clear();
+                                UpdateWorkplace(msg);
                                 ReleaseWorkplace(msg.Workplace);
                             }
 
@@ -397,17 +378,16 @@ namespace Agents.AgentCarpentry {
                         var workerMount = msg.GetWorkerForMounting();
                         msg.Product.WorkerToMount = null;
                         if (workerMount != null) {
+                            if (msg.Workplace != null) {
+                                msg.Workplace.Clear();
+                                UpdateWorkplace(msg);
+                                ReleaseWorkplace(msg.Workplace);
+                            }
                             if (workerMount.Group == WorkerGroup.A) {
                                 ReassignWorkerA(workerMount);
                             } else if (workerMount.Group == WorkerGroup.C) {
                                 ReassignWorkerC(workerMount);
                             }
-                        }
-
-                        if (msg.Workplace != null) {
-                            ReleaseWorkplace(msg.Workplace);
-                            msg.Workplace.Clear();
-                            UpdateWorkplace(msg);
                         }
                     }
                     break;
@@ -520,8 +500,7 @@ namespace Agents.AgentCarpentry {
             } else if (msg.GetWorkerForMounting() != null) {
                 msg.Code = Mc.DoMount;
             } else {
-                MessageBox.Show("Missing worker for moving to workplace");
-                throw new Exception();
+                return;
             }
 
             var assignMsg = new MyMessage(msg);

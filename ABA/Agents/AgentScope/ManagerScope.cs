@@ -2,8 +2,8 @@ using AgentSimulation.Structures;
 using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
-using Simulation;
 using OSPStat;
+using Simulation;
 
 namespace Agents.AgentScope {
     //meta! id="3"
@@ -31,6 +31,7 @@ namespace Agents.AgentScope {
         override public void PrepareReplication() {
             base.PrepareReplication();
             PetriNet?.Clear();
+            Clear();
         }
 
         //meta! sender="AgentModel", id="240", type="Notice"
