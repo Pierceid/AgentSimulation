@@ -67,21 +67,27 @@ namespace Agents.AgentCarpentry {
         }
 
         public void PlanPainting(MyMessage message) {
-            message.Code = Mc.GetWorkerToPaint;
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            Request(message.CreateCopy());
+            if (message.GetWorkerForPainting() == null) {
+                message.Code = Mc.GetWorkerToPaint;
+                message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+                Request(message.CreateCopy());
+            }
         }
 
         public void PlanAssembling(MyMessage message) {
-            message.Code = Mc.GetWorkerToAssemble;
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            Request(message.CreateCopy());
+            if (message.GetWorkerForAssembling() == null) {
+                message.Code = Mc.GetWorkerToAssemble;
+                message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+                Request(message.CreateCopy());
+            }
         }
 
         public void PlanMounting(MyMessage message) {
-            message.Code = Mc.GetWorkerToMount;
-            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
-            Request(message.CreateCopy());
+            if (message.GetWorkerForMounting() == null) {
+                message.Code = Mc.GetWorkerToMount;
+                message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+                Request(message.CreateCopy());
+            }
         }
 
         private void DoCutting(MyMessage message) {
@@ -142,7 +148,7 @@ namespace Agents.AgentCarpentry {
                 msg.Code = Mc.MoveToWorkplace;
                 msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
             } else {
-                msg.Code = Mc.DoCut;
+                msg.Code = Mc.DoPaint;
                 msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             }
 
