@@ -103,10 +103,7 @@ namespace Agents.AgentWorkersC {
         //meta! tag="end"
 
         public double GetAverageUtility() {
-            double time = 0.0;
-            Workers.ForEach(w => time += w.Utility.GetUtility(Constants.SIMULATION_TIME));
-            time /= Workers.Count;
-            return time;
+            return Workers.Average(w => w.Utility.GetUtility(Constants.SIMULATION_TIME));
         }
 
         public new AgentWorkersC MyAgent => (AgentWorkersC)base.MyAgent;

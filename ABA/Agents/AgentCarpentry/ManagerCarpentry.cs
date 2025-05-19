@@ -3,7 +3,9 @@ using AgentSimulation.Structures.Enums;
 using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -103,6 +105,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForCutting()?.SetState(WorkerState.WORKING);
+            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForCutting()?.Workplace?.Id;
 
             if (currentWorkplace == null) {
@@ -133,6 +136,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForPainting()?.SetState(WorkerState.WORKING);
+            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForPainting()?.Workplace?.Id;
             var targetWorkplace = msg.Product?.Workplace?.Id;
 
@@ -155,6 +159,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForPickling()?.SetState(WorkerState.WORKING);
+            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
             msg.Code = Mc.DoPickle;
             msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
             Request(msg);
@@ -177,6 +182,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForAssembling()?.SetState(WorkerState.WORKING);
+            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForAssembling()?.Workplace?.Id;
             var targetWorkplace = msg.Product?.Workplace?.Id;
 
@@ -208,6 +214,7 @@ namespace Agents.AgentCarpentry {
 
             var msg = new MyMessage(message);
             msg.GetWorkerForMounting()?.SetState(WorkerState.WORKING);
+            msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
             var currentWorkplace = msg.GetWorkerForMounting()?.Workplace?.Id;
             var targetWorkplace = msg.Product?.Workplace?.Id;
 
@@ -226,6 +233,8 @@ namespace Agents.AgentCarpentry {
             if (QueueD.Count > 0) {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
+                worker.Utility.AddSample(MySim.CurrentTime, false);
+                worker.Utility.AddSample(MySim.CurrentTime, true);
                 queuedD.Product.WorkerToMount = worker;
                 DoMounting(queuedD);
                 return;
@@ -246,11 +255,15 @@ namespace Agents.AgentCarpentry {
                     return;
                 }
 
+                worker.Utility.AddSample(MySim.CurrentTime, false);
+                worker.Utility.AddSample(MySim.CurrentTime, true);
                 queuedA.Product.WorkerToCut = worker;
                 queuedA.Workplace = freeWorkplace;
                 DoCutting(queuedA);
                 return;
             }
+
+            worker.Utility.AddSample(MySim.CurrentTime, false);
 
             var msg = new MyMessage(MySim) {
                 Code = Mc.DeassignWorkerA,
@@ -264,10 +277,14 @@ namespace Agents.AgentCarpentry {
             if (QueueB.Count > 0) {
                 var queuedB = QueueB.First();
                 if (queuedB.Product == null) return;
+                worker.Utility.AddSample(MySim.CurrentTime, false);
+                worker.Utility.AddSample(MySim.CurrentTime, true);
                 queuedB.Product.WorkerToAssemble = worker;
                 DoAssembling(queuedB);
                 return;
             }
+
+            worker.Utility.AddSample(MySim.CurrentTime, false);
 
             var msg = new MyMessage(MySim) {
                 Code = Mc.DeassignWorkerB,
@@ -281,6 +298,8 @@ namespace Agents.AgentCarpentry {
             if (QueueD.Count > 0) {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
+                worker.Utility.AddSample(MySim.CurrentTime, false);
+                worker.Utility.AddSample(MySim.CurrentTime, true);
                 queuedD.Product.WorkerToMount = worker;
                 DoMounting(queuedD);
                 return;
@@ -289,10 +308,14 @@ namespace Agents.AgentCarpentry {
             if (QueueC.Count > 0) {
                 var queuedC = QueueC.First();
                 if (queuedC.Product == null) return;
+                worker.Utility.AddSample(MySim.CurrentTime, false);
+                worker.Utility.AddSample(MySim.CurrentTime, true);
                 queuedC.Product.WorkerToPaint = worker;
                 DoPainting(queuedC);
                 return;
             }
+
+            worker.Utility.AddSample(MySim.CurrentTime, false);
 
             var msg = new MyMessage(MySim) {
                 Code = Mc.DeassignWorkerC,
@@ -307,6 +330,8 @@ namespace Agents.AgentCarpentry {
 
             switch (msg.Code) {
                 case Mc.DoPrepare:
+                    msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, false);
+                    msg.GetAssignedWorker()?.Utility.AddSample(MySim.CurrentTime, true);
                     msg.Code = Mc.MoveToWorkplace;
                     msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
                     Request(msg);
