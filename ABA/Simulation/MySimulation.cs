@@ -66,6 +66,14 @@ namespace Simulation {
                 AverageUtilityA.AddSample(managerWorkersA.GetAverageUtility());
                 AverageUtilityB.AddSample(managerWorkersB.GetAverageUtility());
                 AverageUtilityC.AddSample(managerWorkersC.GetAverageUtility());
+
+                if (AverageOrderTime.SampleSize > 10) {
+                    double[] interval = AverageOrderTime.ConfidenceInterval95;
+
+                    if (interval[0] >= 0.99 * AverageOrderTime.Mean() || interval[1] <= 1.01 * AverageOrderTime.Mean()) {
+                        StopSimulation();
+                    }
+                }
             }
 
             OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
