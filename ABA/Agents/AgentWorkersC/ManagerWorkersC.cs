@@ -76,6 +76,7 @@ namespace Agents.AgentWorkersC {
                 var match = Workers.FirstOrDefault(w => w.Id == assignedWorker.Id);
                 match?.SetProduct(myMessage.Product);
                 match?.SetWorkplace(myMessage.Workplace);
+                match?.Utility.AddSample(myMessage.DeliveryTime, false);
                 match?.Utility.AddSample(myMessage.DeliveryTime, true);
             }
         }

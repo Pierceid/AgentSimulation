@@ -16,8 +16,8 @@ namespace Agents.AgentMovement.ContinualAssistants {
             var myMessage = (MyMessage)message;
             var mySimulation = (MySimulation)message.MySim;
             myMessage.Code = Mc.Finish;
-            double duration = mySimulation.Generators.WorkerMoveBetweenStationsTime.Next();
             var worker = myMessage.GetAssignedWorker();
+            double duration = worker?.Workplace == null ? mySimulation.Generators.WorkerMoveToStorageTime.Next() : mySimulation.Generators.WorkerMoveBetweenStationsTime.Next();
 
             if (worker != null && myMessage.Product != null && myMessage.Product.Workplace != null && mySimulation.AnimatorExists) {
                 worker.Image.MoveTo(mySimulation.CurrentTime, duration, new(myMessage.Product.Workplace.X, myMessage.Product.Workplace.Y));

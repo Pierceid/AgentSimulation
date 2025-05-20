@@ -1,7 +1,6 @@
 using AgentSimulation.Structures;
 using OSPABA;
 using Simulation;
-using System.Windows;
 namespace Agents.AgentScope.ContinualAssistants {
     //meta! id="163"
     public class OrderArrival : OSPABA.Scheduler {
