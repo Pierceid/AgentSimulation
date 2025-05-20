@@ -7,7 +7,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:osp="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="Discrete Simulation" Height="820" Width="1320" WindowStartupLocation="CenterScreen" Closing="WindowClosing">
+        Title="Discrete Simulation" Height="820" Width="1400" WindowStartupLocation="CenterScreen" Closing="WindowClosing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
