@@ -1,3 +1,4 @@
+using AgentSimulation.Structures.Entities;
 using OSPABA;
 using Simulation;
 
@@ -29,8 +30,14 @@ namespace Agents.AgentMovement.ContinualAssistants {
         //meta! userInfo="Process messages defined in code", id="0"
         public void ProcessDefault(MessageForm message) {
             var myMessage = (MyMessage)message;
+            var mySimulation = (MySimulation)message.MySim;
             myMessage.Workplace = myMessage.Product?.Workplace;
             myMessage.GetAssignedWorker()?.SetWorkplace(myMessage.Workplace);
+
+            if (myMessage.Workplace != null && mySimulation.AnimatorExists) {
+                mySimulation.Animator.GetAnim(myMessage.Workplace.Image.ObjectID).SetToolTip($"Product: {myMessage.Product?.Id}\nType: {myMessage.Product?.Type}\nState: {myMessage.Product?.State}\nIsOccupied: {myMessage.Workplace.IsOccupied}");
+            }
+
             AssistantFinished(myMessage);
         }
 
