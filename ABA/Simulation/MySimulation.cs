@@ -16,6 +16,7 @@ using OSPStat;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Simulation {
     public class MySimulation : OSPABA.Simulation {
@@ -50,7 +51,8 @@ namespace Simulation {
             Clear();
 
             if (AnimatorExists) {
-                InitAnimator();
+                Animator.ClearAll();
+                Application.Current.Dispatcher.Invoke(() => InitAnimator());
             }
         }
 
@@ -81,10 +83,6 @@ namespace Simulation {
             }
 
             OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
-
-            if (AnimatorExists) {
-                Animator.ClearAll();
-            }
         }
 
         override public void SimulationFinished() {
@@ -110,89 +108,98 @@ namespace Simulation {
         }
 
         public void InitSpeed(double speed) {
-            if (Speed == double.MaxValue && !AnimatorExists) {
+            Application.Current.Dispatcher.InvokeAsync(() => {
                 Speed = speed;
-                SetMaxSimSpeed();
-            } else if (Speed > 0) {
-                Speed = speed;
-                SetSimSpeed(Speed / Constants.FPS, 1.0 / Constants.FPS);
-            }
+
+                if (Speed > 0 && Speed != double.MaxValue) {
+                    SetSimSpeed(Speed / Constants.FPS, 1.0 / Constants.FPS);
+                } else if (Speed == double.MaxValue) {
+                    SetMaxSimSpeed();
+                }
+            });
         }
 
         public void InitAnimator() {
             if (!AnimatorExists) return;
 
-            Animator.SetSynchronizedTime(false);
+            Application.Current.Dispatcher.Invoke(() => {
+                Animator.SetSynchronizedTime(false);
 
-            var backgroundImage = new Bitmap(Util.GetFilePath("background.png"));
-            Animator.SetBackgroundImage(backgroundImage);
+                var backgroundImage = new Bitmap(Util.GetFilePath("background.png"));
+                Animator.SetBackgroundImage(backgroundImage);
 
-            Animator.Canvas.VerticalAlignment = VerticalAlignment.Top;
-            Animator.Canvas.HorizontalAlignment = HorizontalAlignment.Left;
-            Animator.Canvas.Width = Constants.ANIMATION_WIDTH;
-            Animator.Canvas.Height = Constants.ANIMATION_HEIGHT;
-            Animator.Canvas.Margin = new Thickness(10);
+                Animator.Canvas.VerticalAlignment = VerticalAlignment.Top;
+                Animator.Canvas.HorizontalAlignment = HorizontalAlignment.Left;
+                Animator.Canvas.Width = Constants.ANIMATION_WIDTH;
+                Animator.Canvas.Height = Constants.ANIMATION_HEIGHT;
+                Animator.Canvas.Margin = new Thickness(10);
 
-            SetupQueues();
+                SetupQueues();
 
-            AgentCarpentry.InitAnimator();
-            AgentWorkersA.InitAnimator();
-            AgentWorkersB.InitAnimator();
-            AgentWorkersC.InitAnimator();
+                AgentCarpentry.InitAnimator();
+                AgentWorkersA.InitAnimator();
+                AgentWorkersB.InitAnimator();
+                AgentWorkersC.InitAnimator();
 
-            animatorWindow = new Window {
-                Title = "Animator",
-                Width = Constants.ANIMATION_WIDTH,
-                Height = Constants.ANIMATION_HEIGHT,
-                Content = Animator.Canvas
-            };
-            animatorWindow.Show();
+                if (animatorWindow == null) {
+                    animatorWindow = new Window {
+                        Title = "Animator",
+                        Width = Constants.ANIMATION_WIDTH,
+                        Height = Constants.ANIMATION_HEIGHT,
+                        Content = Animator.Canvas
+                    };
+                    animatorWindow.Show();
+                }
+            });
         }
 
         private void SetupQueues() {
-            var colors = new[] { Colors.Blue, Colors.Red, Colors.Green, Colors.Purple };
-            for (int i = 0; i < 4; i++) {
-                var shape = new AnimShapeItem(AnimShape.RECTANGLE, 120, 60) {
-                    Color = colors[i],
+            Application.Current.Dispatcher.Invoke(() => {
+                var colors = new[] { Colors.Blue, Colors.Red, Colors.Green, Colors.Purple };
+                for (int i = 0; i < 4; i++) {
+                    var shape = new AnimShapeItem(AnimShape.RECTANGLE, 120, 60) {
+                        Color = colors[i],
+                        Fill = true
+                    };
+                    shape.SetPosition(i * 212, 700);
+                    Animator.Register(shape);
+
+                    var label = new AnimTextItem($"Queue {(char)('A' + i)}", Colors.White, null, 20);
+                    label.SetPosition(i * 212 + 24, 700);
+                    Animator.Register(label);
+
+                    var count = new AnimTextItem("0", Colors.White, null, 20);
+                    count.SetPosition(i * 212 + 56, 730);
+                    Animator.Register(1001 + i, count);
+                }
+
+                var wallShape = new AnimShapeItem(AnimShape.RECTANGLE, 10, 740) {
+                    Color = Colors.Black,
                     Fill = true
                 };
-                shape.SetPosition(i * 212, 700);
-                Animator.Register(shape);
+                wallShape.SetPosition(780, 10);
+                Animator.Register(wallShape);
 
-                var label = new AnimTextItem($"Queue {(char)('A' + i)}", Colors.White, null, 20);
-                label.SetPosition(i * 212 + 24, 700);
-                Animator.Register(label);
-
-                var count = new AnimTextItem("0", Colors.White, null, 20);
-                count.SetPosition(i * 212 + 56, 730);
-                Animator.Register(1001 + i, count);
-            }
-
-            var wallShape = new AnimShapeItem(AnimShape.RECTANGLE, 10, 740) {
-                Color = Colors.Black,
-                Fill = true
-            };
-            wallShape.SetPosition(780, 10);
-            Animator.Register(wallShape);
-
-            var storageImage = new AnimImageItem(Util.GetFilePath("storage.png"));
-            storageImage.SetPosition(0, 0);
-            Animator.Register(storageImage);
+                var storageImage = new AnimImageItem(Util.GetFilePath("storage.png"));
+                storageImage.SetPosition(0, 0);
+                Animator.Register(storageImage);
+            });
         }
 
         public void StartAnimation() {
-            if (IsMaxSpeed()) SetSimSpeed(60, 1);
             CreateAnimator();
             InitAnimator();
         }
 
         public void StopAnimation() {
-            if (animatorWindow != null) {
-                RemoveAnimator();
-                animatorWindow.Content = null;
-                animatorWindow.Close();
-                animatorWindow = null;
-            }
+            Application.Current.Dispatcher.Invoke(() => {
+                if (animatorWindow != null) {
+                    RemoveAnimator();
+                    animatorWindow.Content = null;
+                    animatorWindow.Close();
+                    animatorWindow = null;
+                }
+            });
         }
 
         //meta! userInfo="Generated code: do not modify", tag="begin"

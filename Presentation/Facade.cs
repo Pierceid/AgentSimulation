@@ -100,5 +100,7 @@ namespace AgentSimulation.Presentation {
                 mySimulation.StopAnimation();
             }
         }
+
+        public MySimulation? GetMySimulation() => mySimulation;
     }
 }
