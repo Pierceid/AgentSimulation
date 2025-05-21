@@ -59,6 +59,10 @@ namespace Simulation {
         override public void ReplicationFinished() {
             base.ReplicationFinished();
 
+            if (Speed != double.MaxValue && IsMaxSpeed()) {
+                InitSpeed(3600);
+            }
+
             var managerScope = AgentScope.MyManager as ManagerScope;
             var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
             var managerWorkersA = AgentWorkersA.MyManager as ManagerWorkersA;
