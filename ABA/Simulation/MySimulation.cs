@@ -48,6 +48,10 @@ namespace Simulation {
         override public void PrepareReplication() {
             base.PrepareReplication();
             Clear();
+
+            if (AnimatorExists) {
+                InitAnimator();
+            }
         }
 
         override public void ReplicationFinished() {
@@ -77,6 +81,10 @@ namespace Simulation {
             }
 
             OnRefreshUI(sim => Delegates.ForEach(d => d.Refresh(sim)));
+
+            if (AnimatorExists) {
+                Animator.ClearAll();
+            }
         }
 
         override public void SimulationFinished() {
@@ -102,18 +110,19 @@ namespace Simulation {
         }
 
         public void InitSpeed(double speed) {
-            Speed = speed;
-            if (Speed == double.MaxValue) {
+            if (Speed == double.MaxValue && !AnimatorExists) {
+                Speed = speed;
                 SetMaxSimSpeed();
             } else if (Speed > 0) {
-                SetSimSpeed(Speed, 0.1);
+                Speed = speed;
+                SetSimSpeed(Speed / Constants.FPS, 1.0 / Constants.FPS);
             }
         }
 
         public void InitAnimator() {
-            if (AnimatorExists) return;
+            if (!AnimatorExists) return;
 
-            CreateAnimator();
+            Animator.SetSynchronizedTime(false);
 
             var backgroundImage = new Bitmap(Util.GetFilePath("background.png"));
             Animator.SetBackgroundImage(backgroundImage);
@@ -126,24 +135,10 @@ namespace Simulation {
 
             SetupQueues();
 
-            var managerCarpentry = AgentCarpentry.MyManager as ManagerCarpentry;
-            managerCarpentry?.Workplaces.ForEach(wp => {
-                Animator.Register(wp.Image);
-                wp.Image.SetPosition(wp.X, wp.Y);
-            });
-
-            (AgentWorkersA.MyManager as ManagerWorkersA)?.Workers.ForEach(w => {
-                Animator.Register(w.Image);
-                w.Image.SetPosition(w.X, w.Y);
-            });
-            (AgentWorkersB.MyManager as ManagerWorkersB)?.Workers.ForEach(w => {
-                Animator.Register(w.Image);
-                w.Image.SetPosition(w.X, w.Y);
-            });
-            (AgentWorkersC.MyManager as ManagerWorkersC)?.Workers.ForEach(w => {
-                Animator.Register(w.Image);
-                w.Image.SetPosition(w.X, w.Y);
-            });
+            AgentCarpentry.InitAnimator();
+            AgentWorkersA.InitAnimator();
+            AgentWorkersB.InitAnimator();
+            AgentWorkersC.InitAnimator();
 
             animatorWindow = new Window {
                 Title = "Animator",
@@ -187,6 +182,7 @@ namespace Simulation {
 
         public void StartAnimation() {
             if (IsMaxSpeed()) SetSimSpeed(60, 1);
+            CreateAnimator();
             InitAnimator();
         }
 

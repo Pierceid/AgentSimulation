@@ -4,7 +4,6 @@ using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
 using System.Windows;
-using System.Windows.Interop;
 
 namespace Agents.AgentCarpentry {
     public class ManagerCarpentry : OSPABA.Manager {
@@ -86,11 +85,6 @@ namespace Agents.AgentCarpentry {
         }
 
         private void DoCutting(MyMessage message) {
-            if (message.GetWorkerForCutting() == null || message.Workplace == null) {
-                MessageBox.Show("Missing worker or workplace for cutting");
-                throw new Exception();
-            }
-
             var queued = QueueA.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
 
             if (queued != null) QueueA.Remove(queued);
@@ -120,11 +114,6 @@ namespace Agents.AgentCarpentry {
         }
 
         private void DoPainting(MyMessage message) {
-            if (message.GetWorkerForPainting() == null || message.Workplace == null) {
-                MessageBox.Show("Missing worker or workplace for painting");
-                throw new Exception();
-            }
-
             var queued = QueueC.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
 
             if (queued != null) QueueC.Remove(queued);
@@ -153,11 +142,6 @@ namespace Agents.AgentCarpentry {
         }
 
         private void DoPickling(MyMessage message) {
-            if (message.GetWorkerForPickling() == null || message.Workplace == null) {
-                MessageBox.Show("Missing worker or workplace for pickling");
-                throw new Exception();
-            }
-
             var msg = new MyMessage(message);
             msg.GetWorkerForPickling()?.SetState(WorkerState.WORKING);
             msg.GetWorkerForPickling()?.Utility.AddSample(MySim.CurrentTime, false);
@@ -168,11 +152,6 @@ namespace Agents.AgentCarpentry {
         }
 
         private void DoAssembling(MyMessage message) {
-            if (message.GetWorkerForAssembling() == null || message.Workplace == null) {
-                MessageBox.Show("Missing worker or workplace for assembling");
-                throw new Exception();
-            }
-
             var queued = QueueB.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
 
             if (queued != null) QueueB.Remove(queued);
@@ -201,11 +180,6 @@ namespace Agents.AgentCarpentry {
         }
 
         private void DoMounting(MyMessage message) {
-            if (message.GetWorkerForMounting() == null || message.Workplace == null) {
-                MessageBox.Show("Missing worker or workplace for mounting");
-                throw new Exception();
-            }
-
             var queued = QueueD.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
 
             if (queued != null) QueueD.Remove(queued);
@@ -454,7 +428,6 @@ namespace Agents.AgentCarpentry {
                     Code = Mc.DeassignWorkerA,
                     Addressee = MySim.FindAgent(SimId.AgentWorkers)
                 };
-                if (msg.Product != null) msg.Product.WorkerToCut = null;
                 Notice(returnMsg);
                 return;
             }
@@ -471,19 +444,19 @@ namespace Agents.AgentCarpentry {
             var msg = new MyMessage(message);
 
             switch (msg.Code) {
-                case Mc.GetWorkerToCut:
+                case Mc.GetWorkerForCutting:
                     ProcessResponseWorkerToCut(msg);
                     break;
-                case Mc.GetWorkerToPaint:
+                case Mc.GetWorkerForPainting:
                     ProcessResponseWorkerToPaint(msg);
                     break;
-                case Mc.GetWorkerToPickle:
+                case Mc.GetWorkerForPickling:
                     ProcessResponseWorkerToPickle(msg);
                     break;
-                case Mc.GetWorkerToAssemble:
+                case Mc.GetWorkerForAssembling:
                     ProcessResponseWorkerToAssemble(msg);
                     break;
-                case Mc.GetWorkerToMount:
+                case Mc.GetWorkerForMounting:
                     ProcessResponseWorkerToMount(msg);
                     break;
                 default:

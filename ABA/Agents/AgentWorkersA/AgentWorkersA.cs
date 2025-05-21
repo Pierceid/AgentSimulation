@@ -12,8 +12,18 @@ namespace Agents.AgentWorkersA {
             base.PrepareReplication();
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		private void Init()
+        public void InitAnimator() {
+            if (MySim.AnimatorExists) {
+                var managerWorkersA = MyManager as ManagerWorkersA;
+                managerWorkersA?.Workers.ForEach(w => {
+                    MySim.Animator.Register(w.Image);
+                    w.Image.SetPosition(w.X, w.Y);
+                });
+            }
+        }
+
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        private void Init()
 		{
 			new ManagerWorkersA(SimId.ManagerWorkersA, MySim, this);
 			AddOwnMessage(Mc.DeassignWorkerA);

@@ -44,8 +44,6 @@ namespace AgentSimulation.Presentation {
 
         public void AnalyzeReplication() {
             if (mySimulation == null) return;
-
-
         }
 
         public void InitGraph(PlotView plotView) {
