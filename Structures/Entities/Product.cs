@@ -15,6 +15,7 @@ namespace AgentSimulation.Structures.Entities {
         public Worker? WorkerToPickle { get; set; }
         public Worker? WorkerToAssemble { get; set; }
         public Worker? WorkerToMount { get; set; }
+        public Worker? WorkerToDry { get; set; }
         public bool IsPickled { get; set; }
 
         private Workplace? workplace;

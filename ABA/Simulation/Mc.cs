@@ -27,6 +27,7 @@ namespace Simulation
 		public const int DoPickle = 1068;
 		public const int DoAssemble = 1069;
 		public const int DoMount = 1070;
+		public const int DoDry = 1072;
 		public const int Init = 1071;
 		public const int MoveToStorage = 1030;
 		public const int GetWorkerForCutting = 1031;
@@ -44,6 +45,7 @@ namespace Simulation
 		public const int GetWorkerToAssemble = 1037;
 		public const int GetWorkerToPickle = 1038;
 		public const int GetWorkerToMount = 1039;
+		public const int GetWorkerToDry = 1100;
 		//meta! tag="end"
 
 		// 1..1000 range reserved for user

@@ -1,6 +1,5 @@
 using OSPABA;
 using Simulation;
-using System.Windows;
 
 namespace Agents.AgentProcesses {
     //meta! id="77"
@@ -31,6 +30,12 @@ namespace Agents.AgentProcesses {
         //meta! sender="AgentCarpentry", id="217", type="Request"
         public void ProcessDoPickle(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Pickling);
+            message.Code = Mc.Start;
+            StartContinualAssistant(message);
+        }
+
+        public void ProcessDoDry(MessageForm message) {
+            message.Addressee = MyAgent.FindAssistant(SimId.Drying);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
@@ -74,6 +79,12 @@ namespace Agents.AgentProcesses {
         public void ProcessFinishPickling(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
             message.Code = Mc.DoPickle;
+            Response(message);
+        }
+
+        public void ProcessFinishDrying(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            message.Code = Mc.DoDry;
             Response(message);
         }
 
@@ -126,6 +137,10 @@ namespace Agents.AgentProcesses {
                         case SimId.Cutting:
                             ProcessFinishCutting(message);
                             break;
+
+                        case SimId.Drying:
+                            ProcessFinishDrying(message);
+                            break;
                     }
                     break;
             }
@@ -159,6 +174,10 @@ namespace Agents.AgentProcesses {
 
                 case Mc.DoMount:
                     ProcessDoMount(message);
+                    break;
+
+                case Mc.DoDry:
+                    ProcessDoDry(message);
                     break;
 
                 default:

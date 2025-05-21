@@ -24,12 +24,14 @@ namespace Agents.AgentProcesses {
 			new Mounting(SimId.Mounting, MySim, this);
 			new Pickling(SimId.Pickling, MySim, this);
 			new Painting(SimId.Painting, MySim, this);
+			new Drying(SimId.Drying, MySim, this);
 			AddOwnMessage(Mc.DoPrepare);
 			AddOwnMessage(Mc.DoPaint);
 			AddOwnMessage(Mc.DoCut);
 			AddOwnMessage(Mc.DoPickle);
 			AddOwnMessage(Mc.DoAssemble);
 			AddOwnMessage(Mc.DoMount);
+			AddOwnMessage(Mc.DoDry);
 		}
 		//meta! tag="end"
     }

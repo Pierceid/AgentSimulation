@@ -31,6 +31,7 @@ namespace Simulation {
 		public const int MovingToStorage = 1013;
 		public const int Preparing = 1006;
 		public const int Cutting = 1016;
+		public const int Drying = 1101;
 		//meta! tag="end"
     }
 }

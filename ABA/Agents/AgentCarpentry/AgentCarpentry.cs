@@ -52,6 +52,8 @@ namespace Agents.AgentCarpentry {
             AddOwnMessage(Mc.GetWorkerToPickle);
             AddOwnMessage(Mc.DoPainting);
             AddOwnMessage(Mc.DoPickle);
+            AddOwnMessage(Mc.GetWorkerToDry);
+            AddOwnMessage(Mc.DoDry);
         }
         //meta! tag="end"
     }

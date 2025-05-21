@@ -2,6 +2,7 @@ using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace Agents.AgentWorkers {
     public class ManagerWorkers : OSPABA.Manager {
@@ -32,6 +33,12 @@ namespace Agents.AgentWorkers {
             Request(message);
         }
 
+        public void ProcessGetWorkerForDrying(MessageForm message) {
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkersA);
+            message.Code = Mc.GetWorkerA;
+            Request(message);
+        }
+
         public void ProcessGetWorkerForAssembling(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentWorkersB);
             message.Code = Mc.GetWorkerB;
@@ -53,8 +60,10 @@ namespace Agents.AgentWorkers {
                 Request(msg);
             } else {
                 msg.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-                msg.Code = msg.Product?.State == ProductState.Raw ? Mc.GetWorkerToCut : Mc.GetWorkerToMount;
-                Response(msg);
+                msg.Code = msg.Product?.State == ProductState.Raw ? Mc.GetWorkerToCut :
+                    (msg.Product?.State == ProductState.Painted || msg.Product?.State == ProductState.Pickled) ? Mc.GetWorkerToDry :
+                    Mc.GetWorkerToMount;
+                Response(msg.CreateCopy());
             }
         }
 
@@ -115,27 +124,23 @@ namespace Agents.AgentWorkers {
         }
 
         override public void ProcessMessage(MessageForm message) {
-            try {
-                switch (message.Code) {
-                    case Mc.GetWorkerA: ProcessGetWorkerA(message); break;
-                    case Mc.GetWorkerC: ProcessGetWorkerC(message); break;
-                    case Mc.GetWorkerB: ProcessGetWorkerB(message); break;
-                    case Mc.AssignWorkerA: ProcessAssignWorkerA(message); break;
-                    case Mc.AssignWorkerB: ProcessAssignWorkerB(message); break;
-                    case Mc.AssignWorkerC: ProcessAssignWorkerC(message); break;
-                    case Mc.DeassignWorkerA: ProcessDeassignWorkerA(message); break;
-                    case Mc.DeassignWorkerB: ProcessDeassignWorkerB(message); break;
-                    case Mc.DeassignWorkerC: ProcessDeassignWorkerC(message); break;
-                    case Mc.GetWorkerToCut: ProcessGetWorkerForCutting(message); break;
-                    case Mc.GetWorkerToPaint: ProcessGetWorkerForPainting(message); break;
-                    case Mc.GetWorkerToPickle: ProcessGetWorkerForPickling(message); break;
-                    case Mc.GetWorkerToAssemble: ProcessGetWorkerForAssembling(message); break;
-                    case Mc.GetWorkerToMount: ProcessGetWorkerForMounting(message); break;
-                    default: ProcessDefault(message); break;
-                }
-            } catch (Exception ex) {
-                MessageBox.Show($"Error: {ex.Message}");
-                throw;
+            switch (message.Code) {
+                case Mc.GetWorkerA: ProcessGetWorkerA(message); break;
+                case Mc.GetWorkerC: ProcessGetWorkerC(message); break;
+                case Mc.GetWorkerB: ProcessGetWorkerB(message); break;
+                case Mc.AssignWorkerA: ProcessAssignWorkerA(message); break;
+                case Mc.AssignWorkerB: ProcessAssignWorkerB(message); break;
+                case Mc.AssignWorkerC: ProcessAssignWorkerC(message); break;
+                case Mc.DeassignWorkerA: ProcessDeassignWorkerA(message); break;
+                case Mc.DeassignWorkerB: ProcessDeassignWorkerB(message); break;
+                case Mc.DeassignWorkerC: ProcessDeassignWorkerC(message); break;
+                case Mc.GetWorkerToCut: ProcessGetWorkerForCutting(message); break;
+                case Mc.GetWorkerToPaint: ProcessGetWorkerForPainting(message); break;
+                case Mc.GetWorkerToPickle: ProcessGetWorkerForPickling(message); break;
+                case Mc.GetWorkerToAssemble: ProcessGetWorkerForAssembling(message); break;
+                case Mc.GetWorkerToMount: ProcessGetWorkerForMounting(message); break;
+                case Mc.GetWorkerToDry: ProcessGetWorkerForDrying(message); break;
+                default: ProcessDefault(message); break;
             }
         }
 

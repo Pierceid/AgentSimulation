@@ -42,8 +42,10 @@ namespace Agents.AgentWorkersA {
             if (myMessage.Product != null) {
                 if (myMessage.Product.State == ProductState.Raw) {
                     myMessage.Product.WorkerToCut = availableWorker;
-                } else {
+                } else if (myMessage.Product.State == ProductState.Assembled) {
                     myMessage.Product.WorkerToMount = availableWorker;
+                } else {
+                    myMessage.Product.WorkerToDry = availableWorker;
                 }
             }
 

@@ -11,6 +11,7 @@ namespace Agents.AgentCarpentry {
         public LinkedList<MyMessage> QueueB { get; } = new();
         public LinkedList<MyMessage> QueueC { get; } = new();
         public LinkedList<MyMessage> QueueD { get; } = new();
+        public LinkedList<MyMessage> QueueE { get; } = new();
         public List<Workplace> Workplaces { get; set; } = new();
 
         public ManagerCarpentry(int id, OSPABA.Simulation mySim, Agent myAgent) : base(id, mySim, myAgent) {
@@ -68,6 +69,12 @@ namespace Agents.AgentCarpentry {
 
         public void PlanPainting(MyMessage message) {
             message.Code = Mc.GetWorkerToPaint;
+            message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
+            Request(message.CreateCopy());
+        }
+
+        public void PlanDrying(MyMessage message) {
+            message.Code = Mc.GetWorkerToDry;
             message.Addressee = MySim.FindAgent(SimId.AgentWorkers);
             Request(message.CreateCopy());
         }
@@ -207,7 +214,43 @@ namespace Agents.AgentCarpentry {
             Request(msg);
         }
 
+        private void DoDrying(MyMessage message) {
+            var queued = QueueE.FirstOrDefault(m => m.Product?.Id == message.Product?.Id);
+
+            if (queued != null) QueueE.Remove(queued);
+
+            if (message.Workplace != null) {
+                message.Workplace.Worker = message.GetWorkerForDrying();
+                UpdateWorkplace(message);
+            }
+
+            var msg = new MyMessage(message);
+            msg.GetWorkerForDrying()?.SetState(WorkerState.WORKING);
+            msg.GetWorkerForDrying()?.Utility.AddSample(MySim.CurrentTime, false);
+            msg.GetWorkerForDrying()?.Utility.AddSample(MySim.CurrentTime, true);
+            var currentWorkplace = msg.GetWorkerForDrying()?.Workplace?.Id;
+            var targetWorkplace = msg.Product?.Workplace?.Id;
+
+            if (currentWorkplace != targetWorkplace) {
+                msg.Code = Mc.MoveToWorkplace;
+                msg.Addressee = MySim.FindAgent(SimId.AgentMovement);
+            } else {
+                msg.Code = Mc.DoDry;
+                msg.Addressee = MySim.FindAgent(SimId.AgentProcesses);
+            }
+
+            Request(msg);
+        }
+
         private void ReassignWorkerA(Worker worker) {
+            if (QueueE.Count > 0) {
+                var queuedE = QueueE.First();
+                if (queuedE.Product == null) return;
+                queuedE.Product.WorkerToDry = worker;
+                DoDrying(queuedE);
+                return;
+            }
+
             if (QueueD.Count > 0) {
                 var queuedD = QueueD.First();
                 if (queuedD.Product == null) return;
@@ -320,8 +363,8 @@ namespace Agents.AgentCarpentry {
                             msg.Product.WorkerToPickle = workerPaint;
                             DoPickling(msg);
                         } else {
-                            QueueB.AddLast(msg);
-                            PlanAssembling(QueueB.First());
+                            QueueE.AddLast(msg);
+                            PlanDrying(QueueE.First());
                             if (workerPaint != null) ReassignWorkerC(workerPaint);
                         }
                     }
@@ -332,9 +375,20 @@ namespace Agents.AgentCarpentry {
 
                         var workerPickle = msg.GetWorkerForPickling();
                         msg.Product.WorkerToPickle = null;
+                        QueueE.AddLast(msg);
+                        PlanDrying(QueueE.First());
+                        if (workerPickle != null) ReassignWorkerC(workerPickle);
+                    }
+                    break;
+                case Mc.DoDry:
+                    if (msg.Product != null) {
+                        AdvanceProductState(msg.Product);
+
+                        var workerDry = msg.GetWorkerForDrying();
+                        msg.Product.WorkerToDry = null;
                         QueueB.AddLast(msg);
                         PlanAssembling(QueueB.First());
-                        if (workerPickle != null) ReassignWorkerC(workerPickle);
+                        if (workerDry != null) ReassignWorkerA(workerDry);
                     }
                     break;
                 case Mc.DoAssemble:
@@ -381,6 +435,14 @@ namespace Agents.AgentCarpentry {
                 default:
                     break;
             }
+        }
+
+        private void ProcessResponseWorkerToDry(MessageForm message) {
+            var msg = new MyMessage(message);
+
+            if (msg.GetWorkerForDrying() == null) return;
+
+            DoDrying(msg);
         }
 
         private void ProcessResponseWorkerToMount(MessageForm message) {
@@ -481,6 +543,8 @@ namespace Agents.AgentCarpentry {
                 msg.Code = Mc.DoPaint;
             } else if (msg.GetWorkerForPickling() != null) {
                 msg.Code = Mc.DoPickle;
+            } else if (msg.GetWorkerForDrying() != null) {
+                msg.Code = Mc.DoDry;
             } else if (msg.GetWorkerForAssembling() != null) {
                 msg.Code = Mc.DoAssemble;
             } else if (msg.GetWorkerForMounting() != null) {
@@ -520,6 +584,7 @@ namespace Agents.AgentCarpentry {
                     case Mc.GetWorkerToPickle: ProcessResponseWorkerToPickle(message); break;
                     case Mc.GetWorkerToAssemble: ProcessResponseWorkerToAssemble(message); break;
                     case Mc.GetWorkerToMount: ProcessResponseWorkerToMount(message); break;
+                    case Mc.GetWorkerToDry: ProcessResponseWorkerToDry(message); break;
 
                     case Mc.DoPrepare:
                     case Mc.DoCut:
@@ -527,6 +592,7 @@ namespace Agents.AgentCarpentry {
                     case Mc.DoPickle:
                     case Mc.DoAssemble:
                     case Mc.DoMount:
+                    case Mc.DoDry:
                         ProcessFinishWorking(message); break;
 
                     default: ProcessDefault(message); break;
@@ -567,8 +633,9 @@ namespace Agents.AgentCarpentry {
             productMatch.State = product.State switch {
                 ProductState.Raw => ProductState.Cut,
                 ProductState.Cut => ProductState.Painted,
-                ProductState.Painted => product.IsPickled ? ProductState.Pickled : ProductState.Assembled,
-                ProductState.Pickled => ProductState.Assembled,
+                ProductState.Painted => product.IsPickled ? ProductState.Pickled : ProductState.Dryed,
+                ProductState.Pickled => ProductState.Dryed,
+                ProductState.Dryed => ProductState.Assembled,
                 ProductState.Assembled => ProductState.Finished,
                 _ => productMatch.State
             };

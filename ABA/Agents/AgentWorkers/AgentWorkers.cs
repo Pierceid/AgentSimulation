@@ -30,6 +30,7 @@ namespace Agents.AgentWorkers {
 			AddOwnMessage(Mc.DeassignWorkerC);
 			AddOwnMessage(Mc.DeassignWorkerB);
 			AddOwnMessage(Mc.GetWorkerToCut);
+			AddOwnMessage(Mc.GetWorkerToDry);
 		}
 		//meta! tag="end"
     }
