@@ -2,17 +2,19 @@
 using AgentSimulation.Utilities;
 using System.Windows;
 using System.Windows.Controls;
+using Slider = System.Windows.Controls.Slider;
 
 namespace AgentSimulation.Windows;
 
 public partial class MainWindow : Window {
     private Facade facade;
-
+    private bool isAnimation;
     public MainWindow() {
         InitializeComponent();
 
         facade = new(this);
         facade.InitGraph(plotView);
+        isAnimation = false;
 
         InitUI();
     }
@@ -39,7 +41,12 @@ public partial class MainWindow : Window {
     private void CheckBoxClick(object sender, RoutedEventArgs e) {
         if (sender is CheckBox checkBox) {
             if (checkBox == chkAnimation) {
-                bool isAnimation = chkAnimation.IsChecked!.Value;
+                isAnimation = !isAnimation;
+                if (isAnimation && sldSpeed.Value == 5) {
+                    sldSpeed.Value = 4;
+                }
+
+                UpdateCarpentry();
                 facade?.SetAnimator(isAnimation);
                 return;
             }
@@ -68,6 +75,9 @@ public partial class MainWindow : Window {
     private void SliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
         if (sender is Slider slider) {
             if (slider == sldSpeed) {
+                if (isAnimation && slider.Value == 5) {
+                    sldSpeed.Value = 4;
+                }
                 UpdateCarpentry();
             }
         }
@@ -105,7 +115,6 @@ public partial class MainWindow : Window {
         double[] snapValues = [1, 60, 3600, 36000, double.MaxValue];
         int index = (int)(sldSpeed.Value - 1);
         double speed = snapValues[index];
-
         facade?.UpdateCarpentry(speed);
         lblSpeed.Content = $"Speed: {(index == snapValues.Length - 1 ? "VIRTUAL" : speed):0x}";
     }
