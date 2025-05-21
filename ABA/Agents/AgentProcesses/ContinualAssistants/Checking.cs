@@ -3,8 +3,8 @@ using Simulation;
 
 namespace Agents.AgentProcesses.ContinualAssistants {
     //meta! id="228"
-    public class Drying : OSPABA.Process {
-        public Drying(int id, OSPABA.Simulation mySim, CommonAgent myAgent) :
+    public class Checking : OSPABA.Process {
+        public Checking(int id, OSPABA.Simulation mySim, CommonAgent myAgent) :
             base(id, mySim, myAgent) {
         }
 
@@ -20,9 +20,9 @@ namespace Agents.AgentProcesses.ContinualAssistants {
 
             if (myMessage.Product == null) return;
 
-            double dryingTime = mySimulation.Generators.DryingTime.Next();
+            double checkingTime = mySimulation.Generators.CheckingTime.Next();
 
-            Hold(dryingTime, myMessage);
+            Hold(checkingTime, myMessage);
         }
 
         //meta! userInfo="Process messages defined in code", id="0"

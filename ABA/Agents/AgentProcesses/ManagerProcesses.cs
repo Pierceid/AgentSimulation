@@ -34,8 +34,8 @@ namespace Agents.AgentProcesses {
             StartContinualAssistant(message);
         }
 
-        public void ProcessDoDry(MessageForm message) {
-            message.Addressee = MyAgent.FindAssistant(SimId.Drying);
+        public void ProcessDoCheck(MessageForm message) {
+            message.Addressee = MyAgent.FindAssistant(SimId.Checking);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
@@ -82,9 +82,9 @@ namespace Agents.AgentProcesses {
             Response(message);
         }
 
-        public void ProcessFinishDrying(MessageForm message) {
+        public void ProcessFinishChecking(MessageForm message) {
             message.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
-            message.Code = Mc.DoDry;
+            message.Code = Mc.DoCheck;
             Response(message);
         }
 
@@ -138,8 +138,8 @@ namespace Agents.AgentProcesses {
                             ProcessFinishCutting(message);
                             break;
 
-                        case SimId.Drying:
-                            ProcessFinishDrying(message);
+                        case SimId.Checking:
+                            ProcessFinishChecking(message);
                             break;
                     }
                     break;
@@ -176,8 +176,8 @@ namespace Agents.AgentProcesses {
                     ProcessDoMount(message);
                     break;
 
-                case Mc.DoDry:
-                    ProcessDoDry(message);
+                case Mc.DoCheck:
+                    ProcessDoCheck(message);
                     break;
 
                 default:

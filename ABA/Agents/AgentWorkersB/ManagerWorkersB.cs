@@ -40,7 +40,11 @@ namespace Agents.AgentWorkersB {
             availableWorker?.SetProduct(myMessage.Product);
 
             if (myMessage.Product != null) {
-                myMessage.Product.WorkerToAssemble = availableWorker;
+                if (myMessage.Product.State == ProductState.Assembled) {
+                    myMessage.Product.WorkerToCheck = availableWorker;
+                } else {
+                    myMessage.Product.WorkerToAssemble = availableWorker;
+                }
             }
 
             Response(myMessage);

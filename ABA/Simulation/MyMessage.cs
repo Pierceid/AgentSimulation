@@ -39,14 +39,14 @@ namespace Simulation {
 
         public Worker? GetWorkerForMounting() => Product?.WorkerToMount;
 
-        public Worker? GetWorkerForDrying() => Product?.WorkerToDry;
+        public Worker? GetWorkerForChecking() => Product?.WorkerToCheck;
 
         public Worker? GetAssignedWorker() {
             if (GetWorkerForCutting() != null) return GetWorkerForCutting();
             if (GetWorkerForPainting() != null) return GetWorkerForPainting();
             if (GetWorkerForPickling() != null) return GetWorkerForPickling();
-            if (GetWorkerForDrying() != null) return GetWorkerForDrying();
             if (GetWorkerForAssembling() != null) return GetWorkerForAssembling();
+            if (GetWorkerForChecking() != null) return GetWorkerForChecking();
             if (GetWorkerForMounting() != null) return GetWorkerForMounting();
             return null;
         }

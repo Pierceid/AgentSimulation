@@ -11,7 +11,7 @@ namespace AgentSimulation.Generators {
         public Exponential OrderArrivalTime = new(1800);
         public UniformC RNG = new(0, 1);
         public UniformD ProductCount = new(1, 6);
-        public Triangular DryingTime = new(300, 900, 500);
+        public Triangular CheckingTime = new(900, 1800, 1200);
 
         public UniformC WardrobeCuttingTime = new(900, 4800);
         public UniformC WardrobePaintingTime = new(18000, 36000);

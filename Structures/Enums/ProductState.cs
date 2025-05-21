@@ -4,8 +4,8 @@
         Cut,
         Painted,
         Pickled,
-        Dryed,
         Assembled,
+        Checked,
         Mounted,
         Finished
     }
