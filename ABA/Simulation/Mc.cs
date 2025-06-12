@@ -1,9 +1,12 @@
-using OSPABA;
 namespace Simulation
 {
 	public class Mc : OSPABA.IdList
 	{
 		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public const int AssignWorkplace = 1080;
+		public const int AssignWorkerA = 1081;
+		public const int AssignWorkerB = 1082;
+		public const int AssignWorkerC = 1083;
 		public const int OrderExit = 1002;
 		public const int ProcessOrder = 1003;
 		public const int DoPrepare = 1054;

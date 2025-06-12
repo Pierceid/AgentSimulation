@@ -1,5 +1,6 @@
+using AgentSimulation.Structures;
+using AgentSimulation.Structures.Entities;
 using AgentSimulation.Structures.Enums;
-using AgentSimulation.Structures.Objects;
 using OSPABA;
 using Simulation;
 
@@ -14,12 +15,16 @@ namespace Agents.AgentWorkersA {
 
         override public void PrepareReplication() {
             base.PrepareReplication();
-
             PetriNet?.Clear();
+            Clear();
         }
 
         public void InitWorkers(int workersA) {
-            Parallel.For(0, workersA, a => { lock (Workers) { Workers.Add(new Worker(a, WorkerGroup.A)); } });
+            lock (Workers) {
+                for (int i = 0; i < workersA; i++) {
+                    Workers.Add(new Worker(i, WorkerGroup.A));
+                }
+            }
         }
 
         public void Clear() {
@@ -28,61 +33,80 @@ namespace Agents.AgentWorkersA {
             InitWorkers(workersA);
         }
 
-		//meta! sender="AgentWorkers", id="159", type="Request"
-		public void ProcessGetWorkerA(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
+        //meta! sender="AgentWorkers", id="159", type="Request"
+        public void ProcessGetWorkerA(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
             Worker? availableWorker = Workers.FirstOrDefault(w => !w.IsBusy);
+            availableWorker?.SetProduct(myMessage.Product);
 
-            if (availableWorker != null) {
-                availableWorker.SetProduct(myMessage.Product);
-                availableWorker.SetWorkplace(myMessage.Workplace);
-                myMessage.Worker = availableWorker;
-            } else {
-                myMessage.Worker = null;
+            if (myMessage.Product != null) {
+                if (myMessage.Product.State == ProductState.Raw) {
+                    myMessage.Product.WorkerToCut = availableWorker;
+                } else {
+                    myMessage.Product.WorkerToMount = availableWorker;
+                }
             }
 
             Response(myMessage);
         }
 
-		//meta! userInfo="Process messages defined in code", id="0"
-		public void ProcessDefault(MessageForm message) {
+        //meta! sender="AgentWorkers", id="205", type="Notice"
+        public void ProcessDeassignWorkerA(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            Worker? worker = myMessage.WorkerToRelease;
 
-        }
-
-		//meta! sender="AgentWorkers", id="205", type="Notice"
-		public void ProcessDeassignWorkerA(MessageForm message) {
-            MyMessage myMessage = (MyMessage)message;
-
-            if (myMessage.Worker != null) {
-                var match = Workers.FirstOrDefault(w => w.Id == myMessage.Worker.Id);
-                match?.SetState(false);
-                myMessage.Worker = null;
+            if (worker != null && worker.Group == WorkerGroup.A) {
+                var match = Workers.FirstOrDefault(w => w.Id == worker.Id);
+                match?.SetState(WorkerState.WAITING);
+                match?.Utility.AddSample(myMessage.DeliveryTime, false);
             }
         }
 
-		//meta! userInfo="Generated code: do not modify", tag="begin"
-		public void Init()
-		{
-		}
+        //meta! userInfo="Process messages defined in code", id="0"
+        public void ProcessDefault(MessageForm message) { }
 
-		override public void ProcessMessage(MessageForm message)
-		{
-			switch (message.Code)
-			{
-			case Mc.GetWorkerA:
-				ProcessGetWorkerA(message);
-			break;
+        //meta! sender="AgentWorkers", id="267", type="Notice"
+        public void ProcessAssignWorkerA(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message;
+            var assignedWorker = myMessage.GetAssignedWorker();
 
-			case Mc.DeassignWorkerA:
-				ProcessDeassignWorkerA(message);
-			break;
+            if (assignedWorker != null) {
+                var match = Workers.FirstOrDefault(w => w.Id == assignedWorker.Id);
+                match?.SetProduct(myMessage.Product);
+                match?.SetWorkplace(myMessage.Workplace);
+                match?.Utility.AddSample(myMessage.DeliveryTime, false);
+                match?.Utility.AddSample(myMessage.DeliveryTime, true);
+            }
+        }
 
-			default:
-				ProcessDefault(message);
-			break;
-			}
-		}
-		//meta! tag="end"
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        public void Init() {
+        }
+
+        override public void ProcessMessage(MessageForm message) {
+            switch (message.Code) {
+                case Mc.GetWorkerA:
+                    ProcessGetWorkerA(message);
+                    break;
+
+                case Mc.AssignWorkerA:
+                    ProcessAssignWorkerA(message);
+                    break;
+
+                case Mc.DeassignWorkerA:
+                    ProcessDeassignWorkerA(message);
+                    break;
+
+                default:
+                    ProcessDefault(message);
+                    break;
+            }
+        }
+        //meta! tag="end"
+
+        public double GetAverageUtility() {
+            return Workers.Average(w => w.Utility.GetUtility(Constants.SIMULATION_TIME));
+        }
 
         public new AgentWorkersA MyAgent {
             get {

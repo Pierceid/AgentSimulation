@@ -44,8 +44,6 @@ namespace AgentSimulation.Presentation {
 
         public void AnalyzeReplication() {
             if (mySimulation == null) return;
-
-
         }
 
         public void InitGraph(PlotView plotView) {
@@ -92,5 +90,17 @@ namespace AgentSimulation.Presentation {
             mySimulation.RegisterDelegate(textBlockObserver);
             mySimulation.RegisterDelegate(dataGridObserver);
         }
+
+        public void SetAnimator(bool start) {
+            if (mySimulation == null) return;
+
+            if (start) {
+                mySimulation.StartAnimation();
+            } else {
+                mySimulation.StopAnimation();
+            }
+        }
+
+        public MySimulation? GetMySimulation() => mySimulation;
     }
 }

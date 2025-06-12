@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Agents.AgentCarpentry.AgentCarpentry" Collapsed="true">
+    <Position X="14.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentCarpentry\AgentCarpentry.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentCarpentry.ManagerCarpentry" Collapsed="true">
+    <Position X="16" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAGAAQAAAAKBQEACAgASAAEQIEMAaAgYAAKAABAABs=</HashCode>
+      <FileName>ABA\Agents\AgentCarpentry\ManagerCarpentry.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentModel.AgentModel" Collapsed="true">
+    <Position X="16" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentModel\AgentModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentModel.ManagerModel" Collapsed="true">
+    <Position X="17.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQIAAAAAAAAAAAAAAAAAAMEAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentModel\ManagerModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentMovement.ContinualAssistants.MovingToStorage" Collapsed="true">
+    <Position X="23" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentMovement\ContinualAssistants\MovingToStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentMovement.ContinualAssistants.MovingToWorkplace" Collapsed="true">
+    <Position X="24.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentMovement\ContinualAssistants\MovingToWorkplace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentMovement.AgentMovement" Collapsed="true">
+    <Position X="17.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentMovement\AgentMovement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentMovement.ManagerMovement" Collapsed="true">
+    <Position X="19.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAQAAAAABAAAAAAAAAAEAAEEAIAAAEACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentMovement\ManagerMovement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ContinualAssistants.Assembling" Collapsed="true">
+    <Position X="19.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ContinualAssistants\Assembling.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ContinualAssistants.Cutting" Collapsed="true">
+    <Position X="17.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ContinualAssistants\Cutting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ContinualAssistants.Mounting" Collapsed="true">
+    <Position X="21.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ContinualAssistants\Mounting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ContinualAssistants.Painting" Collapsed="true">
+    <Position X="19.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ContinualAssistants\Painting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ContinualAssistants.Pickling" Collapsed="true">
+    <Position X="23" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ContinualAssistants\Pickling.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ContinualAssistants.Preparing" Collapsed="true">
+    <Position X="24.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ContinualAssistants\Preparing.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.AgentProcesses" Collapsed="true">
+    <Position X="19.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\AgentProcesses.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentProcesses.ManagerProcesses" Collapsed="true">
+    <Position X="21.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAwEAAAAgAAAgABAABAAAAEEQAAAwAoCAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentProcesses\ManagerProcesses.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentScope.ContinualAssistants.OrderArrival" Collapsed="true">
+    <Position X="17.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQACAAAAAAAAAAAIAAAAAEEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentScope\ContinualAssistants\OrderArrival.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentScope.AgentScope" Collapsed="true">
+    <Position X="21.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentScope\AgentScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentScope.ManagerScope" Collapsed="true">
+    <Position X="23" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEBABQAAAAAAAAACBAAAAAAAAEEAIAAAAACABDAAAQ=</HashCode>
+      <FileName>ABA\Agents\AgentScope\ManagerScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkers.AgentWorkers" Collapsed="true">
+    <Position X="23" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkers\AgentWorkers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkers.ManagerWorkers" Collapsed="true">
+    <Position X="24.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YAEAAAwAAAAAAgAAAAAAEQCIAAGEEIAAIAACAAQAEAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkers\ManagerWorkers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkersA.AgentWorkersA" Collapsed="true">
+    <Position X="24.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkersA\AgentWorkersA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkersA.ManagerWorkersA" Collapsed="true">
+    <Position X="26.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAQAAAAAAAAAABAAAAAAAAGEAAAAMAAiAABAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkersA\ManagerWorkersA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkersB.AgentWorkersB" Collapsed="true">
+    <Position X="26.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkersB\AgentWorkersB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkersB.ManagerWorkersB" Collapsed="true">
+    <Position X="14.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAQAAAAAAAAAABAAAQAAAAEEAAAAEAAiAABAEAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkersB\ManagerWorkersB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkersC.AgentWorkersC" Collapsed="true">
+    <Position X="14.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkersC\AgentWorkersC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkersC.ManagerWorkersC" Collapsed="true">
+    <Position X="16" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAwAAAAAAAAAABAAAACAAAEEAAAAEAAiAABAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkersC\ManagerWorkersC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkplaces.AgentWorkplaces" Collapsed="true">
+    <Position X="16" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ABA\Agents\AgentWorkplaces\AgentWorkplaces.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Agents.AgentWorkplaces.ManagerWorkplaces" Collapsed="true">
+    <Position X="17.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAggAAAAAAEEAKAAFEEIAAIAACAARAARE=</HashCode>
+      <FileName>ABA\Agents\AgentWorkplaces\ManagerWorkplaces.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Simulation.MyMessage" Collapsed="true">
+    <Position X="26.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAkCChAAAgAACAAAAAAACAAAAwAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ABA\Simulation\MyMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Simulation.MySimulation" Collapsed="true">
+    <Position X="14.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAkACCBAAAAgAAAABAEAAAJBAmAkIMAACACgABCBBg=</HashCode>
+      <FileName>ABA\Simulation\MySimulation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Delegates.DataGridDelegate" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAABgAAAAAAAAQAAAAAAAEAAAAAAgAAAAAAQ=</HashCode>
+      <FileName>Delegates\DataGridDelegate.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AgentSimulation.Delegates.LineGraphDelegate" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAABgAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Delegates\LineGraphDelegate.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AgentSimulation.Delegates.TextBlockDelegate" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="21.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABgAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Delegates\TextBlockDelegate.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AgentSimulation.Generators.RandomGenerators" Collapsed="true">
+    <Position X="16" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAIQBAAMAAGACAAICAQAAAAAAAAAQAAgAYASAABAABA=</HashCode>
+      <FileName>Generators\RandomGenerators.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Presentation.Facade" Collapsed="true">
+    <Position X="23" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAMAAAAAAAACEAgAARAAADAAAAAAAAACAAAAAAAg=</HashCode>
+      <FileName>Presentation\Facade.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Presentation.LineGraph" Collapsed="true">
+    <Position X="24.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAIAAEAAAAQAAAAAAAAAAgAQAAAAACABAAAAICAA=</HashCode>
+      <FileName>Presentation\LineGraph.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Randoms.Continuous.EmpiricC" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAACAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Randoms\Continuous\EmpiricC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Randoms.Continuous.UniformC" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Randoms\Continuous\UniformC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Randoms.Discrete.EmpiricD" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAACAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Randoms\Discrete\EmpiricD.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Randoms.Discrete.UniformD" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Randoms\Discrete\UniformD.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Randoms.Other.Exponential" Collapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Randoms\Other\Exponential.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Randoms.Other.Triangular" Collapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAAAQAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Randoms\Other\Triangular.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Statistics.ConfidenceInterval" Collapsed="true">
+    <Position X="26.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAIAQBAEAAAAAQAAAAAABAAAQ=</HashCode>
+      <FileName>Statistics\ConfidenceInterval.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Structures.Entities.Order" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAIAAIAACApAAgAAAEAAAABABAAAQ=</HashCode>
+      <FileName>Structures\Entities\Order.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AgentSimulation.Structures.Entities.Product" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAAAACAAAYAggAIAAoAAgAAAEAQAAHAJAAAA=</HashCode>
+      <FileName>Structures\Entities\Product.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AgentSimulation.Structures.Entities.ProductionManager" Collapsed="true">
+    <Position X="14.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAABAAAAAIAQAAAAAAAAQQkAAAAAQAAggABICAE=</HashCode>
+      <FileName>Structures\Entities\ProductionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Structures.Entities.Worker" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICBEAAggCACAAgIEgAAABEgAAABBAEAAAABABAYAA=</HashCode>
+      <FileName>Structures\Entities\Worker.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AgentSimulation.Structures.Entities.Workplace" Collapsed="true">
+    <Position X="14.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBBAAAAEEAAAAAAAAAgAAAAAAABAAIAAAAABAYAA=</HashCode>
+      <FileName>Structures\Entities\Workplace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Structures.GeneralRandom&lt;T&gt;" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAgAAQAAAAAEAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Structures\GeneralRandom.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AgentSimulation.Windows.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAIAABAAACAAAAAAAAAAAAIABAAAEAACAAAQAAAA=</HashCode>
+      <FileName>Windows\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

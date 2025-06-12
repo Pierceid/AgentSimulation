@@ -2,7 +2,7 @@
 using AgentSimulation.Utilities;
 using System.ComponentModel;
 
-namespace AgentSimulation.Structures.Objects {
+namespace AgentSimulation.Structures.Entities {
     public class Product : INotifyPropertyChanged {
         public int Id { get; set; }
         public Order Order { get; set; }
@@ -10,17 +10,23 @@ namespace AgentSimulation.Structures.Objects {
         public double StartTime { get; set; }
         public double EndTime { get; set; }
         public string FormattedTime { get; set; }
-        public Workplace? Workplace { get; set; }
+        public Worker? WorkerToCut { get; set; }
+        public Worker? WorkerToPaint { get; set; }
+        public Worker? WorkerToPickle { get; set; }
+        public Worker? WorkerToAssemble { get; set; }
+        public Worker? WorkerToMount { get; set; }
+        public bool IsPickled { get; set; }
 
-        public Product(int id, ProductType type, Order order) {
-            Id = id;
-            Type = type;
-            Order = order;
-            FormattedTime = Util.FormatTime(StartTime);
-            State = ProductState.Raw;
-            Workplace = null;
+        private Workplace? workplace;
+        public Workplace? Workplace {
+            get => workplace;
+            set {
+                if (workplace != value) {
+                    workplace = value;
+                    OnPropertyChanged(nameof(workplace));
+                }
+            }
         }
-
         private ProductState state;
         public ProductState State {
             get => state;
@@ -30,6 +36,21 @@ namespace AgentSimulation.Structures.Objects {
                     OnPropertyChanged(nameof(State));
                 }
             }
+        }
+
+        public Product(int id, ProductType type, Order order) {
+            Id = id;
+            Type = type;
+            Order = order;
+            FormattedTime = Util.FormatTime(StartTime);
+            State = ProductState.Raw;
+            Workplace = null;
+            IsPickled = false;
+            WorkerToCut = null;
+            WorkerToPaint = null;
+            WorkerToPickle = null;
+            WorkerToAssemble = null;
+            WorkerToMount = null;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

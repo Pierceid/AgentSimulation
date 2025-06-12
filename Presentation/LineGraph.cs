@@ -56,9 +56,9 @@ namespace AgentSimulation.Presentation {
                 double mean = ms.AverageOrderTime.Mean();
                 double[] interval = (ms.AverageOrderTime.SampleSize < 2) ? [double.NaN, double.NaN] : ms.AverageOrderTime.ConfidenceInterval95;
 
-                mainSeries.Points.Add(new DataPoint(rep, mean));
+                if (rep > 0) mainSeries.Points.Add(new DataPoint(rep, mean));
 
-                if (ms.CurrentReplication % 2 == 0 && !double.IsNaN(interval[0]) && !double.IsNaN(interval[1])) {
+                if (rep > 29 && !double.IsNaN(interval[0]) && !double.IsNaN(interval[1])) {
                     upperSeries.Points.Add(new DataPoint(rep, interval[1]));
                     lowerSeries.Points.Add(new DataPoint(rep, interval[0]));
                 }

@@ -1,7 +1,7 @@
 ﻿using AgentSimulation.Statistics;
 using AgentSimulation.Structures.Enums;
 
-namespace AgentSimulation.Structures.Objects {
+namespace AgentSimulation.Structures.Entities {
     public class ProductionManager {
         public List<Product> Orders { get; } = new();
         public LinkedList<Product> QueueA { get; } = new();

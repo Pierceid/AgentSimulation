@@ -14,42 +14,42 @@ namespace Agents.AgentProcesses {
         }
 
         //meta! sender="AgentCarpentry", id="215", type="Request"
-        public void ProcessDoCutting(MessageForm message) {
+        public void ProcessDoCut(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Cutting);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
 
         //meta! sender="AgentCarpentry", id="216", type="Request"
-        public void ProcessDoPainting(MessageForm message) {
+        public void ProcessDoPaint(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Painting);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
 
         //meta! sender="AgentCarpentry", id="217", type="Request"
-        public void ProcessDoPickling(MessageForm message) {
+        public void ProcessDoPickle(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Pickling);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
 
         //meta! sender="AgentCarpentry", id="218", type="Request"
-        public void ProcessDoAssembling(MessageForm message) {
+        public void ProcessDoAssemble(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Assembling);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
 
         //meta! sender="AgentCarpentry", id="219", type="Request"
-        public void ProcessDoMounting(MessageForm message) {
+        public void ProcessDoMount(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Mounting);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
         }
 
         //meta! sender="AgentCarpentry", id="140", type="Request"
-        public void ProcessDoPreparing(MessageForm message) {
+        public void ProcessDoPrepare(MessageForm message) {
             message.Addressee = MyAgent.FindAssistant(SimId.Preparing);
             message.Code = Mc.Start;
             StartContinualAssistant(message);
@@ -98,20 +98,10 @@ namespace Agents.AgentProcesses {
         }
 
         //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message) { }
-
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init() {
-        }
-
-        override public void ProcessMessage(MessageForm message) {
+        public void ProcessDefault(MessageForm message) {
             switch (message.Code) {
                 case Mc.Finish:
                     switch (message.Sender.Id) {
-                        case SimId.Painting:
-                            ProcessFinishPainting(message);
-                            break;
-
                         case SimId.Preparing:
                             ProcessFinishPreparing(message);
                             break;
@@ -124,6 +114,10 @@ namespace Agents.AgentProcesses {
                             ProcessFinishMounting(message);
                             break;
 
+                        case SimId.Painting:
+                            ProcessFinishPainting(message);
+                            break;
+
                         case SimId.Pickling:
                             ProcessFinishPickling(message);
                             break;
@@ -133,29 +127,37 @@ namespace Agents.AgentProcesses {
                             break;
                     }
                     break;
+            }
+        }
 
-                case Mc.DoAssemble:
-                    ProcessDoAssembling(message);
-                    break;
+        //meta! userInfo="Generated code: do not modify", tag="begin"
+        public void Init() {
+        }
 
-                case Mc.DoPaint:
-                    ProcessDoPainting(message);
-                    break;
-
+        override public void ProcessMessage(MessageForm message) {
+            switch (message.Code) {
                 case Mc.DoPickle:
-                    ProcessDoPickling(message);
-                    break;
-
-                case Mc.DoCut:
-                    ProcessDoCutting(message);
-                    break;
-
-                case Mc.DoMount:
-                    ProcessDoMounting(message);
+                    ProcessDoPickle(message);
                     break;
 
                 case Mc.DoPrepare:
-                    ProcessDoPreparing(message);
+                    ProcessDoPrepare(message);
+                    break;
+
+                case Mc.DoCut:
+                    ProcessDoCut(message);
+                    break;
+
+                case Mc.DoPaint:
+                    ProcessDoPaint(message);
+                    break;
+
+                case Mc.DoAssemble:
+                    ProcessDoAssemble(message);
+                    break;
+
+                case Mc.DoMount:
+                    ProcessDoMount(message);
                     break;
 
                 default:

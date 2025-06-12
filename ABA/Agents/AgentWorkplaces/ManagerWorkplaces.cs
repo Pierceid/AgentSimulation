@@ -1,4 +1,5 @@
-using AgentSimulation.Structures.Objects;
+using AgentSimulation.Structures.Entities;
+using AgentSimulation.Structures.Enums;
 using OSPABA;
 using Simulation;
 
@@ -11,14 +12,17 @@ namespace Agents.AgentWorkplaces {
             Init();
         }
 
-        override public void PrepareReplication() {
+        public override void PrepareReplication() {
             base.PrepareReplication();
-
             PetriNet?.Clear();
         }
 
         public void InitWorkplaces(int workplaces) {
-            Parallel.For(0, workplaces, w => { lock (Workplaces) { Workplaces.Add(new Workplace(w)); } });
+            Parallel.For(0, workplaces, w => {
+                lock (Workplaces) {
+                    Workplaces.Add(new Workplace(w));
+                }
+            });
         }
 
         public void Clear() {
@@ -26,38 +30,47 @@ namespace Agents.AgentWorkplaces {
             Workplaces.Clear();
             InitWorkplaces(count);
         }
+        //meta! sender="AgentCarpentry", id="257", type="Notice"
+        public void ProcessAssignWorkplace(MessageForm message) {
+            MyMessage myMessage = (MyMessage)message.CreateCopy();
+            Workplace? workplace = GetFreeWorkplace();
 
-        // Cutting
-        //meta! sender="AgentCarpentry", id="115", type="Request"
+            if (workplace != null) {
+                workplace.Product = myMessage.Product;
+                workplace.Worker = myMessage.WorkerToRelease;
+            }
+
+            myMessage.Workplace = workplace;
+            myMessage.Code = GetNextProcessCode(myMessage.Product);
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            Request(myMessage);
+        }
+
+        //meta! sender="AgentCarpentry", id="115", type="Response"
         public void ProcessGetWorkerForCutting(MessageForm message) {
             SendWorkerToWork(message, Mc.DoCutting);
         }
 
-        // Mounting
-        //meta! sender="AgentCarpentry", id="119", type="Request"
+        //meta! sender="AgentCarpentry", id="119", type="Response"
         public void ProcessGetWorkerForMounting(MessageForm message) {
             SendWorkerToWork(message, Mc.DoMounting);
         }
 
-        // Assembling
-        //meta! sender="AgentCarpentry", id="118", type="Request"
+        //meta! sender="AgentCarpentry", id="118", type="Response"
         public void ProcessGetWorkerForAssembling(MessageForm message) {
             SendWorkerToWork(message, Mc.DoAssembling);
         }
 
-        // Painting
-        //meta! sender="AgentCarpentry", id="117", type="Request"
+        //meta! sender="AgentCarpentry", id="117", type="Response"
         public void ProcessGetWorkerForPainting(MessageForm message) {
             SendWorkerToWork(message, Mc.DoPainting);
         }
 
-        // Pickling
-        //meta! sender="AgentCarpentry", id="120", type="Request"
+        //meta! sender="AgentCarpentry", id="120", type="Response"
         public void ProcessGetWorkerForPickling(MessageForm message) {
             SendWorkerToWork(message, Mc.DoPickling);
         }
-
-        //meta! sender="AgentCarpentry", id="170", type="Response"
+        //meta! sender="AgentCarpentry", id="170", type="Request"
         public void ProcessGetFreeWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
             Workplace? workplace = GetFreeWorkplace();
@@ -67,8 +80,10 @@ namespace Agents.AgentWorkplaces {
             }
 
             myMessage.Workplace = workplace;
+            myMessage.Code = Mc.GetFreeWorkplace;
+            myMessage.Addressee = MySim.FindAgent(SimId.AgentCarpentry);
+            Response(myMessage);
         }
-
         //meta! sender="AgentCarpentry", id="73", type="Notice"
         public void ProcessDeassignWorkplace(MessageForm message) {
             MyMessage myMessage = (MyMessage)message.CreateCopy();
@@ -87,21 +102,24 @@ namespace Agents.AgentWorkplaces {
             Notice(myMessage);
         }
 
-
-        //meta! userInfo="Removed from model"
         public void ProcessInit(MessageForm message) {
-        }
 
+        }
         //meta! userInfo="Process messages defined in code", id="0"
         public void ProcessDefault(MessageForm message) {
+
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init() {
+
         }
 
-        override public void ProcessMessage(MessageForm message) {
+        public override void ProcessMessage(MessageForm message) {
             switch (message.Code) {
+                case Mc.AssignWorkplace:
+                    ProcessAssignWorkplace(message);
+                    break;
+
                 case Mc.GetWorkerForCutting:
                     ProcessGetWorkerForCutting(message);
                     break;
@@ -135,12 +153,22 @@ namespace Agents.AgentWorkplaces {
                     break;
             }
         }
-        //meta! tag="end"
 
         public new AgentWorkplaces MyAgent => (AgentWorkplaces)base.MyAgent;
 
         private Workplace? GetFreeWorkplace() {
             return Workplaces.FirstOrDefault(w => !w.IsOccupied);
+        }
+
+        private int GetNextProcessCode(Product? product) {
+            return product?.State switch {
+                ProductState.Raw => Mc.GetWorkerForCutting,
+                ProductState.Cut => Mc.GetWorkerForPainting,
+                ProductState.Painted => Mc.GetWorkerForPickling,
+                ProductState.Pickled => Mc.GetWorkerForAssembling,
+                ProductState.Assembled => Mc.GetWorkerForMounting,
+                _ => Mc.GetWorkerForCutting
+            };
         }
     }
 }

@@ -18,18 +18,18 @@ namespace Agents.AgentProcesses {
 		private void Init()
 		{
 			new ManagerProcesses(SimId.ManagerProcesses, MySim, this);
-			new Mounting(SimId.Mounting, MySim, this);
+			new Cutting(SimId.Cutting, MySim, this);
+			new Assembling(SimId.Assembling, MySim, this);
 			new Preparing(SimId.Preparing, MySim, this);
+			new Mounting(SimId.Mounting, MySim, this);
 			new Pickling(SimId.Pickling, MySim, this);
 			new Painting(SimId.Painting, MySim, this);
-			new Assembling(SimId.Assembling, MySim, this);
-			new Cutting(SimId.Cutting, MySim, this);
-			AddOwnMessage(Mc.DoPickling);
-			AddOwnMessage(Mc.DoMounting);
-			AddOwnMessage(Mc.DoCutting);
-			AddOwnMessage(Mc.DoPainting);
-			AddOwnMessage(Mc.DoPreparing);
-			AddOwnMessage(Mc.DoAssembling);
+			AddOwnMessage(Mc.DoPrepare);
+			AddOwnMessage(Mc.DoPaint);
+			AddOwnMessage(Mc.DoCut);
+			AddOwnMessage(Mc.DoPickle);
+			AddOwnMessage(Mc.DoAssemble);
+			AddOwnMessage(Mc.DoMount);
 		}
 		//meta! tag="end"
     }

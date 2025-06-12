@@ -5,17 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AgentSimulation.Windows"
         xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:osp="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="Discrete Simulation" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="Discrete Simulation" Height="820" Width="1400" WindowStartupLocation="CenterScreen" Closing="WindowClosing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="5*"/>
-            <RowDefinition Height="6*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Left Column: Controls -->
@@ -53,7 +54,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Label Name="lblSpeed" Content="Speed:" VerticalAlignment="Center" Margin="0,0,2,0"/>
-                        <Slider x:Name="sldSpeed" Grid.Column="1" Minimum="1" Maximum="7" IsSnapToTickEnabled="True" Margin="2" ValueChanged="SliderValueChanged"/>
+                        <Slider x:Name="sldSpeed" Grid.Column="1" Minimum="1" Maximum="5" IsSnapToTickEnabled="True" Margin="2" ValueChanged="SliderValueChanged"/>
                     </Grid>
 
                     <StackPanel Margin="2" Grid.Row="6">
@@ -91,6 +92,36 @@
                             </Grid.ColumnDefinitions>
                             <Label Content="Workerplaces:" VerticalAlignment="Center" Margin="0,0,2,0"/>
                             <TextBox x:Name="txtWorkplaces" Grid.Column="1" Height="20"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Content="Config 1" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig1" Grid.Column="1" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Config 2" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig2" Grid.Column="3" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Config 3" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Config 4" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <CheckBox x:Name="chkConfig4" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Click="CheckBoxClick"/>
+
+                            <Label Content="Animation" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,2,0" Foreground="Red"/>
+                            <CheckBox x:Name="chkAnimation" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Click="CheckBoxClick"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
@@ -158,7 +189,7 @@
                         <Label Content="Queue D:" Margin="0,0,2,0"/>
                         <TextBlock x:Name="txtQueueD" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center" Foreground="Black"/>
                     </Grid>
-                    
+
                     <Grid Grid.Row="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -217,8 +248,10 @@
         </StackPanel>
 
         <oxy:PlotView x:Name="plotView" Grid.Column="1" Margin="2"/>
+        
+        <ContentControl x:Name="contentControl" Grid.Column="1" Grid.RowSpan="2" Margin="2" Visibility="Collapsed"/>
 
-        <GroupBox Header="Simulation Status" Grid.Row="1" Grid.Column="1" Margin="2" BorderBrush="DarkBlue" Foreground="DarkBlue">
+        <GroupBox x:Name="simStatus" Header="Simulation Status" Grid.Row="1" Grid.Column="1" Margin="2" BorderBrush="DarkBlue" Foreground="DarkBlue">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="28"/>
@@ -256,6 +289,7 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
                         <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="*"/>
                         <DataGridCheckBoxColumn Header="Is Busy" Binding="{Binding IsBusy}" Width="*"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding State}" Width="*"/>
                         <DataGridTextColumn Header="Product" Binding="{Binding Product.Id}" Width="*"/>
                         <DataGridTextColumn Header="Workplace" Binding="{Binding Workplace.Id}" Width="*"/>
                     </DataGrid.Columns>

@@ -1,34 +1,24 @@
 ﻿namespace AgentSimulation.Statistics {
     public class Utility {
-        public int Count { get; set; }
-        public double Sum { get; set; }
-        public double LastTime { get; set; }
+        public double Sum { get; private set; }
+        private double? lastStart;
 
-        public Utility() {
-            Count = 0;
-            Sum = 0;
-            LastTime = 0;
-        }
-
-        public void AddSample(double totalTtime, bool isStart) {
-            Count++;
-
+        public void AddSample(double time, bool isStart) {
             if (isStart) {
-                LastTime = totalTtime;
-            } else {
-                Sum += totalTtime - LastTime;
+                lastStart = time;
+            } else if (lastStart.HasValue) {
+                Sum += time - lastStart.Value;
+                lastStart = null;
             }
         }
 
-        public double GetUtility(double time) {
-            return Sum / time;
+        public double GetUtility(double totalTime) {
+            return Sum / totalTime;
         }
 
-
         public void Clear() {
-            Count = 0;
             Sum = 0;
-            LastTime = 0;
+            lastStart = null;
         }
     }
 }

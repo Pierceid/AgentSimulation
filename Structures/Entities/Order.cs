@@ -2,14 +2,14 @@
 using AgentSimulation.Utilities;
 using System.ComponentModel;
 
-namespace AgentSimulation.Structures.Objects {
+namespace AgentSimulation.Structures.Entities {
     public class Order : INotifyPropertyChanged {
         public int Id { get; set; }
         public double StartTime { get; set; }
         public double EndTime { get; set; }
         public string FormattedTime { get; set; }
 
-        private List<Product> products;
+        private List<Product> products = new();
         public List<Product> Products {
             get => products;
             set {
@@ -17,6 +17,7 @@ namespace AgentSimulation.Structures.Objects {
                 foreach (var product in products) {
                     product.PropertyChanged += ProductPropertyChanged;
                 }
+                UpdateState();
             }
         }
 
@@ -35,28 +36,35 @@ namespace AgentSimulation.Structures.Objects {
             Id = id;
             StartTime = startTime;
             FormattedTime = Util.FormatTime(startTime);
-            Products = new();
             State = "0/0";
         }
 
         public void AddProducts(List<Product> products) {
             Products = products;
-            State = $"0/{Products.Count}";
         }
 
-        private void ProductPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName == nameof(ProductState.Finished)) {
-                CheckOrderCompletion();
+        public void UpdateProduct(Product product) {
+            var index = Products.FindIndex(p => p.Id == product.Id);
+            if (index != -1) {
+                Products[index] = product;
+                product.PropertyChanged += ProductPropertyChanged;
+                UpdateState();
             }
         }
 
-        private void CheckOrderCompletion() {
-            var finished = Products.FindAll(p => p.State == ProductState.Finished);
+        private void ProductPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(Product.State)) {
+                UpdateState();
+            }
+        }
 
-            if (finished.Count == Products.Count) {
+        private void UpdateState() {
+            var finishedCount = Products.Count(p => p.State == ProductState.Finished);
+
+            if (finishedCount == Products.Count && Products.Count > 0) {
                 State = "Completed";
             } else {
-                State = $"{finished.Count}/{Products.Count}";
+                State = $"{finishedCount}/{Products.Count}";
             }
         }
 
